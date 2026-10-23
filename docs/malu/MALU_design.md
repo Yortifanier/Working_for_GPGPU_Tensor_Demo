@@ -458,6 +458,12 @@ NVFP4 Inference 的 50 PFLOPS 在产品页脚注 ² 明确标为 sparse。技术
 
 产品吞吐是整颗 GPU 的峰值统计，不包含本项目实际时钟与面积约束，也不能保证短 K 或持续反压时仍达到标称比。性能验证同时报告 P_peak 和 P_eff，dense 与 sparse 分开。
 
+### 13.5 替代来源与交叉核验
+
+本轮同时检查 ServeTheHome、Tom’s Hardware、TechPowerUp、TrendForce、SemiAnalysis 等第三方入口，并使用 Bing/GitHub 公开检索。部分第三方直接页面在代理 CONNECT 阶段被403拒绝；部分搜索结果不相关，已排除。未取得全文或完整口径的媒体内容不进入算力比例表，也不伪称独立实测。官方现已恢复，因此本版采用实际读取的一手表格和脚注，不因替代来源尚未闭合而继续空置已有依据的数值。
+
+详细的访问结果、证据层级和不采用原因见 [Rubin 来源交叉核验记录](research/rubin_source_crosscheck.md)。NVIDIA产品页与技术博客来自同一厂商，它们之间的一致性核对不等于两次独立硬件测量。
+
 ## 14. 参数化吞吐、带宽与资源估算
 
 ### 14.1 点积吞吐口径

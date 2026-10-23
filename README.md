@@ -15,3 +15,5 @@ Tensor
 在 tcsh 中从根目录执行 `source ./setup.csh`；默认只初始化目录，不要求安装 EDA。站点工具及版本写入本地、未跟踪的 `setup.local.csh`，可参考示例文件。
 
 Rubin 单 GPU dense 参考：TF32 : FP16/BF16 : FP8/FP6 Training : NVFP4 Training = **0.5 : 1 : 4.375 : 8.75**。50 PFLOPS NVFP4 inference 为 sparse，独立登记；逐合法 tuple 的性能仍需映射。
+
+[Rubin 来源交叉核验与替代检索记录](docs/malu/research/rubin_source_crosscheck.md)
