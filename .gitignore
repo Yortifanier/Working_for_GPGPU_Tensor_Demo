@@ -1,0 +1,5 @@
+/build/
+/setup.local.csh
+__pycache__/
+*.pyc
+.DS_Store

@@ -1,0 +1,45 @@
+{
+  "accessed_on": "2026-10-23",
+  "timezone": "Asia/Shanghai",
+  "source": "https://www.nvidia.com/en-us/data-center/vera-rubin-nvl72/",
+  "column": "NVIDIA Rubin GPU / 1 NVIDIA Rubin GPU",
+  "reference": "FP16/BF16 dense = 4 PFLOPS",
+  "dense_footnote": "3. Dense specification.",
+  "sparse_footnote": "2. Sparse specification.",
+  "modes": [
+    {
+      "name": "TF32",
+      "pflops": 2,
+      "relative_to_fp16": 0.5,
+      "basis": "dense"
+    },
+    {
+      "name": "FP16/BF16",
+      "pflops": 4,
+      "relative_to_fp16": 1.0,
+      "basis": "dense"
+    },
+    {
+      "name": "FP8/FP6 Training",
+      "pflops": 17.5,
+      "relative_to_fp16": 4.375,
+      "basis": "dense"
+    },
+    {
+      "name": "NVFP4 Training",
+      "pflops": 35,
+      "relative_to_fp16": 8.75,
+      "basis": "dense"
+    },
+    {
+      "name": "NVFP4 Inference",
+      "pflops": 50,
+      "basis": "sparse",
+      "relative_to_fp16": null
+    }
+  ],
+  "snapshot_sha256": {
+    "rubin_now_nvl.html": "6cc3116c2c9776e071a5929d18a83c6b041f4ae8450b8494424f9fc34577a9fd",
+    "rubin_now_blog.html": "07f2fcf16a3334054d49d30684e58dd1fab0862bac35621fff5b42e358eb31a0"
+  }
+}

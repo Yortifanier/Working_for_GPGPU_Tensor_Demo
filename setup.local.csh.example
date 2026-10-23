@@ -1,0 +1,13 @@
+# Copy to setup.local.csh (keep the local file untracked).
+# Default: initialize directories without selecting or requiring an EDA tool.
+setenv MALU_SIMULATOR none
+
+# Optional site-specific tool selection and an expected version substring:
+# setenv MALU_SIMULATOR verilator
+# setenv MALU_EDA_BIN /opt/eda/verilator/bin
+# setenv EDA_VERSION 5.0
+# setenv MALU_BUILD_DIR /tmp/malu-build
+
+# Licensed tools are not installed by setup.csh. Inherit licenses from the
+# approved site environment; never commit a license value or credential here.
+# MALU_SIMULATOR choices: none, verilator, iverilog, vcs, xrun, questa.
