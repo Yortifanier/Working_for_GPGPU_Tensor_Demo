@@ -1,0 +1,9 @@
+{
+  "package": "verilator",
+  "version": "5.032-1+b2",
+  "architecture": "amd64",
+  "url": "https://deb.debian.org/debian/pool/main/v/verilator/verilator_5.032-1+b2_amd64.deb",
+  "sha256": "238ab4ca84cddd371f113cd549f16f2d65c43e7b4962a763bea1d259158dd3b2",
+  "index_sha256": "7778d3e3f303b7ddb8ce0fe7c8d57473a076c6bf2e8f241f75421d2396352498",
+  "verification": "Debian InRelease -> signed index SHA256 -> package SHA256"
+}

@@ -1,6 +1,6 @@
 # MALU 工程环境初始化
 
-当前仅提供文档与工程目录骨架，没有 MALU RTL，也没有可执行的 RTL 编译或仿真目标。`setup.csh` 不安装 EDA 工具，不声称仿真通过。
+当前提供 PROJECT_EXACT MALU RTL 与 Verilator 验证入口。`setup.csh`负责站点环境初始化，不安装或伪造商业 EDA；本地开源验证工具可通过`python3 tools/bootstrap_verilator.py`安装到build目录。
 
 在 **tcsh** 中从项目根目录运行：
 
@@ -27,7 +27,7 @@ csh/tcsh 的 `$_` 是上一条命令信息，不是可移植的 `BASH_SOURCE`。
 
 已有 `LM_LICENSE_FILE`、`SNPSLMD_LICENSE_FILE`、`CDS_LIC_FILE`、`MGLS_LICENSE_FILE` 仅检查是否存在，不输出值，不修改许可证。不把许可服务地址或密钥提交到 Git，也不在聊天中填写秘密。
 
-加载结束时可通过 `$status` 或 `MALU_SETUP_STATUS` 检查初始化结果。版本探测成功仅证明程序可执行，不证明许可证可用或仿真可运行。当前尚无 RTL，功能验证、时序与综合均未执行。
+加载结束时可通过 `$status` 或 `MALU_SETUP_STATUS` 检查初始化结果。版本探测成功仅证明程序可执行，不证明许可证可用或仿真可运行。PROJECT_EXACT功能验证记录见docs/malu/RTL_IMPLEMENTATION.md；商业EDA、工艺综合和时序签核未执行。
 
 ## 初始化脚本检查
 

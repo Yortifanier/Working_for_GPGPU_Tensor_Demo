@@ -1,0 +1,94 @@
+{
+  "archive_date": "2026-10-26",
+  "source_signature": "197395785750354d3e1acf59dbba4542894062cfe66390eb952ed6d9022f96fd",
+  "verified_source_file_count": 11,
+  "all_current_source_hashes_match": true,
+  "raw_log_counts_match_reports": true,
+  "numerical_executions": 10861,
+  "protocol_executions": 55,
+  "independent_decoder_cases": 66999,
+  "python_syntax_checked": [
+    "tools/bootstrap_verilator.py",
+    "tools/generate_malu_vectors.py",
+    "tools/malu_resource_audit.py",
+    "tools/run_malu_checks.py",
+    "tools/verify_setup.py"
+  ],
+  "git_diff_check_passed": true,
+  "full_simulation_reexecuted_during_archival": false,
+  "files": {
+    "round1_results.json": {
+      "original": "build/malu/round1/results.json",
+      "bytes": 1978,
+      "sha256": "facf8c2ef8b593cf54a36c751736f1f51ea7ac2e254586acc87e7890cc88267e"
+    },
+    "round2_results.json": {
+      "original": "build/malu/round2/results.json",
+      "bytes": 1983,
+      "sha256": "c3baf2373894cef701db7f2706d2180dfd97607a98a8c98ab182209b8946daae"
+    },
+    "round3_results.json": {
+      "original": "build/malu/round3/results.json",
+      "bytes": 3050,
+      "sha256": "d3e4f60fa2dc338875212aad0517e487c1932e7c0f23e9dc22fc21746f654678"
+    },
+    "round1_run_l4_f1.log": {
+      "original": "build/malu/round1/run_l4_f1.log",
+      "bytes": 318,
+      "sha256": "2e969bc38082619ba4b8e57ff375355c9778e0214a1197ac1198b95784b3e050"
+    },
+    "round2_run_l4_f1.log": {
+      "original": "build/malu/round2/run_l4_f1.log",
+      "bytes": 318,
+      "sha256": "a45b8cb84fd2e342ae6988725940f7d2b87fd5cd83c8745e0cf7d4fcfa699485"
+    },
+    "round3_run_l4_f1.log": {
+      "original": "build/malu/round3/run_l4_f1.log",
+      "bytes": 320,
+      "sha256": "6b78630252b7b0e3781e0bd66b3747163b776213e519096e669a5239b8b31b3e"
+    },
+    "round3_run_l1_f0.log": {
+      "original": "build/malu/round3/run_l1_f0.log",
+      "bytes": 319,
+      "sha256": "60c4683371f64b4fec0c43f6e779e54abbf81cd32deffe298629b848d88759d5"
+    },
+    "resource_inventory.json": {
+      "original": "build/malu/round3/resource_inventory.json",
+      "bytes": 765,
+      "sha256": "ba294407e771e3a9926a4f6c9b19d559d419ebc3e10b0a058f2c76a4e92527b5"
+    },
+    "decode_review_result.json": {
+      "original": "/workspace/output/malu/review3/decode_review_result.json",
+      "bytes": 751,
+      "sha256": "9c9259a5e2589d63bd92f5dc8efba7b5498bbf9e8f9a97627d3da526664861ae"
+    },
+    "final_independent_audit.json": {
+      "original": "/workspace/output/malu/review3/final_independent_audit.json",
+      "bytes": 5983,
+      "sha256": "ce75405140b4fee93034274f1ceb2545186c98abc55944b41a0fac0dd982d244"
+    },
+    "rtl_review_spec.md": {
+      "original": "/workspace/output/malu/rtl_review_spec.md",
+      "bytes": 18330,
+      "sha256": "9766b1ad985ff0e0375f2a975c7012e49778f7d5ebfe075ea30f27c8ce88bbb7"
+    },
+    "rtl_review_arithmetic.md": {
+      "original": "/workspace/output/malu/rtl_review_arithmetic.md",
+      "bytes": 26776,
+      "sha256": "19e5821d7b812ee7af0ba6b166cb2e4703b07be98fdbe944119dc97d36eab87f"
+    },
+    "README.md": {
+      "original": "new archival summary",
+      "bytes": 3356,
+      "sha256": "75176768ff30130d29c6c1f2cf742f4c664290be2d3cb0f2b107bf116bdc7eb9"
+    }
+  },
+  "python_tools_sha256": {
+    "tools/bootstrap_verilator.py": "3a0ab0f5f8d60b4f1d25d6cb3506ce85538216b29df2cf4f2a2b99b792f1e2fe",
+    "tools/generate_malu_vectors.py": "91a8c6e76a88f9382d4cc3a2cb396c24c87c34214090d961424c07c0b36c3c4b",
+    "tools/malu_resource_audit.py": "0a2333c48b595859b3aaf2aa0ddb126497225e2453eefb335aacde0766eb5911",
+    "tools/run_malu_checks.py": "22f1efe575f39ae496b7b2da50edb241c7cbe5e580f182c9de8d87cba4c1974d",
+    "tools/verify_setup.py": "6674789f7b6c56344e7a88b4e08b741825e82fc47f773f67655ce50d3d0b7222"
+  },
+  "archived_text_whitespace_check_passed": true
+}

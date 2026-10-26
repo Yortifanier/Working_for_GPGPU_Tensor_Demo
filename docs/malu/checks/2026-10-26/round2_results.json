@@ -1,0 +1,37 @@
+{
+  "round": 2,
+  "passed": true,
+  "timestamp": "2026-10-25T19:26:17.649924+08:00",
+  "tool": "Verilator 5.032 2025-01-01 rev (Debian 5.032-1+b2)",
+  "source_signature": "197395785750354d3e1acf59dbba4542894062cfe66390eb952ed6d9022f96fd",
+  "source_sha256": {
+    "design/core/filelist/common/malu_pkg.f": "e18db4dfbecc214eb1291967064da77a5353c74f57d22cb044cbb3dc635a510b",
+    "design/core/filelist/if/sp/eu/tensor/malu/malu_if.f": "8ca23d1e9a8c168780ba03e8796659f1d378097783624d319648819c2fe6427f",
+    "design/core/filelist/rtl/sp/eu/tensor/malu/malu.f": "d8db3a3c00e18e5a2c1e8e9326922694768e3553fa0170715622b9a3e097d130",
+    "design/core/src/common/malu_pkg.sv": "bec4d6b583e5a2c73bbdd1f3715137a3dee446c0a1e25090f7af7cab8db65f16",
+    "design/core/src/if/sp/eu/tensor/malu/malu_if.sv": "f4f91a0094eb93586f15546949fc570a0001091f4c59dff6090c778b8d2d3086",
+    "design/core/src/rtl/sp/eu/tensor/malu/malu.sv": "713b2b7be57d1d6d5d8cf7a134ce794e54d8e8bfc9f56c3ed6b519b96afaf4c1",
+    "design/core/src/rtl/sp/eu/tensor/malu/malu_core.sv": "da56d5dd3f38299755fcacdef493c6091536338188cb1f9b5b71149688697348",
+    "design/core/src/rtl/sp/eu/tensor/malu/malu_decode.sv": "ecb64bc43a68ab7e82e6556e71d026ef7e54d1d104ff3eba70097792d011688e",
+    "design/core/src/rtl/sp/eu/tensor/malu/malu_round_pack.sv": "c96739a42bd36a879d023154197fb6880bf5f08478201376b6a643c386433bdf",
+    "verif/core/filelist/rtl/sp/eu/tensor/malu/tb_malu.f": "426aeee6a5361a23a848d2703e2a83f7f4d98db8ad6d992231b696c78834c399",
+    "verif/core/src/rtl/sp/eu/tensor/malu/tb_malu.sv": "618c029f9aef2bd658e4dcd0db2fe8cba873320fbdb772b71b4c3681152d01c7"
+  },
+  "configurations": [
+    {
+      "suite": "random",
+      "seed": 1907,
+      "numerical": 1228,
+      "protocol": 14,
+      "cycles": 780411,
+      "lanes": 4,
+      "fp64": true,
+      "reused_compilation": true,
+      "passed": true
+    }
+  ],
+  "lint_waivers": [
+    "UNUSEDSIGNAL: unused sanitized fields",
+    "UNUSEDPARAM: public package constants"
+  ]
+}

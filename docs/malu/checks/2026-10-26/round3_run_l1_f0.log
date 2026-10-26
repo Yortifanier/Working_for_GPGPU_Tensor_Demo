@@ -1,0 +1,5 @@
+MALU_PASS numerical=228 protocol=13 lanes=1 fp64=0 cycles=61616
+- verif/core/src/rtl/sp/eu/tensor/malu/tb_malu.sv:238: Verilog $finish
+- S i m u l a t i o n   R e p o r t: Verilator 5.032 2025-01-01
+- Verilator: $finish at 616us; walltime 0.055 s; speed 11.118 ms/s
+- Verilator: cpu 0.055 s on 1 threads; alloced 34 MB

@@ -1,0 +1,27 @@
+{
+  "tool": "Verilator 5.032 Debian 5.032-1+b2",
+  "cases": 66999,
+  "counts": {
+    "E4M3": 256,
+    "E5M2": 256,
+    "E2M3": 64,
+    "E3M2": 64,
+    "E2M1": 16,
+    "UE8M0": 256,
+    "UE4M3": 256,
+    "UE5M3": 256,
+    "TI16_DECODED": 65539,
+    "TF32_PROJECT": 12,
+    "F16": 6,
+    "BF16": 6,
+    "F32": 6,
+    "F64": 6
+  },
+  "mismatches": 0,
+  "details": [],
+  "source_sha256": {
+    "design/core/src/common/malu_pkg.sv": "bec4d6b583e5a2c73bbdd1f3715137a3dee446c0a1e25090f7af7cab8db65f16",
+    "design/core/src/rtl/sp/eu/tensor/malu/malu_decode.sv": "ecb64bc43a68ab7e82e6556e71d026ef7e54d1d104ff3eba70097792d011688e"
+  },
+  "scope": "independent decoder-only exhaustive low-format and Ti16 transport review; not whole-core simulation or proof"
+}

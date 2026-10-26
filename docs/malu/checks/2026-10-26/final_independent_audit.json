@@ -1,0 +1,149 @@
+{
+  "reviewer": "agent1 independent third-round audit",
+  "source_signature": "197395785750354d3e1acf59dbba4542894062cfe66390eb952ed6d9022f96fd",
+  "all_three_source_maps_match_current": true,
+  "source_file_count": 11,
+  "all_raw_pass_logs_and_manifest_counts_match": true,
+  "main_vector_total": 10861,
+  "main_protocol_total": 55,
+  "decoder_independent_total": 66999,
+  "configurations": [
+    {
+      "round": 1,
+      "lanes": 4,
+      "fp64": true,
+      "numerical": 228,
+      "protocol": 14,
+      "raw_log": "build/malu/round1/run_l4_f1.log",
+      "raw_log_sha256": "2e969bc38082619ba4b8e57ff375355c9778e0214a1197ac1198b95784b3e050",
+      "manifest": "build/malu/round1/vectors_l4_f1.json",
+      "selected_coverage": {
+        "f64_borrow_entire_ram": 4,
+        "f64_huge_product_cancellation": 4,
+        "scaled_fp4_boundaries": 48,
+        "ue4_scale_codes": 6,
+        "ue5_scale_codes": 5,
+        "ue8_smallest_scaled": 4,
+        "ti16_raw_unsupported": 1,
+        "ti16_out_of_range": 3,
+        "tf32_bad_low_bits": 1
+      },
+      "cycles": 84271
+    },
+    {
+      "round": 2,
+      "lanes": 4,
+      "fp64": true,
+      "numerical": 1228,
+      "protocol": 14,
+      "raw_log": "build/malu/round2/run_l4_f1.log",
+      "raw_log_sha256": "a45b8cb84fd2e342ae6988725940f7d2b87fd5cd83c8745e0cf7d4fcfa699485",
+      "manifest": "build/malu/round2/vectors_l4_f1.json",
+      "selected_coverage": {
+        "f64_borrow_entire_ram": 4,
+        "f64_huge_product_cancellation": 4,
+        "scaled_fp4_boundaries": 48,
+        "ue4_scale_codes": 6,
+        "ue5_scale_codes": 5,
+        "ue8_smallest_scaled": 4,
+        "ti16_raw_unsupported": 1,
+        "ti16_out_of_range": 3,
+        "tf32_bad_low_bits": 1
+      },
+      "cycles": 780411
+    },
+    {
+      "round": 3,
+      "lanes": 4,
+      "fp64": true,
+      "numerical": 9177,
+      "protocol": 14,
+      "raw_log": "build/malu/round3/run_l4_f1.log",
+      "raw_log_sha256": "6b78630252b7b0e3781e0bd66b3747163b776213e519096e669a5239b8b31b3e",
+      "manifest": "build/malu/round3/vectors_l4_f1.json",
+      "selected_coverage": {
+        "f64_borrow_entire_ram": 4,
+        "f64_huge_product_cancellation": 4,
+        "scaled_fp4_boundaries": 48,
+        "ue4_scale_codes": 6,
+        "ue5_scale_codes": 5,
+        "ue8_smallest_scaled": 4,
+        "ti16_raw_unsupported": 1,
+        "ti16_out_of_range": 3,
+        "tf32_bad_low_bits": 1
+      },
+      "cycles": 2194731
+    },
+    {
+      "round": 3,
+      "lanes": 1,
+      "fp64": false,
+      "numerical": 228,
+      "protocol": 13,
+      "raw_log": "build/malu/round3/run_l1_f0.log",
+      "raw_log_sha256": "60c4683371f64b4fec0c43f6e779e54abbf81cd32deffe298629b848d88759d5",
+      "manifest": "build/malu/round3/vectors_l1_f0.json",
+      "selected_coverage": {
+        "f64_borrow_entire_ram": 4,
+        "f64_huge_product_cancellation": 4,
+        "scaled_fp4_boundaries": 48,
+        "ue4_scale_codes": 6,
+        "ue5_scale_codes": 5,
+        "ue8_smallest_scaled": 4,
+        "ti16_raw_unsupported": 1,
+        "ti16_out_of_range": 3,
+        "tf32_bad_low_bits": 1
+      },
+      "cycles": 61616
+    }
+  ],
+  "actual_xml_inventory": [
+    {
+      "fp64": false,
+      "actual_elaborated_acc_words": 20,
+      "variable_multiplication_nodes": 1,
+      "multiplier_operand_bits": [
+        24,
+        24
+      ],
+      "multiplier_result_bits": 48,
+      "coefficient_zero_extended_to_bits": 106,
+      "claim": "elaborated RTL inventory; not mapped DSP, RAM macro, area, frequency or power sign-off"
+    },
+    {
+      "fp64": true,
+      "actual_elaborated_acc_words": 132,
+      "variable_multiplication_nodes": 1,
+      "multiplier_operand_bits": [
+        53,
+        53
+      ],
+      "multiplier_result_bits": 106,
+      "coefficient_zero_extended_to_bits": 106,
+      "claim": "elaborated RTL inventory; not mapped DSP, RAM macro, area, frequency or power sign-off"
+    }
+  ],
+  "protocol_source_review": {
+    "reset_during_clear": true,
+    "reset_while_response_blocked": true,
+    "reset_during_word_accumulation": true,
+    "fresh_request_after_each_reset": true,
+    "error_response_aborts_unaccepted_following_beat": true
+  },
+  "verdict": "No delivery-blocking issue identified within the documented PROJECT_EXACT profile; not a formal proof, GPU bit-match claim, or mapped PPA result.",
+  "source_sha256": {
+    "design/core/filelist/common/malu_pkg.f": "e18db4dfbecc214eb1291967064da77a5353c74f57d22cb044cbb3dc635a510b",
+    "design/core/filelist/if/sp/eu/tensor/malu/malu_if.f": "8ca23d1e9a8c168780ba03e8796659f1d378097783624d319648819c2fe6427f",
+    "design/core/filelist/rtl/sp/eu/tensor/malu/malu.f": "d8db3a3c00e18e5a2c1e8e9326922694768e3553fa0170715622b9a3e097d130",
+    "design/core/src/common/malu_pkg.sv": "bec4d6b583e5a2c73bbdd1f3715137a3dee446c0a1e25090f7af7cab8db65f16",
+    "design/core/src/if/sp/eu/tensor/malu/malu_if.sv": "f4f91a0094eb93586f15546949fc570a0001091f4c59dff6090c778b8d2d3086",
+    "design/core/src/rtl/sp/eu/tensor/malu/malu.sv": "713b2b7be57d1d6d5d8cf7a134ce794e54d8e8bfc9f56c3ed6b519b96afaf4c1",
+    "design/core/src/rtl/sp/eu/tensor/malu/malu_core.sv": "da56d5dd3f38299755fcacdef493c6091536338188cb1f9b5b71149688697348",
+    "design/core/src/rtl/sp/eu/tensor/malu/malu_decode.sv": "ecb64bc43a68ab7e82e6556e71d026ef7e54d1d104ff3eba70097792d011688e",
+    "design/core/src/rtl/sp/eu/tensor/malu/malu_round_pack.sv": "c96739a42bd36a879d023154197fb6880bf5f08478201376b6a643c386433bdf",
+    "verif/core/filelist/rtl/sp/eu/tensor/malu/tb_malu.f": "426aeee6a5361a23a848d2703e2a83f7f4d98db8ad6d992231b696c78834c399",
+    "verif/core/src/rtl/sp/eu/tensor/malu/tb_malu.sv": "618c029f9aef2bd658e4dcd0db2fe8cba873320fbdb772b71b4c3681152d01c7"
+  },
+  "decoder_independent_sources_unchanged": true,
+  "final_delta_review": "ENABLE_FP64=0 contracts multiplier from 53x53/106 to 24x24/48; exact coefficient is zero-extended to 106, unchanged numerical algorithm; all four real run logs checked after rerun."
+}

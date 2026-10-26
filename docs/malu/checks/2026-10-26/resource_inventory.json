@@ -1,0 +1,28 @@
+{
+  "True": {
+    "variable_multiplication_nodes": 1,
+    "multiplier_operand_bits": [
+      53,
+      53
+    ],
+    "multiplier_result_bits": 106,
+    "shared_word_add_result_bits": 33,
+    "accumulator_words": 132,
+    "accumulator_word_bits": 32,
+    "accumulator_bits": 4224,
+    "claim": "Elaborated RTL, not mapped DSP count, RAM macro, area, frequency, or power sign-off"
+  },
+  "False": {
+    "variable_multiplication_nodes": 1,
+    "multiplier_operand_bits": [
+      24,
+      24
+    ],
+    "multiplier_result_bits": 48,
+    "shared_word_add_result_bits": 33,
+    "accumulator_words": 20,
+    "accumulator_word_bits": 32,
+    "accumulator_bits": 640,
+    "claim": "Elaborated RTL, not mapped DSP count, RAM macro, area, frequency, or power sign-off"
+  }
+}
