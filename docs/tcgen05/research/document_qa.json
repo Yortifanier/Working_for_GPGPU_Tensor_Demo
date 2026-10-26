@@ -1,0 +1,97 @@
+{
+  "title": "tcgen05 Tensor 架构文档",
+  "build_date": "2026-10-26",
+  "source": "docs/tcgen05/TCGEN05_TENSOR_ARCHITECTURE.md",
+  "source_sha256": "4612f7b87d00ced9cda627ae002d840c7c4881f53031b3d8052417262294dc8e",
+  "docx": "docs/tcgen05/TCGEN05_Tensor_Architecture_v1.0.docx",
+  "figure_sha256": {
+    "figures/01_architecture_context.png": "15399100601687d5d41f2256e02e314c094b8602965a8722eb292eeb97b9e941",
+    "figures/02_memory_and_operands.png": "32c00e8b9854f1a94e9ee8bdf3b3396e56f9c3fab2d5024ca2077093cf9019c2",
+    "figures/03_resource_lifecycle.png": "c7e1735c788037f4d9db049e0b3285530feba05efd37598feb16800276ce0ff0",
+    "figures/05_scale_domains.png": "e902cfdd5629d55124fb2aa54cefc20a158fc90a68b65c85bcde0cff12569aeb",
+    "figures/04_async_completion.png": "ff2691afe70a04ac3b83c57c02ddf988b12cbd383fd4c04b3c39a8b83169a62d"
+  },
+  "native_tables": 27,
+  "native_math": 3,
+  "embedded_images": 5,
+  "chapter_navigation_links": 20,
+  "pandoc_version": "pandoc 3.1.11.1",
+  "pdf": "docs/tcgen05/TCGEN05_Tensor_Architecture_v1.0.pdf",
+  "pdf_pages": 33,
+  "pdf_text_characters": 46477,
+  "all_heading_text_found": true,
+  "pdf_structural_check": {
+    "internal_links": 20,
+    "unique_images": 5,
+    "text_outside_page_bounds": []
+  },
+  "rendered_pages": [
+    "build/tcgen05/page_01.png",
+    "build/tcgen05/page_05.png",
+    "build/tcgen05/page_09.png",
+    "build/tcgen05/page_10.png",
+    "build/tcgen05/page_18.png",
+    "build/tcgen05/page_24.png",
+    "build/tcgen05/page_33.png"
+  ],
+  "source_unchanged_during_build": true,
+  "docx_sha256": "f2358acbc2f5a2b4a8a345ec7d953d60fc97216db899ca32fea32e2d23250cd8",
+  "pdf_sha256": "cc28a821c6b5fce9525acaca0b4587e863ba7c8c2625b5ba146a9757a2e04113",
+  "passed": true,
+  "status": "complete",
+  "archival_date": "2026-10-26",
+  "review_scope": {
+    "software_checks": "Pandoc AST/native DOCX counts, exact embedded PNG hashes, source/artifact SHA256, PDF heading extraction, 20 internal goto links, five PDF image objects and all-page text bounding boxes.",
+    "manual_visual_review": {
+      "reviewer": "agent4",
+      "final_pdf_pages": [
+        1,
+        5,
+        9,
+        10,
+        18,
+        24,
+        33
+      ],
+      "scope": "Cover, all five figure pages, table continuations/headers and final page; sampled readability and visible layout.",
+      "all_pages_visually_reviewed": false,
+      "observed_blocking_layout_issue": false
+    },
+    "additional_parent_visual_review_pages": [
+      9,
+      18,
+      24
+    ],
+    "font_check": {
+      "tool": "pdffonts",
+      "all_reported_fonts_embedded": true,
+      "font_rows": [
+        "BAAAAA+NotoSansCJKsc-Bold            Type 1            Builtin          yes yes yes   4195  0",
+        "CAAAAA+NotoSansCJKsc-Bold            Type 1            Builtin          yes yes yes   4180  0",
+        "DAAAAA+NotoSansCJKsc-Regular         Type 1            Builtin          yes yes yes   4150  0",
+        "EAAAAA+NotoSansCJKsc-Regular         Type 1            Builtin          yes yes yes   4145  0",
+        "FAAAAA+NotoSansCJKsc-Regular         Type 1            Builtin          yes yes yes   4125  0",
+        "GAAAAA+NotoSansCJKsc-Regular         Type 1            Builtin          yes yes yes   4140  0",
+        "HAAAAA+NotoSansCJKsc-Bold            Type 1            Builtin          yes yes yes   4190  0",
+        "IAAAAA+NotoSansCJKsc-Bold            Type 1            Builtin          yes yes yes   4170  0",
+        "JAAAAA+NotoSansCJKsc-Bold            Type 1            Builtin          yes yes yes   4185  0",
+        "KAAAAA+NotoSansCJKsc-Regular         Type 1            Builtin          yes yes yes   4130  0",
+        "LAAAAA+NotoSansCJKsc-Bold            Type 1            Builtin          yes yes yes   4175  0",
+        "MAAAAA+NotoSansCJKsc-Bold            Type 1            Builtin          yes yes yes   4200  0",
+        "NAAAAA+NotoSansCJKsc-Regular         Type 1            Builtin          yes yes yes   4155  0",
+        "OAAAAA+DejaVuSansMono                TrueType          WinAnsi          yes yes yes   4215  0",
+        "PAAAAA+NotoSansCJKsc-Regular         Type 1            Builtin          yes yes yes   4160  0",
+        "QAAAAA+LiberationSerif-Italic        TrueType          WinAnsi          yes yes yes   4210  0",
+        "RAAAAA+LiberationSerif               TrueType          WinAnsi          yes yes yes   4205  0",
+        "SAAAAA+OpenSymbol                    TrueType          WinAnsi          yes yes yes   4225  0",
+        "TAAAAA+DejaVuSansMono-Bold           TrueType          WinAnsi          yes yes yes   4220  0",
+        "UAAAAA+NotoSansCJKsc-Regular         Type 1            Builtin          yes yes yes   4135  0",
+        "VAAAAA+NotoSansCJKsc-Regular         Type 1            Builtin          yes yes yes   4165  0"
+      ]
+    },
+    "limitations": "Software structure checks and sampled visual review are distinct; this does not claim full-page-by-page manual review or validation of every architectural statement."
+  },
+  "builder_sha256": "16517e8b77640a4c4a53079349ee653fc7b06ff3c6a07ed6d115cae3ce497db6",
+  "builder_python_syntax_passed": true,
+  "git_diff_check_passed": true
+}

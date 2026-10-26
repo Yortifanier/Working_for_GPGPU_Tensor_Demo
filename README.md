@@ -1,6 +1,14 @@
 # Working_for_GPGPU_Tensor_Demo
 Tensor
 
+## tcgen05 Tensor 架构
+
+以用户提供的 PTX ISA 9.4 为基准，涵盖 Tensor 功能边界、TMEM、全部指令家族、格式/shape/scale、稀疏与复用、CTA pair、异步完成和内存顺序。文档限定为架构层，不规定物理阵列、流水线、端口或 RTL 微架构。
+
+- [完整架构文档（Markdown）](docs/tcgen05/TCGEN05_TENSOR_ARCHITECTURE.md)
+- [带图 DOCX](docs/tcgen05/TCGEN05_Tensor_Architecture_v1.0.docx) · [PDF](docs/tcgen05/TCGEN05_Tensor_Architecture_v1.0.pdf)
+- [规范逐页核查](docs/tcgen05/research/ptx94_architecture_audit.md) · [来源审查](docs/tcgen05/research/architecture_source_review.md) · [构建方法](docs/tcgen05/BUILDING.md)
+
 ## MALU 设计与工程骨架
 
 当前包含可综合的 PROJECT_EXACT MALU 功能 RTL、专用接口和可复现验证。MALU 只提供向量点积 `D=C+Dot(A,B)`；精确乘积/归约及最终舍入为本项目数值约定，不是 NVIDIA 设备拟合。
