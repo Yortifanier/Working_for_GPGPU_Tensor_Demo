@@ -1,0 +1,85 @@
+{
+  "passed": true,
+  "scope": "Project proposal arithmetic and capacity checks only; not RTL, synthesis, timing, or end-to-end performance validation.",
+  "tool_source_sha256": "593da8bfe07db9bf501772fab9b90bf8367a981420e6dcc7fd1bbdb283affa5b",
+  "bank_mapping": {
+    "unique_cells": 73728,
+    "banks": 32,
+    "words_per_bank": 2304,
+    "endpoint_bytes": 294912,
+    "pair_bytes": 589824,
+    "allocation_records_per_endpoint": 18,
+    "pair_records": 36
+  },
+  "compute": {
+    "base_bricks": 18,
+    "total_4x4_equivalent_bricks": 159,
+    "raw_terms_per_cycle": {
+      "tf32": 8,
+      "f16_bf16": 16,
+      "f8f6f4_mxf8f6f4": 70,
+      "mxf4_mxf4nvf4": 140
+    },
+    "relative_to_f16": {
+      "tf32": "1/2",
+      "f16_bf16": "1",
+      "f8f6f4_mxf8f6f4": "35/8",
+      "mxf4_mxf4nvf4": "35/4"
+    },
+    "ideal_average_dot_closures_per_cycle": {
+      "tf32": "1",
+      "f16_bf16": "1",
+      "f8f6f4_mxf8f6f4": "35/16",
+      "mxf4_mxf4nvf4": "35/16"
+    },
+    "finalizer_minimum_ideal_II1_count": 3,
+    "dot_contexts": 44,
+    "dot_context_bytes": 8448
+  },
+  "operand_buffers": {
+    "a_version_banks": 16,
+    "a_bank_words_64bit": 128,
+    "b_slot_banks": 16,
+    "b_bank_words_64bit": 64,
+    "aux_banks": 8,
+    "aux_bank_words_64bit": 128,
+    "smem_outstanding_tags": 32,
+    "smem_response_slots": 8,
+    "nominal_round_trip_cycles_at_two_requests_per_cycle": 16
+  },
+  "numeric": {
+    "q_product_magnitude_bound": 144,
+    "q_product_signed_bits": 9,
+    "block32_sum_magnitude_bound": 4608,
+    "block_sum_signed_bits": 14,
+    "scale_product_unsigned_bits": 8,
+    "scaled_magnitude_bound": 1036800,
+    "fp4_injection_exponent_adjustment": -2,
+    "low_group_signed_bits_bound": 71,
+    "low_group_storage_bits": 80,
+    "accumulator_base": -300,
+    "accumulator_bits": 640,
+    "signed_upper_exclusive_exponent": 339
+  },
+  "examples": {
+    "f16_m128_n64_k16": {
+      "terms": 131072,
+      "raw_only_lower_bound_cycles": 8192
+    },
+    "fp8_m128_n64_k32": {
+      "terms": 262144,
+      "raw_only_lower_bound_cycles": 3745
+    },
+    "mxf4_m128_n64_k64": {
+      "terms": 524288,
+      "raw_only_lower_bound_cycles": 3745
+    }
+  },
+  "unverified": [
+    "PERF pipeline and forwarding",
+    "queue liveness and fairness",
+    "native recipe correctness",
+    "SRAM macro and PPA",
+    "end-to-end throughput"
+  ]
+}

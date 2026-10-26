@@ -9,6 +9,13 @@ Tensor
 - [带图 DOCX](docs/tcgen05/TCGEN05_Tensor_Architecture_v1.0.docx) · [PDF](docs/tcgen05/TCGEN05_Tensor_Architecture_v1.0.pdf)
 - [规范逐页核查](docs/tcgen05/research/ptx94_architecture_audit.md) · [来源审查](docs/tcgen05/research/architecture_source_review.md) · [构建方法](docs/tcgen05/BUILDING.md)
 
+项目微架构已单独成文，包含 REF 集成、PERF-S1 资源复用、流水/队列、TMEM banks、scoreboard、scale、完成跟踪及 peer 协议：
+
+- [微架构正文](docs/tcgen05/microarchitecture/TCGEN05_TENSOR_MICROARCHITECTURE.md)
+- [微架构 DOCX](docs/tcgen05/microarchitecture/TCGEN05_Tensor_Microarchitecture_v1.0.docx) · [PDF](docs/tcgen05/microarchitecture/TCGEN05_Tensor_Microarchitecture_v1.0.pdf)
+
+微架构是项目拟议方案；新增 Tensor/PERF 硬件仍待实现及验证，算力比例表给出入口预算。
+
 ## MALU 设计与工程骨架
 
 当前包含可综合的 PROJECT_EXACT MALU 功能 RTL、专用接口和可复现验证。MALU 只提供向量点积 `D=C+Dot(A,B)`；精确乘积/归约及最终舍入为本项目数值约定，不是 NVIDIA 设备拟合。

@@ -1,0 +1,90 @@
+{
+  "title": "tcgen05 Tensor 微架构文档",
+  "build_date": "2026-10-26",
+  "source": "docs/tcgen05/microarchitecture/TCGEN05_TENSOR_MICROARCHITECTURE.md",
+  "source_sha256": "707740b0ea57fcec5d5a47e745c4df10cdea87e3efe523cbd254795873f6cf16",
+  "docx": "docs/tcgen05/microarchitecture/TCGEN05_Tensor_Microarchitecture_v1.0.docx",
+  "figure_sha256": {
+    "figures/01_tensor_subsystem.png": "4be041b7d7c52f3b9497633d38b87cdb9b4e1768ea06e1eaa80b9b91bdd3a1f5",
+    "figures/02_dispatch_and_issue.png": "9aa6df728af33d2533e994761363d08c269f4fc910ff248beb99c61d014a1f6f",
+    "figures/03_operand_and_tmem.png": "a4163e11c5340208c6a9ca6b2ad77422680bbf3d106f34564f031d7e915763de",
+    "figures/05_malu_adapter.png": "0c52f0a6cda29e7bdaa4a064af0fdb901e8547e6788409f722bc1397a190f342",
+    "figures/04_async_tracking.png": "5866b194d3814053528466531668afcb15ee992fef4080991979c6812809b47f"
+  },
+  "native_tables": 21,
+  "native_math": 2,
+  "embedded_images": 5,
+  "chapter_navigation_links": 26,
+  "pandoc_version": "pandoc 3.1.11.1",
+  "pdf": "docs/tcgen05/microarchitecture/TCGEN05_Tensor_Microarchitecture_v1.0.pdf",
+  "pdf_pages": 30,
+  "pdf_text_characters": 41033,
+  "all_heading_text_found": true,
+  "pdf_structural_check": {
+    "internal_links": 26,
+    "unique_images": 5,
+    "text_outside_page_bounds": []
+  },
+  "rendered_pages": [
+    "build/tcgen05_microarchitecture/page_01.png",
+    "build/tcgen05_microarchitecture/page_05.png",
+    "build/tcgen05_microarchitecture/page_07.png",
+    "build/tcgen05_microarchitecture/page_10.png",
+    "build/tcgen05_microarchitecture/page_15.png",
+    "build/tcgen05_microarchitecture/page_22.png",
+    "build/tcgen05_microarchitecture/page_30.png"
+  ],
+  "source_unchanged_during_build": true,
+  "docx_sha256": "e81b79eb66a83011818a1b68f2f127914a8b580fcaa84b60742fa7bac702e849",
+  "pdf_sha256": "468e3b262445af45e327074d514b04fb20ac114bea23a528b93830dc28fa0beb",
+  "passed": true,
+  "status": "complete",
+  "qa_scope": "Document structure and sampled rendered-PDF readability only; no new RTL, synthesis, timing, PPA, native GPU implementation, or end-to-end throughput validation.",
+  "additional_software_checks": {
+    "navigation_page": 2,
+    "navigation_links_on_that_page": 26,
+    "pdf_no_inverted_question_or_replacement_characters": true,
+    "pdf_font_records": 21,
+    "all_pdf_font_records_embedded_subset_unicode": true,
+    "pdf_font_families": [
+      "DejaVuSansMono",
+      "LiberationSerif",
+      "LiberationSerif-Italic",
+      "NotoSansCJKsc-Bold",
+      "NotoSansCJKsc-Regular",
+      "OpenSymbol"
+    ],
+    "native_tables_with_repeated_header": 21,
+    "table_rows": 172,
+    "table_rows_with_cant_split": 172,
+    "artifact_and_png_hashes_rechecked": true,
+    "python_syntax_checks": [
+      "build_doc.py",
+      "figures/generate_figures.py",
+      "check_design_budget.py"
+    ]
+  },
+  "manual_visual_review": {
+    "performed": true,
+    "pdf_pages": [
+      1,
+      2,
+      5,
+      7,
+      10,
+      15,
+      19,
+      22,
+      30
+    ],
+    "coverage": "Cover, full chapter navigation, all five figure pages, both native equations, representative tables, final page; not every page was visually inspected.",
+    "observations": [
+      "No observed clipping, overlapping text, unreadable diagram labels, or garbled CJK on sampled pages.",
+      "Page 10 native div equation renders without the former red inverted-question-mark floor error.",
+      "Page 15 distinguishes implemented REF from proposed PERF and shows 80b/14b local sums, 640b CSA, 44 contexts, 3 finalizers, and 159 equivalent bricks.",
+      "Page 22 marks SMEM-A MMA A-read; diagram numbering follows reading order 1 through 5.",
+      "Page 2 holds all 26 navigation links without reducing their 10.5 pt font."
+    ],
+    "technical_correctness_claim": "Readability and visible label correspondence only; technical reviews and design-budget arithmetic remain separate evidence."
+  }
+}
