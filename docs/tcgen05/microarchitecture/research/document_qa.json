@@ -1,45 +1,48 @@
 {
   "title": "tcgen05 Tensor 微架构文档",
-  "build_date": "2026-10-26",
+  "build_date": "2026-10-27",
+  "document_version": "1.1",
   "source": "docs/tcgen05/microarchitecture/TCGEN05_TENSOR_MICROARCHITECTURE.md",
-  "source_sha256": "707740b0ea57fcec5d5a47e745c4df10cdea87e3efe523cbd254795873f6cf16",
-  "docx": "docs/tcgen05/microarchitecture/TCGEN05_Tensor_Microarchitecture_v1.0.docx",
+  "source_sha256": "a1ed03c91884b7610c205cdf9c923fc6be6fd22ee129abfd505f3385bf3bd924",
+  "docx": "docs/tcgen05/microarchitecture/TCGEN05_Tensor_Microarchitecture_v1.1.docx",
   "figure_sha256": {
-    "figures/01_tensor_subsystem.png": "4be041b7d7c52f3b9497633d38b87cdb9b4e1768ea06e1eaa80b9b91bdd3a1f5",
+    "figures/01_tensor_subsystem.png": "cf87f3065bdf59a0a4fab9c22c787471da1b055781729344cf5ff300b4af0f30",
     "figures/02_dispatch_and_issue.png": "9aa6df728af33d2533e994761363d08c269f4fc910ff248beb99c61d014a1f6f",
     "figures/03_operand_and_tmem.png": "a4163e11c5340208c6a9ca6b2ad77422680bbf3d106f34564f031d7e915763de",
-    "figures/05_malu_adapter.png": "0c52f0a6cda29e7bdaa4a064af0fdb901e8547e6788409f722bc1397a190f342",
-    "figures/04_async_tracking.png": "5866b194d3814053528466531668afcb15ee992fef4080991979c6812809b47f"
+    "figures/06_smem_subsystem.png": "9c5348707946ec6d1bb6322ade119dcd696f23e9dfb3032f7c1a898f2e8d3d28",
+    "figures/05_malu_adapter.png": "3381191b889ea6c413b079fb4c10e6313f6720a28adce5e071b2ed36904a9aa4",
+    "figures/04_async_tracking.png": "296a58d9047b26c9bcad95e704c3e8f401bbe1fe047a4f32df3749708f307c30"
   },
-  "native_tables": 21,
+  "native_tables": 22,
   "native_math": 2,
-  "embedded_images": 5,
+  "embedded_images": 6,
   "chapter_navigation_links": 26,
   "pandoc_version": "pandoc 3.1.11.1",
-  "pdf": "docs/tcgen05/microarchitecture/TCGEN05_Tensor_Microarchitecture_v1.0.pdf",
-  "pdf_pages": 30,
-  "pdf_text_characters": 41033,
+  "pdf": "docs/tcgen05/microarchitecture/TCGEN05_Tensor_Microarchitecture_v1.1.pdf",
+  "pdf_pages": 37,
+  "pdf_text_characters": 52046,
   "all_heading_text_found": true,
   "pdf_structural_check": {
     "internal_links": 26,
-    "unique_images": 5,
+    "unique_images": 6,
     "text_outside_page_bounds": []
   },
   "rendered_pages": [
-    "build/tcgen05_microarchitecture/page_01.png",
-    "build/tcgen05_microarchitecture/page_05.png",
-    "build/tcgen05_microarchitecture/page_07.png",
-    "build/tcgen05_microarchitecture/page_10.png",
-    "build/tcgen05_microarchitecture/page_15.png",
-    "build/tcgen05_microarchitecture/page_22.png",
-    "build/tcgen05_microarchitecture/page_30.png"
+    "build/tcgen05_microarchitecture/v1.1/page_01.png",
+    "build/tcgen05_microarchitecture/v1.1/page_05.png",
+    "build/tcgen05_microarchitecture/v1.1/page_07.png",
+    "build/tcgen05_microarchitecture/v1.1/page_10.png",
+    "build/tcgen05_microarchitecture/v1.1/page_12.png",
+    "build/tcgen05_microarchitecture/v1.1/page_21.png",
+    "build/tcgen05_microarchitecture/v1.1/page_28.png",
+    "build/tcgen05_microarchitecture/v1.1/page_37.png"
   ],
   "source_unchanged_during_build": true,
-  "docx_sha256": "e81b79eb66a83011818a1b68f2f127914a8b580fcaa84b60742fa7bac702e849",
-  "pdf_sha256": "468e3b262445af45e327074d514b04fb20ac114bea23a528b93830dc28fa0beb",
+  "docx_sha256": "3505c4fabbf44bf06d7de9dc4f43725603a73e650df65ca38076dabf1ddbaa48",
+  "pdf_sha256": "13b733de11910bf9d92d059e9ef80a8434908b1f8bc88c8d4af17ceefc3f5d52",
   "passed": true,
   "status": "complete",
-  "qa_scope": "Document structure and sampled rendered-PDF readability only; no new RTL, synthesis, timing, PPA, native GPU implementation, or end-to-end throughput validation.",
+  "qa_scope": "Document structure and sampled rendered-PDF readability only; no new SMEM/Tensor RTL, synthesis, timing, PPA, native NVIDIA implementation, or end-to-end throughput validation.",
   "additional_software_checks": {
     "navigation_page": 2,
     "navigation_links_on_that_page": 26,
@@ -54,15 +57,19 @@
       "NotoSansCJKsc-Regular",
       "OpenSymbol"
     ],
-    "native_tables_with_repeated_header": 21,
-    "table_rows": 172,
-    "table_rows_with_cant_split": 172,
+    "native_tables_with_repeated_header": 22,
+    "table_rows": 193,
+    "table_rows_with_cant_split": 193,
+    "cover_and_footer_version": "1.1",
     "artifact_and_png_hashes_rechecked": true,
+    "svg_files_parse_and_have_no_trailing_whitespace": 6,
     "python_syntax_checks": [
       "build_doc.py",
-      "figures/generate_figures.py",
-      "check_design_budget.py"
-    ]
+      "figures/generate_figures.py"
+    ],
+    "historical_v1_0_docx_pdf_unchanged": true,
+    "historical_v1_0_docx_sha256": "e81b79eb66a83011818a1b68f2f127914a8b580fcaa84b60742fa7bac702e849",
+    "historical_v1_0_pdf_sha256": "468e3b262445af45e327074d514b04fb20ac114bea23a528b93830dc28fa0beb"
   },
   "manual_visual_review": {
     "performed": true,
@@ -72,19 +79,27 @@
       5,
       7,
       10,
+      12,
+      13,
+      14,
       15,
-      19,
-      22,
-      30
+      16,
+      17,
+      21,
+      25,
+      28,
+      37
     ],
-    "coverage": "Cover, full chapter navigation, all five figure pages, both native equations, representative tables, final page; not every page was visually inspected.",
+    "coverage": "Cover, complete one-page navigation, all six figure pages, continuous SMEM section samples including its split table and visibility/scrub revisions, both native equations, and final page; not every page was visually inspected.",
     "observations": [
-      "No observed clipping, overlapping text, unreadable diagram labels, or garbled CJK on sampled pages.",
-      "Page 10 native div equation renders without the former red inverted-question-mark floor error.",
-      "Page 15 distinguishes implemented REF from proposed PERF and shows 80b/14b local sums, 640b CSA, 44 contexts, 3 finalizers, and 159 equivalent bricks.",
-      "Page 22 marks SMEM-A MMA A-read; diagram numbering follows reading order 1 through 5.",
-      "Page 2 holds all 26 navigation links without reducing their 10.5 pt font."
+      "No observed clipped or overlapping text, unreadable figure labels, or garbled CJK on sampled pages.",
+      "Page 12 embeds the final SMEM figure: owner-translated physical address p, one-time Tensor swizzle, 64 banks, 256 KiB, shared 256 B read plus 256 B write per cycle, and independent completion credit.",
+      "Pages 13-14 show repeated SMEM table headers and readable capacity/responsibility columns.",
+      "Pages 15-17 show the final scrub/visibility/retirement wording without layout defects; technical correctness remains separate review evidence.",
+      "Page 10 div equation and page 25 fractional-scale equation render normally as native equations.",
+      "Pages 21 and 28 retain the separate REF/PERF status and SMEM-A MMA A-read labels; diagram numbers follow reading order 1 through 6.",
+      "Page 2 contains all 26 navigation links at 10.5 pt; cover and footer identify version 1.1."
     ],
-    "technical_correctness_claim": "Readability and visible label correspondence only; technical reviews and design-budget arithmetic remain separate evidence."
+    "technical_correctness_claim": "Readability and visible label correspondence only; design-budget arithmetic and technical reviews remain separate evidence."
   }
 }

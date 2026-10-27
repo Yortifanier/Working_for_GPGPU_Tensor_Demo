@@ -1,6 +1,6 @@
 # tcgen05 Tensor 微架构文档
 
-版本：v1.0；日期：2026-10-26（Asia/Shanghai）。状态：**项目拟议微架构，供 RTL 设计评审**。上位约束：[tcgen05 Tensor 架构 v1.0](../TCGEN05_TENSOR_ARCHITECTURE.md)，依据上传 PTX ISA 9.4。
+版本：v1.1；日期：2026-10-27（Asia/Shanghai）。状态：**项目拟议微架构，供 RTL 设计评审**。上位约束：[tcgen05 Tensor 架构 v1.0](../TCGEN05_TENSOR_ARCHITECTURE.md)，依据上传 PTX ISA 9.4。v1.1 补全 core 共享 SMEM 本体及与 Tensor 的集成；v1.0 阅读版保留为历史快照。
 
 ## 1. 实现范围、证据和设计基线
 
@@ -26,6 +26,7 @@
 | 参数 | 本版建议值 | 说明 |
 |---|---:|---|
 | TMEM banks / endpoint | 32 | 每 bank 32-bit、1R1W，读延迟目标 2 cycle |
+| shared SMEM / endpoint | 256 KiB | 64 个 32-bit 1R1W physical banks，8 CTA owner 共享 |
 | physical MAX_COLS | 576 | capability 选择可用 512 或 576；每列 128 lanes |
 | allocation records | 18 / endpoint | pair 共 36；不按每 CTA 限 4 项 |
 | resident CTA owners / warp slots | 8 / 64 | 必须与核心 admission credits 联动 |
@@ -56,8 +57,9 @@
 | `tensor_writeback` | D 地址映射、write-disable、写回合并 | 写队列与 bank ack |
 | `tensor_completion` | full/A-read/ld/st、commit/fence | issuer 前缀、CommitWait、Event Q |
 | `tensor_peer_bridge` | pair 资源和子任务协议 | parent/child ID、双边 prepare/done masks |
+| `core_smem_subsystem` | core 共享存储、LSU/TMA/Tensor/DSM/barrier 服务 | CTA launch 分配、64-bank 仲裁、assembly/RMW/可见性状态 |
 
-MALU 始终只执行向量点积及其正式 C；地址生成、TMEM 分配、稀疏位置恢复、collector 管理和 mbarrier 不放入 dot 核心。TMA 是外部供数机制，tensor map 不与 tcgen05 SMEM matrix descriptor 合并。
+MALU 始终只执行向量点积及其正式 C；地址生成、TMEM 分配、稀疏位置恢复、collector 管理和 mbarrier 不放入 dot 核心。SMEM 是 core 共享子系统，Tensor 是其客户端。TMA 是外部供数机制，tensor map 不与 tcgen05 SMEM matrix descriptor 合并。
 
 ## 3. 命令记录、标识和不可变配置
 
@@ -138,7 +140,9 @@ pair 的联合分配由 even 侧 coordinator 选择共同的连续 chunk 区间�
 
 exclusive 的作用域与实际 TMEM 资源池一致：CTA group 1 只锁其本 endpoint 的池与许可；CTA group 2 原子锁住两端池。不能把两端独立的 CTA1 exclusive 也跨整个 pair 串行，否则两边各申请后执行 cluster barrier 的程序可能环等。relinquish 仅清 owner 的后续申请许可，不清 LIVE records，也不代替 drain/dealloc。
 
-## 7. TMEM 物理组织、端口和访问冲突
+## 7. 片上存储：TMEM 与 SMEM
+
+### 7.1 TMEM 物理组织、端口和访问冲突
 
 ![图 3：每 endpoint 的 TMEM bank 映射、操作数缓存和双 endpoint 配对。](figures/03_operand_and_tmem.png)
 
@@ -155,6 +159,116 @@ $$bank=lane\bmod32,\qquad row=4\times column+(lane\mathbin{\mathrm{div}}32)$$
 建议读请求/地址寄存为 T0，bank 数据返回为 T2；实际 SRAM 宏可参数化延迟，响应按 tag 归属。写入在 bank 接受边沿提交。对同地址读写采用显式 write-forwarding；不能依赖不同 RAM macro 的 read-during-write 默认行为。
 
 多个不同 row 命中同 bank 时排队重放；重复请求可以广播给同地址读者，写请求只能在无相互覆盖风险时合并。bank arbiter 使用带年龄的轮转，writeback drain 和已接受的 move 返回具有保留进度，不允许新 prefetch 长期饿死已有写回。
+
+### 7.2 SMEM 的归属、容量与 CTA launch 分配
+
+SMEM 与 TMEM 是两套物理存储。SMEM 保存程序可见的 shared 字节对象，由 generic LSU、TMA、Tensor、cluster/peer 和 mbarrier 服务端共同访问；不是仅供 Tensor 使用的 A/B cache。v1.0 只定义了它的外部接口，本节把服务端补齐。
+
+![图 4：core 共享 SMEM 子系统。64-bank 与 256 KiB 为项目参数，和图 3 的 TMEM 独立；所有客户端竞争同一端口池。](figures/06_smem_subsystem.png)
+
+本版选每 endpoint 256 KiB 有效数据容量，独立于 L1 和 TMEM；不实施 L1/SMEM 动态 carve-out。该数值不是 NVIDIA 某款产品的保证，也不表示每 CTA 都有 256 KiB。每 CTA 可用上限还受系统 capability、launch 配置及其他 resident owner 占用约束。
+
+core 在 CTA launch 时提供 static shared、dynamic shared、可选 runtime reserved 大小。SMEM allocator 以 256 B 对齐分配连续区间，填入 8 项 SMEM owner table：visible_bytes 为 static+dynamic，allocation_bytes 为三者之和向上对齐。程序声明的 mbarrier 若已在 static/dynamic 内，不在 reserved 中重复计算；reserved 默认 0。
+
+owner record 保存 CTA/cluster rank、base、visible/allocation size、generation/epoch 和 outstanding refs。launch 必须同时满足 warp、CTA slot、SMEM 和其他 residency 信用；容量不足则延后 launch，不能先让 CTA 运行再等待其基础 SMEM 区间。
+
+generic/async/peer 请求最终访问同一 owner 的相同字节对象。`.shared::cta` 的程序 offset 先检查可见范围，再映射到 owner base；cluster 请求选择目标 CTA owner 后做同样转换。SMEM 分配不使用 `tcgen05.alloc/dealloc/relinquish`，这些指令仍只管理 TMEM。[PTX §5.1.7、§10.32；SMEM ISA 审查]
+
+### 7.3 SMEM bank、端口和有效带宽
+
+选用 64 个 physical banks，每 bank 1024 个 32-bit words，1R1W、同步读延迟目标 2 cycle。有效容量为 `64×1024×4 B=256 KiB`。对完成 owner 转译后的 physical byte address p：
+
+`bank=p[7:2]，row=p[17:8]，byte_select=p[1:0]`。
+
+owner base 按 256 B 对齐；若省略 base 转译，不同 resident CTA 的 offset=0 会错误地访问同一 word。完整访问还要检查 p+length 未越过 owner 边界。64 banks 是项目物理组织，不把 CUDA 常见的 bank 性能模型直接当作该实现事实。
+
+无冲突时每方向最多 `64×4 B=256 B/cycle`。两个 Tensor 128 B 读向量只有在 bank 集合不重叠且无其他读竞争时才达到 256 B；此时已用满全部 64 个 R 端口，不能同时再给 LSU、peer 或 barrier 一份免费读带宽。独立 W 端口可并行至 256 B/cycle 写，但仍受同址、锁和控制仲裁限制。
+
+相同 word 的多个读取可合并后广播；同 bank 不同 row 需要分拍。byte/half/unaligned 普通访问分解为 word fragments，重组采用项目 little-endian 布局。原子访问须满足对应自然对齐和宽度条件，不能把普通多 fragment load 的拼接误称为 atomic load。
+
+读写同 word 采用明确的写优先旁路与访问序号，或因原子锁等待；不依赖 SRAM macro 的默认 read-during-write 行为。不同 row 的一读一写可并行。写合并只用于同一有序责任内兼容的 byte masks，不能把两个可观察的 atomic/barrier 更新合成普通 store。
+
+### 7.4 SMEM 服务端队列、返回与执行流水
+
+客户端与服务端缓冲分层预算；Tensor 的 32 tags、8×128 B 返回 staging 不变，不能靠它们隐含一个无限 SMEM 响应池。
+
+| 服务端资源 | 建议容量 | 责任 |
+|---|---:|---|
+| Tensor request Q | 16×128 B | word-address/mask 向量与 token；每请求数据至多 128 B |
+| LSU request Q | 8×256 B | 每 packet 至多 128 B 数据，另含 gather/scatter 地址、mask 和标识 |
+| TMA destination/read Q | 8×256 B | 大传输先分为至多 128 B 数据段，按 producer/segment 标识 |
+| peer/DSM Q | 8×256 B | 目标 owner、generation、路由与返回标识 |
+| barrier/control Q | 8×64 B | mbarrier、fence/owner 控制的保留入口 |
+| response assembly data | 64×256 B | 保守预留的返回/ack 空间，接收前预约 |
+| assembly metadata | 64×32 B | word bitmap、expected count、source/tag、owner refs |
+| RMW records / bank locks | 4×64 B / 64×32 bit | 完整原子责任与每 bank 锁归属 |
+| visibility notifications | 16×32 B | store/producer 与 collector 失效、发布确认 |
+
+256 B record 不能同时免费装下 256 B store data 和全部 warp 地址。宽 LSU warp 操作拆成两个或更多 128 B packets；core 保留整条指令的目的寄存器及完成责任，不能把第一个 packet 返回当作整条操作完成。
+
+64 个 assembly credits 固定保留 Tensor32、LSU8、TMA8、peer8、control8。request ready 只有在入口、assembly、owner ref 和返回责任均可用时成立。write-only 请求也保留 terminal ack 位置。不能先读出无法保存的数据，再等对端给缓冲。
+
+slot 保存至所有 fragments 完成并被客户端接受；返回可乱序，按 source/tag/generation 匹配。Tensor 服务端 32 个保留 slots 与客户端 32 个 tags 共同限制在途；客户端 8 个返回 staging 只吸收流量起伏，反压时服务端保留 assembly 数据。
+
+建议流水为 M0 接收/信用、M1 owner 转译及 fragment 计划、M2 bank 仲裁、M3 SRAM 寄存、M4 返回重组/RMW 运算、M5 response 或 write-visible 处理。RMW 和通知 ack 可延长；这是逻辑边界，不是所有访问固定六周期。
+
+### 7.5 Matrix AGU、swizzle 与普通字节地址
+
+generic LSU 使用 CTA shared offset；Tensor matrix AGU 使用已捕获的 SMEM matrix descriptor、major-ness、stride、base offset、transpose、packing 和 shape 计算访问位置；TMA adapter 根据独立的 tensor map 计算 SMEM 目的布局。
+
+三者形成最终 CTA-relative byte offsets 后，共用 owner 翻译、范围检查、physical bank decoder 和返回通路。Tensor 的 swizzle 在 matrix AGU 按 recipe 施加一次；服务端不对已 swizzled 地址重做变换。TMA 写布局与 Tensor 读 descriptor 必须描述同一个字节布局，不能因都写了“128 B swizzle”就假定任意组合一致。
+
+AGU 核查 16 B 对齐、swizzle atomicity、absolute leading 模式和 K48 特例的 target 限制。SMEM bank 数不改变 PTX descriptor 编码；禁止为适配 64 banks 私自重定义指令地址位。
+
+transpose/crossbar 和 FP4/FP6 padding 重排只在相应 formatter/AGU 层执行，SMEM 本体保存字节，不在普通 read 上隐式转换浮点值。cp 从 SMEM 读取后才写 TMEM；两者 bank 地址没有直接别名关系。
+
+### 7.6 仲裁、RMW、原子与 ECC
+
+每 bank 在满足依赖的候选中按年龄和 client 轮转，Tensor 连续读不长期压住 LSU、mbarrier 和 peer 控制。control 有独立请求及返回信用；达到年龄门限的 eligible 控制 beat 优先服务。32-cycle 门限约束首次可服务机会，不是整条 gather 的固定完成延迟；当前有界 RMW holder 结束前仍可等待。
+
+32-bit atomic、缺少 byte-write-enable 的窄 store、ECC 窄写使用共享 `smem_rmw_engine`。64-bit atomic 和 8 B mbarrier 跨两个 32-bit banks，须由中央 arbiter 一次取得全部 locks、RMW/写回/返回及 visibility 信用。禁止先锁一个 bank 再等另一个。锁在实际 RMW 提交后释放，不等远端消费者取走 ack。
+
+RMW engine 保存原 word、mask、操作和 owner generation；计算属于 LSU/shared-memory 服务，不占 MALU。opcode 按 core capability 开放。PTX 的 128-bit CAS 需要四个 banks 全有全无预约及相应比较/状态；在这一路径实现前，其 capability 关闭，双 bank 路径不冒称覆盖所有 shared atomics。
+
+最老的多 bank 请求可阻止新的冲突锁预约，等待当前 holder drain 后原子授予，避免各 bank 可用窗口始终错开。RMW 开始前已保留 visibility 及 response 信用；collector 失效 sink 不等待 Tensor CQ 或消费指令，防止持锁后形成反馈环。
+
+默认无 ECC。每 32-bit word 若配置 SECDED，另需 7 check bits：理论 raw 阵列为 312 KiB；若 macro 按 40-bit word 实现则为 320 KiB。两者均不是 256 KiB 物理占用。窄写包含 decode/merge/encode 的 RMW；不可校正错误走 owner 诊断/abort，不作为正常数据返回。
+
+可选 scrub queue 为 8×16 B，只保存地址/owner 与重验责任，不将早先 corrected value 当作将来写回数据。scrub 取得对应 bank/word 的 RMW 预约后，重新读取当前 word 并重新检查 ECC，仅在仍需纠正时写回当前值的纠正结果。因此即便新 store 发生在旧 correction ticket 迟到入队之前，也不会把旧值覆盖回去；队列内同址取消只是减少无用工作，不是唯一正确性机制。
+
+不要求每 word 配版本 RAM。新写和已取得锁的 scrub 按顺序完成；owner exit 可取消尚未开始的可选 scrub，已开始的 RMW 必须 drain。低优先级 scrub 不阻塞控制进度。
+
+### 7.7 Store 可见性、proxy 与 collector 版本
+
+请求携带 producer ID/sequence、generic 或 async proxy、owner generation。`bank write committed`、`collector future-reuse invalidated`、`proxy fence published` 是不同事件。普通 store ack 不自动等于 `fence.proxy.async`。
+
+服务端配 64×32 B active producer records，保存 producer/owner key、issued、bank-commit prefix、visibility prefix、各 8-bit 完成窗口及 fence cutoff/reference。写接收受 `issued−visibility_prefix<8` 约束，不能让失效确认尚有孔洞时复用窗口位；序号采用有界模比较。producer 无在途写、失效和 fence 引用后可回收，后来无未完成写的 fence 可以立即满足空集合。表满只反压新 producer，不能挡已有失效/控制返回。
+
+写提交前预约 visibility notification；提交后向 Tensor collector 发布失效/版本变化。collector 只有在 future lookup 已能观察到版本变化/失效后才确认，不能仅写入自己的 FIFO 就返回“已失效”。future reuse 仅在版本匹配时命中，当前命令固定的 immutable snapshot 保持有效。通知满则回压新写，不静默漏掉失效。
+
+proxy bridge 在有序 admission 点捕获 fence cutoff，等待相应先前 writes 提交及 collector 失效实际生效并确认后，再发布 async 可见性 token。后来的写不能无界延长该 fence。Tensor 使用核心建立的 producer/线程顺序关系；cache 失效不把软件缺失 fence 的程序自动修成正确同步。
+
+TMA destination writes 同样参与版本失效和 write-ack。TMA 自己依传输方向、expected bytes 和 barrier 规则判定完成；SMEM 只报告对应 fragments 落地，不能因 DMA 请求发出就触发完成。
+
+### 7.8 TMA、DSM 与 mbarrier 的实际存储路径
+
+TMA adapter 接收分段 SMEM 读/写，不直接修改 TMEM。multicast 每个目的 CTA 使用自己的 owner base/generation，写相同逻辑 offset 对应的本地 SMEM；fanout/byte 计数由 TMA 引擎维护。本端 ACK 只覆盖本端已提交的责任。
+
+DSM/peer 按 destination owner 转译，不能误用发起者 base。remote 请求 pin 目的 owner 到返回/写入责任结束；peer 数据和控制独立信用，数据满队列不能挡住 barrier completion 或 owner drain。
+
+mbarrier 是 **8-byte aligned、位于 SMEM 的 opaque b64 对象**，不是仅在外部 Event Q 的一条状态。core 的 init/inval/arrive/wait、TMA/commit 的规定更新通过 barrier agent 访问真实对象，使用双 bank 原子预约与 RMW/forwarding；不把 opaque 值猜成 NVIDIA 内部固定字段。
+
+通知链为 `Tensor Event → barrier agent → SMEM 对象原子更新落地 → ack`。Event 源 metadata 在 ack 前稳定；不能只把通知排进 barrier queue 就宣称 arrive 完成。local polling/wait 读取正确对象及 phase，并与 init/inval 生命周期协调。
+
+TMA complete_tx 字节责任、普通 commit 的 arrive count=1、A-read 受限通知、MMA full done 分别跟踪。remote cluster 只路由规范支持的 barrier 更新；不提供 remote *_wait，消费者等待自己的 local barrier。init/inval 与普通 store 的竞态不能因“同一个地址”自动消除。[PTX §9.7.15.16；SMEM ISA 审查]
+
+### 7.9 CTA 退出、复位和验证要求
+
+exit/abort 不能只清 SMEM owner valid。须排空该 owner 的 LSU/TMA/Tensor/peer 请求、RMW locks、assembly/returns、barrier 更新及失效消息，之后回收区间并改变 generation。迟到响应由旧 generation 的 drain/cancel 记录处理，不写新 owner 区间。
+
+soft drain 继续当前 CTA 完成所需的访存和 barrier；abort 需要外部 TMA/peer 的撤销或落地确认。数据不要求逐字清零，但 owner 权限、generation、可见性状态不能带入新 CTA。
+
+专项验收包括：多 CTA 相同 offset 不别名；generic/TMA/Tensor 对同字节对象一致；swizzle 只施加一次；64-bank 峰值及冲突重放；byte/ECC RMW；多 bank 原子无撕裂；Tensor 饱和时 barrier/peer 仍前进；返回信用耗尽可恢复；fence cutoff 不受后发写延长；scrub 不覆盖新值；owner 回收前本地/远端引用归零。当前只有文档和预算检查，尚未运行新 SMEM RTL。
 
 ## 8. Region scoreboard 与原子 lease
 
@@ -237,7 +351,7 @@ LUT B 路径按 3-bit index 从 canonical LUT 取 E4M3，再进入普通解码�
 
 ## 12. REF MALU 适配器
 
-![图 4：现有 REF 核与拟议 PERF 路径的分工；入口预算、分组 scale 和最终结果均分开。](figures/05_malu_adapter.png)
+![图 5：现有 REF 核与拟议 PERF 路径的分工；入口预算、分组 scale 和最终结果均分开。](figures/05_malu_adapter.png)
 
 REF 直接复用 `design/core/src/rtl/sp/eu/tensor/malu/malu_core.sv` 的实际接口和行为：一个共享乘法器，一个 32-bit+carry 数值通路，一个逐字精确累加器。FP64 开启时为 53×53 与 132×32；关闭时为 24×24 与 20×32。它不是每周期四项的计算阵列。
 
@@ -378,11 +492,11 @@ WBQ 32 项，每项 16 B，保存目的地址、结果、mask 和 token。最终
 | completion→barrier | barrier 地址、phase/owner、mask、事件 ID | 外部 barrier agent ack |
 | peer | 32 B flit、8 TX + 8 RX 保留 slots | 相应协议 ack；按控制/数据独立 credit |
 
-SMEM 的延迟和响应乱序由系统提供，不能把 2×128 B/cycle 的项目接口预算写成既有 shared-memory 实测带宽。TMA 不直接写 TMEM；SMEM producer 的 proxy 可见性条件由 core/访存协同提供。
+SMEM 本体及服务端按第 7.2–7.9 节实现，延迟包括共享 bank、client 竞争与返回信用。2×128 B/cycle 仍是理想项目接口预算，不是既有 shared-memory 实测带宽。TMA 不直接写 TMEM；SMEM producer 可见性由 core/访存与 SMEM proxy bridge 协同提供。
 
 ## 17. 完成跟踪、commit 和 wait
 
-![图 5：full、SMEM-A MMA 的 A-read 和 ld/st 独立完成跟踪；受限通知不释放整个命令。](figures/04_async_tracking.png)
+![图 6：full、SMEM-A MMA 的 A-read 和 ld/st 独立完成跟踪；受限通知不释放整个命令。](figures/04_async_tracking.png)
 
 ### 17.1 乱序完成的有界窗口
 
@@ -494,6 +608,12 @@ SMEM 2×128 B/cycle、TMEM 128 B R+W、三个 finalizer 和九个 fractional sca
 | 资源 | 每 endpoint 的数据容量 / 数量 | 备注 |
 |---|---|---|
 | TMEM | 288 KiB；512 profile 使用 256 KiB | 32 banks 1R1W，非每 CTA 复制 |
+| core shared SMEM | 256 KiB 有效数据 | 64 banks 1R1W；ECC 可选另计 |
+| SMEM client request queues | 8.5 KiB | Tensor 2、LSU/TMA/peer 各 2、control 0.5 KiB |
+| SMEM response assembly | 16 KiB data + 2 KiB metadata | 64×256 B + 64×32 B，分 client 保留 |
+| SMEM owner/RMW/bank locks | 512 / 256 / 256 B | 8×64 B / 4×64 B / 64×32 bit |
+| SMEM visibility/scrub queues | 512 / 128 B | 16×32 B；可选 8×16 B |
+| SMEM active producer tracking | 2 KiB | 64×32 B，commit/visibility 窗口及 fence cutoff |
 | A / B / auxiliary | 32 / 32 / 8 KiB | snapshot、chunk collector、cache |
 | OpTable | 16 KiB | 64×256 B |
 | range scoreboard | 4 KiB | 64×8×64 bit |
@@ -528,6 +648,8 @@ SMEM 2×128 B/cycle、TMEM 128 B R+W、三个 finalizer 和九个 fractional sca
 | `design/core/src/common/` | op token、owner、capability、recipe、request/response types |
 | `design/core/src/rtl/sp/eu/tensor/ctrl/` | issue/collective、legalizer、OpTable、scoreboard、completion |
 | `design/core/src/rtl/sp/eu/tensor/tmem/` | bank wrapper、allocator、arbiter、access protection |
+| `design/core/src/rtl/sp/lsu/smem/` | core 共享 bank、launch allocator、client adapter、RMW/barrier/proxy 服务 |
+| `design/core/src/if/sp/lsu/smem/` | LSU/TMA/Tensor/peer/barrier 请求、返回、owner 与可见性接口 |
 | `design/core/src/rtl/sp/eu/tensor/move/` | ld/st/cp/shift、format/reduction/compression |
 | `design/core/src/rtl/sp/eu/tensor/operand/` | snapshot、collector、scale/meta/LUT、tile planner |
 | `design/core/src/rtl/sp/eu/tensor/malu/` | 既有 REF 核；新 adapter 与 PERF 后端分版本管理 |
@@ -558,6 +680,7 @@ SMEM 2×128 B/cycle、TMEM 128 B R+W、三个 finalizer 和九个 fractional sca
 | 数值 profile | PROJECT_EXACT | 原生目标 bit-match 不能直接沿用 |
 | Ti16 | 原生 raw 关闭，项目 decoded 单列 | raw 编码与 transpose 勘误 |
 | TMEM 宏 | 32 banks、1R1W、2-cycle read | 宏可得性、时序、同址行为、ECC |
+| SMEM 宏与共享服务 | 64 banks、256 KiB、1R1W、分 client credits | client 竞争、RMW、barrier 进度、proxy/collector 失效与退出 drain |
 | PERF | 159-brick + 44ctx + 3 finalizer 方案 | 面积、PPA、模式 drain、闭合突发与实际利用率 |
 | scale | aligned dense 基准，特殊 recipe 分开 | sparse/错位边界、aux cache 与 backend 压力 |
 | active owner / issuer | 8 CTA、32 active issuers | admission 与回收活性，不能把容量耗尽变成静默拒绝 |
@@ -575,7 +698,8 @@ SMEM 2×128 B/cycle、TMEM 128 B R+W、三个 finalizer 和九个 fractional sca
 - [本版 ISA→微架构正确性审查](research/isa_to_microarchitecture_review.md)：不变量与反例。
 - [本版数值及资源审查](research/arithmetic_resource_review.md)：备选方案与选中 S1 分开，FP4/scale 位宽及吞吐限制。
 - [本版控制/TMEM 审查](research/control_memory_review.md)：容量、lease、credits、pair 与 drain。
+- [SMEM ISA 边界](research/smem_isa_review.md) · [SMEM 资源](research/smem_resource_review.md) · [SMEM 控制](research/smem_control_review.md)：v1.1 新增子系统的独立审查。
 - [可重算设计预算](research/design_budget.json)：bank 映射、砖数、位宽和服务率的实际数值检查，非 RTL 仿真；生成脚本为 `check_design_budget.py`。
 - [现有 MALU RTL 和真实验证记录](../../malu/RTL_IMPLEMENTATION.md)：仅作为 REF 接口和数值基线。
 
-图 1–5 是本项目微架构方案图；所有新增模块仍待编码与验证。文档构建、图源及结构质量检查见 [BUILDING.md](BUILDING.md)。
+图 1–6 是本项目微架构方案图；所有新增模块仍待编码与验证。文档构建、图源及结构质量检查见 [BUILDING.md](BUILDING.md)。

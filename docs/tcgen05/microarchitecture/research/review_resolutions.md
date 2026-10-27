@@ -1,4 +1,4 @@
-# 微架构 v1.0 审查合并记录
+# 微架构审查合并记录（v1.0–v1.1）
 
 日期：2026-10-26。范围为拟议微架构的规范映射、数值位宽、容量和进度合同。下表记录已经合并到主文的修正；不表示新增 Tensor/PERF RTL、形式证明或 PPA 已完成。
 
@@ -28,3 +28,20 @@
 - [算术与资源](arithmetic_resource_review.md)：选中S1与备选时分方案分别记录；备选quota不作为产品峰值实现。
 
 实际参数重算由 `check_design_budget.py` 执行，结果在 [design_budget.json](design_budget.json)。文档结构和抽页目检另存 `document_qa.json`；数值/结构检查不代替硬件验证。
+
+## v1.1：补齐 SMEM 本体（2026-10-27）
+
+v1.0 将 SMEM 当外部服务，仅给 Tensor 端口和缓存预算。v1.1 新增 §7.2–7.9 与 SMEM 图，细化 core 共享服务端，保留 v1.0 DOCX/PDF 和原始 QA。
+
+| 核查点 | v1.1 已合并的合同 |
+|---|---|
+| 所有权与分配 | static+dynamic(+reserved) 在 CTA launch 分配；SMEM 不使用 TMEM alloc；base 转译先于 physical bank |
+| 实体与峰值 | 256 KiB、64×1024×32-bit 1R1W 是项目选择；256 B/cycle 是所有客户端共享、无冲突条件下的单方向峰值 |
+| 队列与返回 | client ReqQs + 64×256 B assembly/64×32 B metadata，32/8/8/8/8 credits 保留；宽 LSU 拆包 |
+| 地址与数据 | generic/TMA/Tensor 访问同字节对象；swizzle 仅按相应 AGU/descriptor 施加一次 |
+| mbarrier | 真实 8B opaque SMEM 对象，原子更新落地后 ack；64b 双bank、128b CAS 需四bank且暂不开放 |
+| proxy 与缓存 | bank commit、collector lookup 可见失效、proxy publish 分开；通知 FIFO 接收不冒充已生效 |
+| scrub | 取得锁后重新读当前 word 再纠正，防迟到 correction ticket 覆盖新 store |
+| 退出 | LSU/TMA/Tensor/peer/barrier/RMW/assembly/失效全部 drain 后才回收 owner generation |
+
+三项独立复核见 [ISA](smem_isa_review.md)、[资源](smem_resource_review.md)、[控制](smem_control_review.md)。重算覆盖 65536 个 SMEM word 的无别名映射、平衡/冲突读示例、312/320 KiB ECC 阵列及服务端容量；这些不是 SMEM RTL 测试。

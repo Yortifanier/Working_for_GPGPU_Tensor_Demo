@@ -1,4 +1,5 @@
 """Recompute proposal budgets. This is neither RTL simulation nor a PPA report."""
+from collections import Counter
 from fractions import Fraction
 from pathlib import Path
 import hashlib
@@ -21,6 +22,36 @@ def main():
     assert columns * lanes * 4 == 288 * 1024
     assert columns // 32 == 18
     assert 2 * columns // 32 == 36
+
+    smem_words, smem_banks = 65536, 64
+    smem_map = {((p >> 2) & 63, p >> 8) for p in range(0, smem_words * 4, 4)}
+    assert len(smem_map) == smem_words == smem_banks * 1024
+    assert smem_words * 4 == 256 * 1024
+    assert max(row for _, row in smem_map) == 1023
+    # Two CTA-visible offset-zero addresses must select distinct physical rows.
+    owner_bases = [0, 65536]
+    owner_cells = [((base >> 2) & 63, base >> 8) for base in owner_bases]
+    assert owner_cells[0] != owner_cells[1]
+    # Distinct-address 128B vectors: adjacent banks vs same banks/different rows.
+    balanced = Counter((p >> 2) & 63 for p in range(0, 256, 4))
+    conflicting = Counter((p >> 2) & 63 for p in list(range(0, 128, 4)) + list(range(256, 384, 4)))
+    assert max(balanced.values()) == 1 and max(conflicting.values()) == 2
+    assert smem_banks * 4 == 256  # Shared ideal bytes/cycle per direction.
+    assert smem_words * 39 // 8 == 312 * 1024
+    assert smem_words * 40 // 8 == 320 * 1024
+    for byte_address in range(0, smem_words * 4, 16):
+        assert len({((byte_address + 4 * i) >> 2) & 63 for i in range(4)}) == 4
+    assembly_credits = {'tensor': 32, 'lsu': 8, 'tma': 8, 'peer': 8, 'control': 8}
+    assert sum(assembly_credits.values()) == 64
+    smem_server_storage = {
+        'tensor_req': 16 * 128, 'lsu_req': 8 * 256, 'tma_req': 8 * 256,
+        'peer_req': 8 * 256, 'control_req': 8 * 64,
+        'assembly_data': 64 * 256, 'assembly_metadata': 64 * 32,
+        'owners': 8 * 64, 'rmw_records': 4 * 64, 'bank_locks': 64 * 4,
+        'visibility_queue': 16 * 32, 'producer_tracking': 64 * 32,
+        'optional_scrub': 8 * 16,
+    }
+    assert sum(smem_server_storage.values()) == 30848
 
     high_bricks = 2 * ceil_div(11, 4) ** 2
     fp4_raw_bricks, coefficient_bricks = 8, 1
@@ -76,12 +107,26 @@ def main():
 
     report = {
         'passed': True,
+        'design_version': '1.1',
         'scope': 'Project proposal arithmetic and capacity checks only; not RTL, synthesis, timing, or end-to-end performance validation.',
         'tool_source_sha256': hashlib.sha256(Path(__file__).read_bytes()).hexdigest(),
         'bank_mapping': {'unique_cells': len(addresses), 'banks': banks,
                          'words_per_bank': 2304, 'endpoint_bytes': columns * lanes * 4,
                          'pair_bytes': 2 * columns * lanes * 4,
                          'allocation_records_per_endpoint': 18, 'pair_records': 36},
+        'smem': {'unique_words': len(smem_map), 'physical_banks': smem_banks,
+                 'words_per_bank': 1024, 'endpoint_data_bytes': smem_words * 4,
+                 'ideal_shared_bytes_per_cycle_per_direction': smem_banks * 4,
+                 'balanced_256B_read_min_cycles': max(balanced.values()),
+                 'conflicting_256B_read_min_cycles': max(conflicting.values()),
+                 'secded_39bit_raw_bytes': smem_words * 39 // 8,
+                 'macro_40bit_raw_bytes': smem_words * 40 // 8,
+                 'assembly_credits': assembly_credits,
+                 'server_storage_bytes': smem_server_storage,
+                 'server_storage_bytes_total_including_optional_scrub': sum(smem_server_storage.values()),
+                 'storage_excludes': ['SMEM data and ECC arrays', 'existing Tensor client staging/tags',
+                                      'pipeline registers, AGUs, arbiters, interconnect, ECC/atomic logic'],
+                 'note': 'Enumeration and arithmetic only; no SMEM RTL, fairness, ECC or atomic verification.'},
         'compute': {'base_bricks': high_bricks, 'total_4x4_equivalent_bricks': bricks,
                     'raw_terms_per_cycle': terms,
                     'relative_to_f16': {k: str(v) for k, v in ratios.items()},

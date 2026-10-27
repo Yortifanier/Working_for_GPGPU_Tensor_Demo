@@ -9,10 +9,10 @@ Tensor
 - [带图 DOCX](docs/tcgen05/TCGEN05_Tensor_Architecture_v1.0.docx) · [PDF](docs/tcgen05/TCGEN05_Tensor_Architecture_v1.0.pdf)
 - [规范逐页核查](docs/tcgen05/research/ptx94_architecture_audit.md) · [来源审查](docs/tcgen05/research/architecture_source_review.md) · [构建方法](docs/tcgen05/BUILDING.md)
 
-项目微架构已单独成文，包含 REF 集成、PERF-S1 资源复用、流水/队列、TMEM banks、scoreboard、scale、完成跟踪及 peer 协议：
+项目微架构已单独成文，v1.1 补齐 core 共享 SMEM 的 banks、LSU/TMA/Tensor 仲裁、RMW/barrier、proxy 与返回信用，连同 REF 集成、PERF-S1、TMEM、scale、完成跟踪及 peer 协议：
 
 - [微架构正文](docs/tcgen05/microarchitecture/TCGEN05_TENSOR_MICROARCHITECTURE.md)
-- [微架构 DOCX](docs/tcgen05/microarchitecture/TCGEN05_Tensor_Microarchitecture_v1.0.docx) · [PDF](docs/tcgen05/microarchitecture/TCGEN05_Tensor_Microarchitecture_v1.0.pdf)
+- [微架构 DOCX](docs/tcgen05/microarchitecture/TCGEN05_Tensor_Microarchitecture_v1.1.docx) · [PDF](docs/tcgen05/microarchitecture/TCGEN05_Tensor_Microarchitecture_v1.1.pdf)
 
 微架构是项目拟议方案；新增 Tensor/PERF 硬件仍待实现及验证，算力比例表给出入口预算。
 

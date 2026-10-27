@@ -222,3 +222,15 @@ context预算可按每group反馈延迟和退休延迟保守计算。若`L_acc=4
 **可表述为：**“S1规划MUL入口资源预算8 TF32 / 16 F16-BF16 / 70 FP8-FP6 / 140 FP4 unscaled raw terms per cycle，在所列scale/backend与供数条件下继续评估有效吞吐。”
 
 **不可表述为：**“现有RTL已达到Rubin比例/140个带任意scale的完整dot terms per cycle/某fmax或面积”。主稿应以S1为选中候选，将第1–10节T1仅列为有界时分备选，避免两套数字混成同一实现。
+
+## 12. 主稿最终分组方案复核
+
+已只读复核主稿S1的§13–15/21–22。80-bit局部FP8/FP6归约是有效的面积收缩方向：E5M2最小非零乘积为2^-32，有限乘积幅值<2^32，最多64项在LSB=-32的网格上幅值整数<2^70，signed71足够，80位安全。只对共同scale段做局部求和，UE8M0再调整指数后注入640-bit网格；不在scale边界两侧混加，最低位置仍不低于2^-286。未发现该局部位宽的数学阻断。
+
+主稿已经正确写明signed9 q-product、signed14 blocksum、unsigned8 scale系数、22-bit完整幅值、−2指数、159砖包含boost额外后端、mode drain和任意offset可能降速。将140限制于K≥64的mxf4/mxf4nvf4，而f8f6f4即使含E2M1也按70预算，避免最小K32下finalizer平均能力被高估，是一致选择。
+
+44个contexts与3条II=1 finalizer作为未实现预算可接受，但其充分性依赖P6 RAW forwarding、就绪调度与下游回压，不能只用context数声称隐藏全部P0–P7延迟。本地closed-ID而不复制全宽S/C，能够避免同拍多路关闭冲击单写全局宽FIFO。
+
+进入实现前应明确两条数据责任：P5只压缩当前packet，P6才与旧context S/C及首次seed合并，避免重复注入；六boost共享scale后端同时关闭block时，待处理的R/scale/exp/class须有不可变记录或被锁住的local block与credit，P3捕获之前不得覆盖。缩放为零或raw项相消时，zero-sign/非零项统计仍按正确分类路径维护，不能仅以blocksum符号代替。
+
+本轮未发现必须修改数学范围或目标比例的阻断错误；没有新RTL仿真、综合或PPA证据，PERF仍是计划方案。本记录的T1和较早72-context估算是备选/预算讨论，不替代主稿最终S1的44-context选择与对应风险限定。

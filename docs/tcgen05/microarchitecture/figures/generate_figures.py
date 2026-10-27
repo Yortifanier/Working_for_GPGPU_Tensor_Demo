@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 """Draw the project's proposed Tensor microarchitecture, not an NVIDIA design."""
 from pathlib import Path
+import argparse
 import os
 import subprocess
 
@@ -75,10 +76,10 @@ def save(fig,name):
 
 
 def subsystem():
-    fig,ax=canvas(1,"Tensor 子系统组织","外部接口、控制上下文与数据通路分离；图中连接不是 NVIDIA 物理实现。")
+    fig,ax=canvas(1,"Tensor 子系统组织","共享 SMEM 属 core 侧系统模块；Tensor 经 operand buffers 接入。")
     box(ax,2,60,17,11,"外部 core\nwarp / issuer\ncmd",face="white",edge=GRAY)
     box(ax,23,62,56,9,"normal / escape 按类别进入\n联合合法性、资源租约与 tile 计划分工",face="white",edge=GRID)
-    box(ax,83,62,35,9,"外部 SMEM / TMA\nTMA 供数，独立于 Tensor",face="white",edge=GRAY)
+    box(ax,83,58,35,13,"共享 SMEM 子系统\n详见 SMEM 图；core 侧\n外部 TMA",face="white",edge=GRAY)
     boxes=[(2,17,"命令入口\nnormalCQ 24\nescapeCQ 8"),
            (23,14,"decode\nlegalizer"),(41,18,"OpTable 64\nregion\nscoreboard"),
            (63,16,"8 tile ctx\nlayout\nplanner"),(83,16,"operand\nbuffers"),
@@ -86,7 +87,7 @@ def subsystem():
     for x,w,label in boxes: box(ax,x,39,w,16,label,face=MINT if x==103 else PALE)
     for (x,w,_),(nx,_,_) in zip(boxes,boxes[1:]): wire(ax,[(x+w,47),(nx,47)])
     wire(ax,[(10.5,60),(10.5,55)])
-    wire(ax,[(100.5,62),(100.5,58),(91,58),(91,55)])
+    wire(ax,[(100.5,58),(100.5,57),(91,57),(91,55)])
     box(ax,103,18,15,12,"WBQ\nD writeback")
     box(ax,83,18,16,12,"TMEM\nendpoint(s)")
     box(ax,62,18,17,12,"completion\ncommit / wait")
@@ -136,7 +137,7 @@ def operand():
 
 
 def completion():
-    fig,ax=canvas(5,"异步完成、通知与退休","normal / ARead 按 active issuer 隔离；ld/st 另有 per-warp 完成域。")
+    fig,ax=canvas(6,"异步完成、通知与退休","normal / ARead 按 active issuer 隔离；ld/st 另有 per-warp 完成域。")
     box(ax,2,48,32,19,"每个 active issuer\nnormal MCS seq\nfull-done prefix")
     box(ax,2,24,32,19,"SMEM-A MMA A-read\nARead seq / prefix\n独立 A 读取跟踪",face=MINT,edge=TEAL)
     box(ax,40,36,23,17,"commit 快照\nnormal 或 ARead\n按类别选择")
@@ -154,7 +155,7 @@ def completion():
 
 
 def adapter():
-    fig,ax=canvas(4,"REF 适配与 PERF 拟议资源","两种实现状态分区；PERF 数字是入口预算，尚非端到端吞吐保证。")
+    fig,ax=canvas(5,"REF 适配与 PERF 拟议资源","两种实现状态分区；PERF 数字是入口预算，尚非端到端吞吐保证。")
     box(ax,2,66,116,5,"归一化 dot / C / format / scale 输入；按实现模式与合法格式选择路径",face="white",edge=GRID)
     box(ax,2,28,28,34,"REF：现有 SV exact 核\n单个共享 mul\nFP64 on：53×53\nFP64 off：24×24\nRAM on：132 ×32 bit\nRAM off：20 ×32 bit\nPROJECT_EXACT",face=MINT,edge=TEAL)
     # PERF outline contains proposed resources; inner boxes remain readable.
@@ -177,7 +178,39 @@ def adapter():
     save(fig,"05_malu_adapter")
 
 
+def smem():
+    fig,ax=canvas(4,"SMEM 共享存储子系统（core 侧）","独立于 TMEM；容量、端口与队列组织均为项目拟议选择。")
+    box(ax,2,56,56,15,"256 KiB / endpoint（SMEM）\n64 banks ×32-bit ×1024 rows\np：owner 转译后物理 byte address\nbank=p[7:2]；row=p[17:8]",face=PALE)
+    box(ax,62,56,56,15,"共享峰值：256 B 读 +256 B 写 / cycle\nTensor：2 ×128 B，非独占\nCTA launch 分配：8 owners",face=MINT,edge=TEAL)
+    clients=[(2,"LSU"),(26,"TMA"),(50,"Tensor"),(74,"peer"),(98,"barrier")]
+    for x,label in clients:
+        box(ax,x,44,20,10,label+"\n独立 reqQ",face=WARM if label=="barrier" else PALE,
+            edge=ORANGE if label=="barrier" else NAVY)
+        wire(ax,[(x+10,44),(x+10,40)],color=ORANGE if label=="barrier" else TEAL)
+    ax.plot([12,108],[40,40],color=TEAL,linewidth=1.7,zorder=1)
+    wire(ax,[(19,40),(19,37)])
+    box(ax,2,25,34,12,"AGU / fragment\nTensor swizzle 仅一次\nowner 转译 / 范围检查")
+    box(ax,42,25,34,12,"per-bank arbiter\nRMW locks\n共享端口仲裁")
+    box(ax,84,25,34,12,"64 physical banks\n每 bank 1R1W\n1024 ×32-bit rows",face=MINT,edge=TEAL)
+    wire(ax,[(36,31),(42,31)])
+    wire(ax,[(76,31),(84,31)])
+    box(ax,2,7,34,14,"barrier / 已承诺返回\n独立 credit\n保留完成进度",face=WARM,edge=ORANGE)
+    box(ax,42,7,34,14,"tagged return\nreassembly\n按 client/tag 返回")
+    box(ax,84,7,34,14,"store visibility\ncollector invalidate\n或版本更新\n→ 发布 ack",face=WARM,edge=ORANGE)
+    wire(ax,[(36,14),(39,14),(39,31),(42,31)],color=ORANGE,dashed=True)
+    wire(ax,[(84,29),(80,29),(80,14),(76,14)])
+    wire(ax,[(101,25),(101,21)],color=ORANGE)
+    save(fig,"06_smem_subsystem")
+
+
 if __name__=="__main__":
+    drawings={"01_tensor_subsystem":subsystem,"02_dispatch_and_issue":dispatch,
+              "03_operand_and_tmem":operand,"04_async_tracking":completion,
+              "05_malu_adapter":adapter,"06_smem_subsystem":smem}
+    parser=argparse.ArgumentParser(description=__doc__)
+    parser.add_argument("--only",nargs="+",choices=drawings)
+    args=parser.parse_args()
     ROOT.mkdir(parents=True,exist_ok=True)
-    for draw in (subsystem,dispatch,operand,completion,adapter): draw()
-    print("Generated five microarchitecture PNG/SVG pairs (2400 × 1608).")
+    selected=args.only or list(drawings)
+    for name in selected: drawings[name]()
+    print(f"Generated {len(selected)} microarchitecture PNG/SVG pairs (2400 × 1608).")

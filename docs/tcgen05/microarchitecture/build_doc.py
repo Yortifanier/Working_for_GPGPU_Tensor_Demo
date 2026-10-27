@@ -36,9 +36,10 @@ BUILD = REPO / "build/tcgen05_microarchitecture"
 FONT = "Noto Sans CJK SC"
 MONO = "DejaVu Sans Mono"
 NAVY, TEAL, GRAY = "173553", "087F8C", "52687B"
-NAME = "TCGEN05_Tensor_Microarchitecture_v1.0"
+NAME_PREFIX = "TCGEN05_Tensor_Microarchitecture_v"
 FIGURES = ["01_tensor_subsystem", "02_dispatch_and_issue",
-           "03_operand_and_tmem", "04_async_tracking", "05_malu_adapter"]
+           "03_operand_and_tmem", "04_async_tracking", "05_malu_adapter",
+           "06_smem_subsystem"]
 NS = {"w": "http://schemas.openxmlformats.org/wordprocessingml/2006/main",
       "m": "http://schemas.openxmlformats.org/officeDocument/2006/math"}
 
@@ -166,7 +167,7 @@ def add_internal_link(paragraph, text, anchor):
     paragraph._p.append(link)
 
 
-def configure(doc, title, build_date, captions):
+def configure(doc, title, build_date, captions, version="1.1"):
     for section in doc.sections:
         section.page_width, section.page_height = Cm(21), Cm(29.7)
         section.top_margin, section.bottom_margin = Cm(1.9), Cm(1.8)
@@ -244,7 +245,7 @@ def configure(doc, title, build_date, captions):
     for shape in doc.inline_shapes:
         width,height = shape.width,shape.height
         # Pandoc may choose a smaller width; use all available width for the
-        # five architecture figures while retaining their original aspect.
+        # architecture figures while retaining their original aspect.
         scale = min(Cm(17)/width,Cm(19)/height)
         shape.width,shape.height = int(width*scale),int(height*scale)
         node = shape._inline
@@ -287,16 +288,16 @@ def configure(doc, title, build_date, captions):
         font(header.add_run("tcgen05  /  PROJECT MICROARCHITECTURE"),8.5,color=GRAY)
         footer = section.footer.paragraphs[0]
         footer.alignment = WD_ALIGN_PARAGRAPH.RIGHT
-        font(footer.add_run("v1.0  ·  "),8.5,color=GRAY)
+        font(footer.add_run(f"v{version}  ·  "),8.5,color=GRAY)
         add_field(footer,"PAGE")
     doc.core_properties.title = title
     doc.core_properties.subject = "Proposed tcgen05 Tensor microarchitecture and existing RTL adaptation"
     doc.core_properties.author = "项目微架构研究记录"
     doc.core_properties.keywords = "tcgen05, proposed microarchitecture, TMEM, RTL adaptation, resource sharing"
-    add_front_matter(doc,title,build_date)
+    add_front_matter(doc,title,build_date,version,len(captions))
 
 
-def add_front_matter(doc,title,build_date):
+def add_front_matter(doc,title,build_date,version="1.1",figure_count=6):
     headings = [p for p in doc.paragraphs if p.style.name == "Heading 1"]
     identifiers = []
     existing = doc._element.xpath(".//w:bookmarkStart")
@@ -318,8 +319,8 @@ def add_front_matter(doc,title,build_date):
     para("PROJECT MICROARCHITECTURE",11,True,TEAL,22).paragraph_format.space_before=Pt(55)
     para(title,27,True,NAVY,18)
     para("拟议执行组织、资源复用与现有 RTL 适配",14,False,TEAL,28)
-    para("版本 1.0  ·  "+build_date,11,False,GRAY,12)
-    para("项目拟议方案；附五张独立微架构示意图与可点击章节导航。",10.5,False,GRAY,8)
+    para(f"版本 {version}  ·  "+build_date,11,False,GRAY,12)
+    para(f"项目拟议方案；附 {figure_count} 张独立微架构示意图与可点击章节导航。",10.5,False,GRAY,8)
     para("现有 RTL 与待实现模块分别标注；本文件不是已实施 NVIDIA 微架构的描述。",10.5,False,GRAY,6)
     p=para();p.add_run().add_break(WD_BREAK.PAGE)
     para("阅读导航",18,True,NAVY,14).paragraph_format.keep_with_next=True
@@ -356,20 +357,25 @@ def main():
     parser=argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--source",type=Path,default=ROOT/"TCGEN05_TENSOR_MICROARCHITECTURE.md")
     parser.add_argument("--date",default=datetime.now(ZoneInfo("Asia/Shanghai")).date().isoformat())
+    parser.add_argument("--version",choices=("1.0","1.1"),default="1.1",
+                        help="Output version; 1.1 requires six figures, 1.0 five")
     parser.add_argument("--title")
     parser.add_argument("--soffice")
     parser.add_argument("--docx-only",action="store_true")
     parser.add_argument("--render-check",action="store_true")
     args=parser.parse_args()
+    name=NAME_PREFIX+args.version
+    figures=FIGURES if args.version=="1.1" else FIGURES[:-1]
+    build=BUILD/("v"+args.version)
     source=args.source.resolve()
     if not source.is_file():
         parser.error("Markdown source is not present yet: "+str(source))
-    BUILD.mkdir(parents=True,exist_ok=True)
-    for directory in (BUILD/"cache",BUILD/"config"):
+    build.mkdir(parents=True,exist_ok=True)
+    for directory in (build/"cache",build/"config"):
         directory.mkdir(exist_ok=True)
-    env=dict(os.environ,XDG_CACHE_HOME=str(BUILD/"cache"),XDG_CONFIG_HOME=str(BUILD/"config"))
+    env=dict(os.environ,XDG_CACHE_HOME=str(build/"cache"),XDG_CONFIG_HOME=str(build/"config"))
     source_bytes=source.read_bytes()
-    (BUILD/"document_qa.json").write_text(json.dumps({"passed":False,"status":"building", "source_sha256":hashlib.sha256(source_bytes).hexdigest()},indent=2)+"\n")
+    (build/"document_qa.json").write_text(json.dumps({"passed":False,"status":"building", "document_version":args.version,"source_sha256":hashlib.sha256(source_bytes).hexdigest()},indent=2)+"\n")
     if "\ufffd" in source_bytes.decode("utf-8"):
         raise RuntimeError("Source contains Unicode replacement characters")
     pandoc=executable("pandoc")
@@ -384,8 +390,8 @@ def main():
         for n in headings:
             n["c"][0]-=offset
     images=[n for n in walk(ast["blocks"]) if n["t"] == "Image"]
-    if len(images) != 5 or {Path(n["c"][2][0]).stem for n in images} != set(FIGURES):
-        raise RuntimeError("Source must explicitly reference each of the five microarchitecture figures once")
+    if len(images) != len(figures) or {Path(n["c"][2][0]).stem for n in images} != set(figures):
+        raise RuntimeError(f"Version {args.version} source must explicitly reference each of the {len(figures)} microarchitecture figures once")
     for image in images:
         target=Path(image["c"][2][0])
         if target.suffix.lower() == ".svg" and (ROOT/target.with_suffix(".png")).is_file():
@@ -394,14 +400,14 @@ def main():
     captions=[plain(n["c"][1]) for n in images]
     expected_math=sum(n["t"] == "Math" for n in walk(ast["blocks"]))
     expected_tables=sum(n["t"] == "Table" for n in walk(ast["blocks"]))
-    ast_path=BUILD/"microarchitecture_ast.json"
+    ast_path=build/"microarchitecture_ast.json"
     ast_path.write_text(json.dumps(ast,ensure_ascii=False))
-    body=BUILD/"body.docx"
+    body=build/"body.docx"
     subprocess.run([pandoc,str(ast_path),"-f","json","-t","docx","--resource-path",str(ROOT),"-o",str(body)],cwd=ROOT,env=env,check=True)
     doc=Document(body)
-    configure(doc,title,args.date,captions)
-    destination=ROOT/(NAME+".docx")
-    staged=BUILD/(NAME+".docx")
+    configure(doc,title,args.date,captions,args.version)
+    destination=ROOT/(name+".docx")
+    staged=build/(name+".docx")
     doc.save(staged)
     with ZipFile(staged) as package:
         xml=ET.fromstring(package.read("word/document.xml"))
@@ -410,35 +416,35 @@ def main():
         actual_tables=len(xml.findall(".//w:tbl",NS))
         actual_navigation=sum((n.get(qn("w:anchor")) or "").startswith("tcgen05_micro_section_")
                               for n in xml.findall(".//w:hyperlink",NS))
-        assert len(media)==5,("media",media)
+        assert len(media)==len(figures),("media",media)
         assert {hashlib.sha256(package.read(name)).hexdigest() for name in media}==set(figure_hashes.values()),"embedded images differ from source PNGs"
         assert actual_math==expected_math,("OMML conversion",expected_math,actual_math)
         assert actual_tables==expected_tables,("native table conversion",expected_tables,actual_tables)
         assert actual_navigation==sum(n["c"][0]==1 for n in headings)
         assert "\ufffd" not in package.read("word/document.xml").decode()
     shutil.copy2(staged,destination)
-    report={"title":title,"build_date":args.date,"source":str(source.relative_to(REPO)),
+    report={"title":title,"build_date":args.date,"document_version":args.version,"source":str(source.relative_to(REPO)),
             "source_sha256":hashlib.sha256(source_bytes).hexdigest(),"docx":str(destination.relative_to(REPO)),
             "figure_sha256":figure_hashes,
             "native_tables":actual_tables,"native_math":actual_math,"embedded_images":len(media),
             "chapter_navigation_links":actual_navigation,
             "pandoc_version":subprocess.check_output([pandoc,"--version"],text=True).splitlines()[0]}
     if not args.docx_only:
-        export=BUILD/("pdf_export_"+datetime.now().strftime("%Y%m%d_%H%M%S_%f"))
+        export=build/("pdf_export_"+datetime.now().strftime("%Y%m%d_%H%M%S_%f"))
         export.mkdir()
-        profile=BUILD/"libreoffice-profile"
+        profile=build/"libreoffice-profile"
         command=[executable("soffice",args.soffice),"-env:UserInstallation="+profile.as_uri(),"--headless","--convert-to","pdf:writer_pdf_Export","--outdir",str(export),str(destination)]
         result=subprocess.run(command,cwd=ROOT,env=env,text=True,capture_output=True,timeout=180)
-        (BUILD/"pdf_export.log").write_text(result.stdout+result.stderr)
+        (build/"pdf_export.log").write_text(result.stdout+result.stderr)
         result.check_returncode()
-        pdf=export/(NAME+".pdf")
+        pdf=export/(name+".pdf")
         if not pdf.is_file() or pdf.stat().st_size<1000:
-            raise RuntimeError("PDF was not generated; see build/tcgen05_microarchitecture/pdf_export.log")
+            raise RuntimeError(f"PDF was not generated; see {build.relative_to(REPO)}/pdf_export.log")
         pdf_dest=ROOT/pdf.name
         shutil.copy2(pdf,pdf_dest)
         info=subprocess.check_output([executable("pdfinfo"),str(pdf_dest)],text=True)
         pages=int(re.search(r"^Pages:\s+(\d+)",info,re.M)[1])
-        text_path=BUILD/"pdf_text.txt"
+        text_path=build/"pdf_text.txt"
         subprocess.run([executable("pdftotext"),"-layout",str(pdf_dest),str(text_path)],check=True)
         text=text_path.read_text()
         if "\ufffd" in text:
@@ -447,7 +453,7 @@ def main():
         if missing:
             raise RuntimeError("PDF lost heading text: "+str(missing))
         report.update(pdf=str(pdf_dest.relative_to(REPO)),pdf_pages=pages,pdf_text_characters=len(text),all_heading_text_found=True)
-        (BUILD/"pdfinfo.txt").write_text(info)
+        (build/"pdfinfo.txt").write_text(info)
         try:
             import fitz
         except ImportError:
@@ -462,7 +468,7 @@ def main():
                     for word in page.get_text("words"):
                         if word[0]<-1 or word[1]<-1 or word[2]>page.rect.width+1 or word[3]>page.rect.height+1:
                             outside.append([number,word[4]])
-                if gotos<actual_navigation or image_count!=5 or outside:
+                if gotos<actual_navigation or image_count!=len(figures) or outside:
                     raise RuntimeError(f"PDF structure check failed: links={gotos}, images={image_count}, outside={outside}")
                 report["pdf_structural_check"]={"internal_links":gotos,"unique_images":image_count,"text_outside_page_bounds":outside}
         if args.render_check:
@@ -475,7 +481,7 @@ def main():
                     selected.add(match)
             rendered=[]
             for number in sorted(selected):
-                prefix=BUILD/f"page_{number:02d}"
+                prefix=build/f"page_{number:02d}"
                 subprocess.run([executable("pdftoppm"),"-f",str(number),"-l",str(number),"-singlefile","-scale-to","1600","-png",str(pdf_dest),str(prefix)],check=True)
                 rendered.append(str(prefix.with_suffix(".png").relative_to(REPO)))
             report["rendered_pages"]=rendered
@@ -489,7 +495,7 @@ def main():
         report["pdf_sha256"]=hashlib.sha256(pdf_dest.read_bytes()).hexdigest()
     report["passed"]=True
     report["status"]="complete"
-    (BUILD/"document_qa.json").write_text(json.dumps(report,ensure_ascii=False,indent=2)+"\n")
+    (build/"document_qa.json").write_text(json.dumps(report,ensure_ascii=False,indent=2)+"\n")
     print(json.dumps(report,ensure_ascii=False,indent=2))
 
 
