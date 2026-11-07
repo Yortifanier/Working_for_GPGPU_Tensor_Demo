@@ -1,6 +1,15 @@
 # Working_for_GPGPU_Tensor_Demo
 Tensor
 
+## SM 架构与 PTX 9.4 全指令审查
+
+覆盖全部21个指令大类、215个实际指令说明节及2个控制语法节，附217行架构映射和35节特殊寄存器索引。正文包括SIMT/ITS、SALU/VALU/FPU/SFU、寄存器、LSU/L1、完整SMEM、同步/原子/proxy、TMA、各代Tensor/TMEM/MALU、cluster/DSM、Fabric、texture/surface和系统服务。
+
+- [SM架构正文](docs/sm/SM_ARCHITECTURE.md) · [带七图DOCX](docs/sm/SM_Architecture_v1.0.docx) · [PDF](docs/sm/SM_Architecture_v1.0.pdf)
+- [全量指令证据与构建入口](docs/sm/README.md)
+
+SM-ARCH-S0是项目架构方案；已实现RTL仍限于下述dot-only MALU，完整指令清点不代表全SM已经实现或验证。
+
 ## tcgen05 Tensor 架构
 
 以用户提供的 PTX ISA 9.4 为基准，涵盖 Tensor 功能边界、TMEM、全部指令家族、格式/shape/scale、稀疏与复用、CTA pair、异步完成和内存顺序。文档限定为架构层，不规定物理阵列、流水线、端口或 RTL 微架构。

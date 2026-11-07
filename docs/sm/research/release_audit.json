@@ -1,0 +1,51 @@
+{
+  "date": "2026-11-07",
+  "scope": "Root independent artifact/source verification; document audit only, not SM RTL or all legal ISA tuples.",
+  "artifacts": {
+    "SM_ARCHITECTURE.md": {
+      "sha256": "b28eaee5bf381c7dbcc8387687c62bc8030eb722935e11774cf3eaecb20fb0ba",
+      "bytes": 83539
+    },
+    "SM_Architecture_v1.0.docx": {
+      "sha256": "ed57aab81283312c3bb83a82f7c1838be5c4c024f6d4f398df34aed136f0900a",
+      "bytes": 2482227
+    },
+    "SM_Architecture_v1.0.pdf": {
+      "sha256": "84f9e36568f4dfb3e87d1dd221bfaaaf0aa9d6fb3842a86f87d6cab2bd862e4d",
+      "bytes": 4141697
+    }
+  },
+  "native_appendix_rows_verified": {
+    "instruction_or_syntax": 217,
+    "special_register": 35,
+    "fields": [
+      "section",
+      "complete_heading_names",
+      "pdf_and_printed_page"
+    ],
+    "mismatches": [],
+    "duplicates": []
+  },
+  "docx_structure": {
+    "native_tables": 43,
+    "native_rows": 436,
+    "no_split_rows": 436,
+    "repeated_headers": 43,
+    "omml_equations": 2
+  },
+  "pdf_pages": 48,
+  "pdf_text_outside_page_bounds": [],
+  "root_final_pdf_pages_actually_viewed": [
+    22,
+    40,
+    47
+  ],
+  "root_source_figures_actually_viewed": [
+    1,
+    4,
+    6
+  ],
+  "pdf_font_entries": 24,
+  "rtl_verif_tools_tracked_changes": [],
+  "passed": true
+}

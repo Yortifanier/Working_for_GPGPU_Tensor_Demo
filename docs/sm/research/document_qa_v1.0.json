@@ -1,0 +1,113 @@
+{
+  "title": "SM 架构设计",
+  "build_date": "2026-11-07",
+  "document_version": "1.0",
+  "source": "docs/sm/SM_ARCHITECTURE.md",
+  "source_sha256": "b28eaee5bf381c7dbcc8387687c62bc8030eb722935e11774cf3eaecb20fb0ba",
+  "docx": "docs/sm/SM_Architecture_v1.0.docx",
+  "figure_sha256": {
+    "figures/01_sm_overview.png": "7a00a3cc6062ae983f58e7359bf033e8a24b56fa79f4aed28a6f762acd0617c9",
+    "figures/02_warp_cta_control.png": "e25e20bf7de2398ceb397b27d84822fae08da9aaf565ac15ec81488d7b7f8856",
+    "figures/03_register_execution.png": "4e4427256888a5869fcd35f01e345059162be30d49cb36fff0c5b335556f0d5f",
+    "figures/04_memory_hierarchy.png": "c385bfa9357bddb1500dec2b8e2cb0a14ed40fddee4f0492fae8500ea0ea2453",
+    "figures/05_memory_async_sync.png": "90e689178c37e62cab3ec6e7c9fb039a58f502bacad695ab73cadd2a5008ae22",
+    "figures/06_tensor_malu_integration.png": "1e0d3098ec1cd92013d9640b48a10016b115c1cfa4ebd38c36b71eb7bc04149e",
+    "figures/07_instruction_lowering.png": "b6a8a6357f055a650ee21e365d290d2af0d087ba41663427f910482ad437901c"
+  },
+  "native_tables": 43,
+  "native_math": 2,
+  "embedded_images": 7,
+  "html_breaks_converted_to_native": 31,
+  "chapter_navigation_links": 26,
+  "pandoc_version": "pandoc 3.1.11.1",
+  "pdf": "docs/sm/SM_Architecture_v1.0.pdf",
+  "pdf_pages": 48,
+  "pdf_text_characters": 82355,
+  "all_heading_text_found": true,
+  "pdf_structural_check": {
+    "internal_links": 26,
+    "unique_images": 7,
+    "text_outside_page_bounds": []
+  },
+  "rendered_pages": [
+    "build/sm_architecture/v1.0/page_01.png",
+    "build/sm_architecture/v1.0/page_04.png",
+    "build/sm_architecture/v1.0/page_08.png",
+    "build/sm_architecture/v1.0/page_10.png",
+    "build/sm_architecture/v1.0/page_14.png",
+    "build/sm_architecture/v1.0/page_18.png",
+    "build/sm_architecture/v1.0/page_21.png",
+    "build/sm_architecture/v1.0/page_32.png",
+    "build/sm_architecture/v1.0/page_48.png"
+  ],
+  "source_unchanged_during_build": true,
+  "docx_sha256": "ed57aab81283312c3bb83a82f7c1838be5c4c024f6d4f398df34aed136f0900a",
+  "pdf_sha256": "84f9e36568f4dfb3e87d1dd221bfaaaf0aa9d6fb3842a86f87d6cab2bd862e4d",
+  "passed": true,
+  "status": "complete",
+  "qa_scope": "Document transcription, structure, font embedding and sampled rendered-PDF readability only. This is not SM RTL, PTX semantic compliance, synthesis, timing, native NVIDIA bit equivalence, or end-to-end performance validation.",
+  "additional_software_checks": {
+    "navigation_page": 2,
+    "navigation_links_on_page": 26,
+    "native_tables_with_repeated_headers": 43,
+    "native_table_rows": 436,
+    "rows_with_cant_split": 436,
+    "table_paragraphs": 1581,
+    "table_paragraphs_explicit_left": 1581,
+    "table_inline_code_runs": 294,
+    "table_inline_code_runs_with_ascii_mono": 294,
+    "appendix_identity_columns_ascii_font": "DejaVu Sans Mono, 9 pt",
+    "table_native_line_breaks": 31,
+    "pdf_font_records": 24,
+    "all_pdf_font_records_embedded_subset_unicode": true,
+    "pdf_font_families": [
+      "DejaVuSansMono",
+      "DejaVuSansMono-Bold",
+      "LiberationSerif",
+      "LiberationSerif-Italic",
+      "NotoSansCJKsc-Bold",
+      "NotoSansCJKsc-Regular",
+      "OpenSymbol"
+    ],
+    "pdf_no_inverted_question_or_replacement_characters": true,
+    "appendix_rows_transcribed": {
+      "syntax_description_rows": 217,
+      "special_register_description_rows": 35,
+      "unique_section_ids": 252
+    },
+    "appendix_scope": "217 syntax leaves include two control-syntax descriptions; 35 register rows are description groups, not a count of physical registers or all opcode/type forms.",
+    "appendix_code_label_occurrences_found_in_pdf_after_whitespace_normalization": 283,
+    "artifact_and_png_hashes_rechecked": true,
+    "svg_parse_and_trailing_whitespace_checks": 7,
+    "python_syntax_checks": [
+      "build_doc.py",
+      "figures/generate_figures.py"
+    ]
+  },
+  "manual_visual_review": {
+    "performed": true,
+    "pdf_sha256": "84f9e36568f4dfb3e87d1dd221bfaaaf0aa9d6fb3842a86f87d6cab2bd862e4d",
+    "pdf_pages": [
+      2,
+      7,
+      16,
+      20,
+      21,
+      22,
+      24,
+      40,
+      41,
+      47,
+      48
+    ],
+    "coverage": "Final post-font-fix PDF: navigation, both equations, SMEM, TMA, Tensor integration/C shift, Fabric, split appendix tables, long mnemonics and special-register names. Not every page was visually inspected.",
+    "observations": [
+      "All 26 navigation entries fit page 2; selected CJK paragraphs and tables are readable without observed clipping or overlaps.",
+      "Page 21 shows independent c_scale_shift in the dot adapter and the final round/pack inside MALU; page 22 native equation preserves C scaling.",
+      "Pages 40-41 show full dotted mnemonics, section/page identifiers and separate names on native line breaks in monospace, with no observed column spill or Latin-letter stretching.",
+      "Pages 47-48 show readable %clock/%clock_hi, timer and reserved-SMEM register names with one name per native line.",
+      "Seven source diagrams were separately visually reviewed; all seven final DOCX embedded PNG hashes match the reviewed sources. Diagram counts and physical values are labeled project choices."
+    ],
+    "limitations": "This review covers document readability and transcription; technical reviews and the separate 217+35 coverage checker remain separate evidence."
+  }
+}

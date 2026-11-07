@@ -1,0 +1,2499 @@
+{
+  "checker": "/workspace/Working_for_GPGPU_Tensor_Demo/docs/sm/check_instruction_inventory.py",
+  "checker_sha256": "4f65b90db7bcafc2780f86ae57721676e6df7689100ca4eb6c703601de310857",
+  "checked_at_utc": "2026-11-07T11:25:15.039365+00:00",
+  "expected_counts": {
+    "instruction_description_topics": 217,
+    "actual_instruction_topics": 215,
+    "control_syntax_topics": 2,
+    "syntax_blocks": 217,
+    "categories": 21,
+    "special_register_sections": 35
+  },
+  "errors": [],
+  "source": {
+    "pdf": "/workspace/attachments/4971c15f-29fd-4875-95d3-ed0c693d3482/ptx_isa_9.4.pdf",
+    "sha256": "4be2905e240b70a8b176b4d6fb162714f2fc361a9503572d848ff723abf289c3",
+    "inventory": "/workspace/Working_for_GPGPU_Tensor_Demo/docs/sm/research/ptx94_instruction_inventory.json",
+    "inventory_sha256": "77f932724a2ab3c91f7d3ab8b60269b6e274afcf43db2c82bed3056f542c126a",
+    "pymupdf_version": "1.26.6",
+    "physical_pdf_pages": 1002
+  },
+  "observed_counts": {
+    "instruction_description_topics": 217,
+    "actual_instruction_topics": 215,
+    "control_syntax_topics": 2,
+    "syntax_blocks": 217,
+    "categories": 21,
+    "special_register_sections": 35
+  },
+  "pdf_crosscheck": {
+    "body_section_headings_matched": 494,
+    "chapter9_sections": 459,
+    "unattributed_syntax_sections": [],
+    "instruction_topics_with_wrong_syntax_count": {},
+    "control_syntax_sections": [
+      "9.7.14.1",
+      "9.7.14.2"
+    ]
+  },
+  "inventory_validation": {
+    "matched_instruction_sections": 217,
+    "metadata_mismatches": [],
+    "source_excerpt_fields_checked": 651,
+    "source_excerpt_mismatches": {},
+    "duplicate_section_ids": []
+  },
+  "special_registers": {
+    "source_sections": 35,
+    "index": "/workspace/Working_for_GPGPU_Tensor_Demo/docs/sm/research/ptx94_special_register_inventory.json",
+    "status": "pass",
+    "indexed_sections": 35,
+    "metadata_mismatches": [],
+    "index_sha256": "7dfe04b4778c9490864ce705318d353ad17241596ef8d632ea0cf3fc8ac43465"
+  },
+  "source_inventory_status": "pass",
+  "document_coverage": {
+    "status": "pass",
+    "path": "/workspace/Working_for_GPGPU_Tensor_Demo/docs/sm/SM_ARCHITECTURE.md",
+    "sha256": "b28eaee5bf381c7dbcc8387687c62bc8030eb722935e11774cf3eaecb20fb0ba",
+    "mapping_rule": "Exact section cell in a Markdown table row, plus at least two nonempty companion cells and no TODO/TBD placeholder; prose/ranges do not count",
+    "expected_instruction_description_sections": 217,
+    "mapped_instruction_description_sections": 217,
+    "mapped_actual_instruction_sections": 215,
+    "mapped_control_syntax_sections": 2,
+    "missing_sections": [],
+    "unknown_table_sections": [],
+    "invalid_mapping_rows": {},
+    "instruction_mapping_rows": {
+      "9.7.1.1": [
+        {
+          "line": 635,
+          "companion_cells": [
+            "142/130",
+            "`add`",
+            "INT §8；D/M"
+          ],
+          "valid_mapping_row": true
+        }
+      ],
+      "9.7.1.2": [
+        {
+          "line": 636,
+          "companion_cells": [
+            "143/131",
+            "`sub`",
+            "INT §8；D/M"
+          ],
+          "valid_mapping_row": true
+        }
+      ],
+      "9.7.1.3": [
+        {
+          "line": 637,
+          "companion_cells": [
+            "145/133",
+            "`mul`",
+            "INT §8；D/M"
+          ],
+          "valid_mapping_row": true
+        }
+      ],
+      "9.7.1.4": [
+        {
+          "line": 638,
+          "companion_cells": [
+            "146/134",
+            "`mad`",
+            "INT §8；D/M"
+          ],
+          "valid_mapping_row": true
+        }
+      ],
+      "9.7.1.5": [
+        {
+          "line": 639,
+          "companion_cells": [
+            "148/136",
+            "`clmad`",
+            "INT §8；D/M"
+          ],
+          "valid_mapping_row": true
+        }
+      ],
+      "9.7.1.6": [
+        {
+          "line": 640,
+          "companion_cells": [
+            "149/137",
+            "`mul24`",
+            "INT §8；D/M"
+          ],
+          "valid_mapping_row": true
+        }
+      ],
+      "9.7.1.7": [
+        {
+          "line": 641,
+          "companion_cells": [
+            "150/138",
+            "`mad24`",
+            "INT §8；D/M"
+          ],
+          "valid_mapping_row": true
+        }
+      ],
+      "9.7.1.8": [
+        {
+          "line": 642,
+          "companion_cells": [
+            "151/139",
+            "`sad`",
+            "INT §8；D/M"
+          ],
+          "valid_mapping_row": true
+        }
+      ],
+      "9.7.1.9": [
+        {
+          "line": 643,
+          "companion_cells": [
+            "152/140",
+            "`div`",
+            "INT §8；D/M"
+          ],
+          "valid_mapping_row": true
+        }
+      ],
+      "9.7.1.10": [
+        {
+          "line": 644,
+          "companion_cells": [
+            "153/141",
+            "`rem`",
+            "INT §8；D/M"
+          ],
+          "valid_mapping_row": true
+        }
+      ],
+      "9.7.1.11": [
+        {
+          "line": 645,
+          "companion_cells": [
+            "154/142",
+            "`abs`",
+            "INT §8；D/M"
+          ],
+          "valid_mapping_row": true
+        }
+      ],
+      "9.7.1.12": [
+        {
+          "line": 646,
+          "companion_cells": [
+            "155/143",
+            "`neg`",
+            "INT §8；D/M"
+          ],
+          "valid_mapping_row": true
+        }
+      ],
+      "9.7.1.13": [
+        {
+          "line": 647,
+          "companion_cells": [
+            "157/145",
+            "`min`",
+            "INT §8；D/M"
+          ],
+          "valid_mapping_row": true
+        }
+      ],
+      "9.7.1.14": [
+        {
+          "line": 648,
+          "companion_cells": [
+            "159/147",
+            "`max`",
+            "INT §8；D/M"
+          ],
+          "valid_mapping_row": true
+        }
+      ],
+      "9.7.1.15": [
+        {
+          "line": 649,
+          "companion_cells": [
+            "160/148",
+            "`popc`",
+            "INT §8；D/M"
+          ],
+          "valid_mapping_row": true
+        }
+      ],
+      "9.7.1.16": [
+        {
+          "line": 650,
+          "companion_cells": [
+            "161/149",
+            "`clz`",
+            "INT §8；D/M"
+          ],
+          "valid_mapping_row": true
+        }
+      ],
+      "9.7.1.17": [
+        {
+          "line": 651,
+          "companion_cells": [
+            "162/150",
+            "`bfind`",
+            "INT §8；D/M"
+          ],
+          "valid_mapping_row": true
+        }
+      ],
+      "9.7.1.18": [
+        {
+          "line": 652,
+          "companion_cells": [
+            "164/152",
+            "`fns`",
+            "INT §8；D/M"
+          ],
+          "valid_mapping_row": true
+        }
+      ],
+      "9.7.1.19": [
+        {
+          "line": 653,
+          "companion_cells": [
+            "165/153",
+            "`brev`",
+            "INT §8；D/M"
+          ],
+          "valid_mapping_row": true
+        }
+      ],
+      "9.7.1.20": [
+        {
+          "line": 654,
+          "companion_cells": [
+            "166/154",
+            "`bfe`",
+            "INT §8；D/M"
+          ],
+          "valid_mapping_row": true
+        }
+      ],
+      "9.7.1.21": [
+        {
+          "line": 655,
+          "companion_cells": [
+            "167/155",
+            "`bfi`",
+            "INT §8；D/M"
+          ],
+          "valid_mapping_row": true
+        }
+      ],
+      "9.7.1.22": [
+        {
+          "line": 656,
+          "companion_cells": [
+            "168/156",
+            "`szext`",
+            "INT §8；D/M"
+          ],
+          "valid_mapping_row": true
+        }
+      ],
+      "9.7.1.23": [
+        {
+          "line": 657,
+          "companion_cells": [
+            "170/158",
+            "`bmsk`",
+            "INT §8；D/M"
+          ],
+          "valid_mapping_row": true
+        }
+      ],
+      "9.7.1.24": [
+        {
+          "line": 658,
+          "companion_cells": [
+            "171/159",
+            "`dp4a`",
+            "INT §8；D/M"
+          ],
+          "valid_mapping_row": true
+        }
+      ],
+      "9.7.1.25": [
+        {
+          "line": 659,
+          "companion_cells": [
+            "172/160",
+            "`dp2a`",
+            "INT §8；D/M"
+          ],
+          "valid_mapping_row": true
+        }
+      ],
+      "9.7.2.1": [
+        {
+          "line": 666,
+          "companion_cells": [
+            "174/162",
+            "`add.cc`",
+            "INT/CC §7–8；D/M"
+          ],
+          "valid_mapping_row": true
+        }
+      ],
+      "9.7.2.2": [
+        {
+          "line": 667,
+          "companion_cells": [
+            "175/163",
+            "`addc`",
+            "INT/CC §7–8；D/M"
+          ],
+          "valid_mapping_row": true
+        }
+      ],
+      "9.7.2.3": [
+        {
+          "line": 668,
+          "companion_cells": [
+            "176/164",
+            "`sub.cc`",
+            "INT/CC §7–8；D/M"
+          ],
+          "valid_mapping_row": true
+        }
+      ],
+      "9.7.2.4": [
+        {
+          "line": 669,
+          "companion_cells": [
+            "177/165",
+            "`subc`",
+            "INT/CC §7–8；D/M"
+          ],
+          "valid_mapping_row": true
+        }
+      ],
+      "9.7.2.5": [
+        {
+          "line": 670,
+          "companion_cells": [
+            "179/167",
+            "`mad.cc`",
+            "INT/CC §7–8；D/M"
+          ],
+          "valid_mapping_row": true
+        }
+      ],
+      "9.7.2.6": [
+        {
+          "line": 671,
+          "companion_cells": [
+            "180/168",
+            "`madc`",
+            "INT/CC §7–8；D/M"
+          ],
+          "valid_mapping_row": true
+        }
+      ],
+      "9.7.3.1": [
+        {
+          "line": 678,
+          "companion_cells": [
+            "184/172",
+            "`testp`",
+            "FPU §9；D/M"
+          ],
+          "valid_mapping_row": true
+        }
+      ],
+      "9.7.3.2": [
+        {
+          "line": 679,
+          "companion_cells": [
+            "185/173",
+            "`copysign`",
+            "FPU §9；D/M"
+          ],
+          "valid_mapping_row": true
+        }
+      ],
+      "9.7.3.3": [
+        {
+          "line": 680,
+          "companion_cells": [
+            "186/174",
+            "`add`",
+            "FPU §9；D/M"
+          ],
+          "valid_mapping_row": true
+        }
+      ],
+      "9.7.3.4": [
+        {
+          "line": 681,
+          "companion_cells": [
+            "188/176",
+            "`sub`",
+            "FPU §9；D/M"
+          ],
+          "valid_mapping_row": true
+        }
+      ],
+      "9.7.3.5": [
+        {
+          "line": 682,
+          "companion_cells": [
+            "190/178",
+            "`mul`",
+            "FPU §9；D/M"
+          ],
+          "valid_mapping_row": true
+        }
+      ],
+      "9.7.3.6": [
+        {
+          "line": 683,
+          "companion_cells": [
+            "192/180",
+            "`fma`",
+            "FPU §9；D/M"
+          ],
+          "valid_mapping_row": true
+        }
+      ],
+      "9.7.3.7": [
+        {
+          "line": 684,
+          "companion_cells": [
+            "194/182",
+            "`mad`",
+            "FPU §9；D/M"
+          ],
+          "valid_mapping_row": true
+        }
+      ],
+      "9.7.3.8": [
+        {
+          "line": 685,
+          "companion_cells": [
+            "196/184",
+            "`div`",
+            "SFU/数学 §9；D/M"
+          ],
+          "valid_mapping_row": true
+        }
+      ],
+      "9.7.3.9": [
+        {
+          "line": 686,
+          "companion_cells": [
+            "198/186",
+            "`abs`",
+            "FPU §9；D/M"
+          ],
+          "valid_mapping_row": true
+        }
+      ],
+      "9.7.3.10": [
+        {
+          "line": 687,
+          "companion_cells": [
+            "199/187",
+            "`neg`",
+            "FPU §9；D/M"
+          ],
+          "valid_mapping_row": true
+        }
+      ],
+      "9.7.3.11": [
+        {
+          "line": 688,
+          "companion_cells": [
+            "200/188",
+            "`min`",
+            "FPU §9；D/M"
+          ],
+          "valid_mapping_row": true
+        }
+      ],
+      "9.7.3.12": [
+        {
+          "line": 689,
+          "companion_cells": [
+            "203/191",
+            "`max`",
+            "FPU §9；D/M"
+          ],
+          "valid_mapping_row": true
+        }
+      ],
+      "9.7.3.13": [
+        {
+          "line": 690,
+          "companion_cells": [
+            "205/193",
+            "`rcp`",
+            "SFU/数学 §9；D/M"
+          ],
+          "valid_mapping_row": true
+        }
+      ],
+      "9.7.3.14": [
+        {
+          "line": 691,
+          "companion_cells": [
+            "207/195",
+            "`rcp.approx.ftz.f64`",
+            "SFU/数学 §9；D/M"
+          ],
+          "valid_mapping_row": true
+        }
+      ],
+      "9.7.3.15": [
+        {
+          "line": 692,
+          "companion_cells": [
+            "208/196",
+            "`sqrt`",
+            "SFU/数学 §9；D/M"
+          ],
+          "valid_mapping_row": true
+        }
+      ],
+      "9.7.3.16": [
+        {
+          "line": 693,
+          "companion_cells": [
+            "210/198",
+            "`rsqrt`",
+            "SFU/数学 §9；D/M"
+          ],
+          "valid_mapping_row": true
+        }
+      ],
+      "9.7.3.17": [
+        {
+          "line": 694,
+          "companion_cells": [
+            "212/200",
+            "`rsqrt.approx.ftz.f64`",
+            "SFU/数学 §9；D/M"
+          ],
+          "valid_mapping_row": true
+        }
+      ],
+      "9.7.3.18": [
+        {
+          "line": 695,
+          "companion_cells": [
+            "213/201",
+            "`sin`",
+            "SFU/数学 §9；D/M"
+          ],
+          "valid_mapping_row": true
+        }
+      ],
+      "9.7.3.19": [
+        {
+          "line": 696,
+          "companion_cells": [
+            "215/203",
+            "`cos`",
+            "SFU/数学 §9；D/M"
+          ],
+          "valid_mapping_row": true
+        }
+      ],
+      "9.7.3.20": [
+        {
+          "line": 697,
+          "companion_cells": [
+            "216/204",
+            "`lg2`",
+            "SFU/数学 §9；D/M"
+          ],
+          "valid_mapping_row": true
+        }
+      ],
+      "9.7.3.21": [
+        {
+          "line": 698,
+          "companion_cells": [
+            "218/206",
+            "`ex2`",
+            "SFU/数学 §9；D/M"
+          ],
+          "valid_mapping_row": true
+        }
+      ],
+      "9.7.3.22": [
+        {
+          "line": 699,
+          "companion_cells": [
+            "219/207",
+            "`tanh`",
+            "SFU/数学 §9；D/M"
+          ],
+          "valid_mapping_row": true
+        }
+      ],
+      "9.7.4.1": [
+        {
+          "line": 706,
+          "companion_cells": [
+            "221/209",
+            "`add`",
+            "packed FPU §9；D/M"
+          ],
+          "valid_mapping_row": true
+        }
+      ],
+      "9.7.4.2": [
+        {
+          "line": 707,
+          "companion_cells": [
+            "223/211",
+            "`sub`",
+            "packed FPU §9；D/M"
+          ],
+          "valid_mapping_row": true
+        }
+      ],
+      "9.7.4.3": [
+        {
+          "line": 708,
+          "companion_cells": [
+            "225/213",
+            "`mul`",
+            "packed FPU §9；D/M"
+          ],
+          "valid_mapping_row": true
+        }
+      ],
+      "9.7.4.4": [
+        {
+          "line": 709,
+          "companion_cells": [
+            "227/215",
+            "`fma`",
+            "packed FPU §9；D/M"
+          ],
+          "valid_mapping_row": true
+        }
+      ],
+      "9.7.4.5": [
+        {
+          "line": 710,
+          "companion_cells": [
+            "229/217",
+            "`neg`",
+            "packed FPU §9；D/M"
+          ],
+          "valid_mapping_row": true
+        }
+      ],
+      "9.7.4.6": [
+        {
+          "line": 711,
+          "companion_cells": [
+            "231/219",
+            "`abs`",
+            "packed FPU §9；D/M"
+          ],
+          "valid_mapping_row": true
+        }
+      ],
+      "9.7.4.7": [
+        {
+          "line": 712,
+          "companion_cells": [
+            "232/220",
+            "`min`",
+            "packed FPU §9；D/M"
+          ],
+          "valid_mapping_row": true
+        }
+      ],
+      "9.7.4.8": [
+        {
+          "line": 713,
+          "companion_cells": [
+            "235/223",
+            "`max`",
+            "packed FPU §9；D/M"
+          ],
+          "valid_mapping_row": true
+        }
+      ],
+      "9.7.4.9": [
+        {
+          "line": 714,
+          "companion_cells": [
+            "237/225",
+            "`tanh`",
+            "packed SFU §9；D/M"
+          ],
+          "valid_mapping_row": true
+        }
+      ],
+      "9.7.4.10": [
+        {
+          "line": 715,
+          "companion_cells": [
+            "238/226",
+            "`ex2`",
+            "packed SFU §9；D/M"
+          ],
+          "valid_mapping_row": true
+        }
+      ],
+      "9.7.5.1": [
+        {
+          "line": 722,
+          "companion_cells": [
+            "241/229",
+            "`add`",
+            "mixed FPU §9；D/M"
+          ],
+          "valid_mapping_row": true
+        }
+      ],
+      "9.7.5.2": [
+        {
+          "line": 723,
+          "companion_cells": [
+            "242/230",
+            "`sub`",
+            "mixed FPU §9；D/M"
+          ],
+          "valid_mapping_row": true
+        }
+      ],
+      "9.7.5.3": [
+        {
+          "line": 724,
+          "companion_cells": [
+            "244/232",
+            "`fma`",
+            "mixed FPU §9；D/M"
+          ],
+          "valid_mapping_row": true
+        }
+      ],
+      "9.7.5.4": [
+        {
+          "line": 725,
+          "companion_cells": [
+            "246/234",
+            "`mul`",
+            "mixed FPU §9；D/M"
+          ],
+          "valid_mapping_row": true
+        }
+      ],
+      "9.7.6.1": [
+        {
+          "line": 732,
+          "companion_cells": [
+            "247/235",
+            "`add`",
+            "alternate FPU §9；D/M"
+          ],
+          "valid_mapping_row": true
+        }
+      ],
+      "9.7.6.2": [
+        {
+          "line": 733,
+          "companion_cells": [
+            "250/238",
+            "`sub`",
+            "alternate FPU §9；D/M"
+          ],
+          "valid_mapping_row": true
+        }
+      ],
+      "9.7.6.3": [
+        {
+          "line": 734,
+          "companion_cells": [
+            "252/240",
+            "`mul`",
+            "alternate FPU §9；D/M"
+          ],
+          "valid_mapping_row": true
+        }
+      ],
+      "9.7.6.4": [
+        {
+          "line": 735,
+          "companion_cells": [
+            "254/242",
+            "`fma`",
+            "alternate FPU §9；D/M"
+          ],
+          "valid_mapping_row": true
+        }
+      ],
+      "9.7.7.1": [
+        {
+          "line": 742,
+          "companion_cells": [
+            "258/246",
+            "`set`",
+            "比较/谓词 §8；D/M"
+          ],
+          "valid_mapping_row": true
+        }
+      ],
+      "9.7.7.2": [
+        {
+          "line": 743,
+          "companion_cells": [
+            "260/248",
+            "`setp`",
+            "比较/谓词 §8；D/M"
+          ],
+          "valid_mapping_row": true
+        }
+      ],
+      "9.7.7.3": [
+        {
+          "line": 744,
+          "companion_cells": [
+            "262/250",
+            "`selp`",
+            "比较/谓词 §8；D/M"
+          ],
+          "valid_mapping_row": true
+        }
+      ],
+      "9.7.7.4": [
+        {
+          "line": 745,
+          "companion_cells": [
+            "263/251",
+            "`slct`",
+            "比较/谓词 §8；D/M"
+          ],
+          "valid_mapping_row": true
+        }
+      ],
+      "9.7.8.1": [
+        {
+          "line": 752,
+          "companion_cells": [
+            "264/252",
+            "`set`",
+            "packed比较 §9；D/M"
+          ],
+          "valid_mapping_row": true
+        }
+      ],
+      "9.7.8.2": [
+        {
+          "line": 753,
+          "companion_cells": [
+            "267/255",
+            "`setp`",
+            "packed比较 §9；D/M"
+          ],
+          "valid_mapping_row": true
+        }
+      ],
+      "9.7.9.1": [
+        {
+          "line": 760,
+          "companion_cells": [
+            "270/258",
+            "`and`",
+            "位运算 §8；D/M"
+          ],
+          "valid_mapping_row": true
+        }
+      ],
+      "9.7.9.2": [
+        {
+          "line": 761,
+          "companion_cells": [
+            "271/259",
+            "`or`",
+            "位运算 §8；D/M"
+          ],
+          "valid_mapping_row": true
+        }
+      ],
+      "9.7.9.3": [
+        {
+          "line": 762,
+          "companion_cells": [
+            "272/260",
+            "`xor`",
+            "位运算 §8；D/M"
+          ],
+          "valid_mapping_row": true
+        }
+      ],
+      "9.7.9.4": [
+        {
+          "line": 763,
+          "companion_cells": [
+            "273/261",
+            "`not`",
+            "位运算 §8；D/M"
+          ],
+          "valid_mapping_row": true
+        }
+      ],
+      "9.7.9.5": [
+        {
+          "line": 764,
+          "companion_cells": [
+            "274/262",
+            "`cnot`",
+            "位运算 §8；D/M"
+          ],
+          "valid_mapping_row": true
+        }
+      ],
+      "9.7.9.6": [
+        {
+          "line": 765,
+          "companion_cells": [
+            "275/263",
+            "`lop3`",
+            "位运算 §8；D/M"
+          ],
+          "valid_mapping_row": true
+        }
+      ],
+      "9.7.9.7": [
+        {
+          "line": 766,
+          "companion_cells": [
+            "277/265",
+            "`shf`",
+            "位运算 §8；D/M"
+          ],
+          "valid_mapping_row": true
+        }
+      ],
+      "9.7.9.8": [
+        {
+          "line": 767,
+          "companion_cells": [
+            "278/266",
+            "`shl`",
+            "位运算 §8；D/M"
+          ],
+          "valid_mapping_row": true
+        }
+      ],
+      "9.7.9.9": [
+        {
+          "line": 768,
+          "companion_cells": [
+            "279/267",
+            "`shr`",
+            "位运算 §8；D/M"
+          ],
+          "valid_mapping_row": true
+        }
+      ],
+      "9.7.10.3": [
+        {
+          "line": 775,
+          "companion_cells": [
+            "284/272",
+            "`mov`",
+            "RF/重排 §7、10；D/M"
+          ],
+          "valid_mapping_row": true
+        }
+      ],
+      "9.7.10.4": [
+        {
+          "line": 776,
+          "companion_cells": [
+            "285/273",
+            "`mov`",
+            "RF/重排 §7、10；D/M"
+          ],
+          "valid_mapping_row": true
+        }
+      ],
+      "9.7.10.5": [
+        {
+          "line": 777,
+          "companion_cells": [
+            "287/275",
+            "`shfl`（deprecated）",
+            "warp交换 §10；D/M"
+          ],
+          "valid_mapping_row": true
+        }
+      ],
+      "9.7.10.6": [
+        {
+          "line": 778,
+          "companion_cells": [
+            "290/278",
+            "`shfl.sync`",
+            "warp交换 §10；D/M"
+          ],
+          "valid_mapping_row": true
+        }
+      ],
+      "9.7.10.7": [
+        {
+          "line": 779,
+          "companion_cells": [
+            "292/280",
+            "`prmt`",
+            "RF/重排 §7、10；D/M"
+          ],
+          "valid_mapping_row": true
+        }
+      ],
+      "9.7.10.8": [
+        {
+          "line": 780,
+          "companion_cells": [
+            "294/282",
+            "`ld`",
+            "LSU/空间 §11；D/S"
+          ],
+          "valid_mapping_row": true
+        }
+      ],
+      "9.7.10.9": [
+        {
+          "line": 781,
+          "companion_cells": [
+            "299/287",
+            "`ld.global.nc`",
+            "global非一致读取 §11；D/S"
+          ],
+          "valid_mapping_row": true
+        }
+      ],
+      "9.7.10.10": [
+        {
+          "line": 782,
+          "companion_cells": [
+            "302/290",
+            "`ldu`",
+            "global uniform load §11；D/S"
+          ],
+          "valid_mapping_row": true
+        }
+      ],
+      "9.7.10.11": [
+        {
+          "line": 783,
+          "companion_cells": [
+            "303/291",
+            "`st`",
+            "LSU/空间 §11；D/S"
+          ],
+          "valid_mapping_row": true
+        }
+      ],
+      "9.7.10.12": [
+        {
+          "line": 784,
+          "companion_cells": [
+            "308/296",
+            "`st.async`",
+            "async store §15、18；D/S"
+          ],
+          "valid_mapping_row": true
+        }
+      ],
+      "9.7.10.13": [
+        {
+          "line": 785,
+          "companion_cells": [
+            "310/298",
+            "`multimem.st.async`",
+            "SoC多位置异步 §15、18；S/R"
+          ],
+          "valid_mapping_row": true
+        }
+      ],
+      "9.7.10.14": [
+        {
+          "line": 786,
+          "companion_cells": [
+            "312/300",
+            "`st.bulk`",
+            "shared置零 §12、15；D/M"
+          ],
+          "valid_mapping_row": true
+        }
+      ],
+      "9.7.10.15": [
+        {
+          "line": 787,
+          "companion_cells": [
+            "313/301",
+            "`multimem.ld_reduce`<br>`multimem.st`<br>`multimem.red`",
+            "SoC多位置VA §18；S/R"
+          ],
+          "valid_mapping_row": true
+        }
+      ],
+      "9.7.10.16": [
+        {
+          "line": 788,
+          "companion_cells": [
+            "316/304",
+            "`prefetch`<br>`prefetchu`",
+            "cache管理 §11；D/S"
+          ],
+          "valid_mapping_row": true
+        }
+      ],
+      "9.7.10.17": [
+        {
+          "line": 789,
+          "companion_cells": [
+            "318/306",
+            "`applypriority`",
+            "cache管理 §11；D/S"
+          ],
+          "valid_mapping_row": true
+        }
+      ],
+      "9.7.10.18": [
+        {
+          "line": 790,
+          "companion_cells": [
+            "319/307",
+            "`applypriority.async.bulk`",
+            "bulk/TMA §15；D/S"
+          ],
+          "valid_mapping_row": true
+        }
+      ],
+      "9.7.10.19": [
+        {
+          "line": 791,
+          "companion_cells": [
+            "320/308",
+            "`applypriority.async.bulk.tensor`",
+            "bulk/TMA §15；D/S"
+          ],
+          "valid_mapping_row": true
+        }
+      ],
+      "9.7.10.20": [
+        {
+          "line": 792,
+          "companion_cells": [
+            "321/309",
+            "`discard`",
+            "cache管理 §11；D/S"
+          ],
+          "valid_mapping_row": true
+        }
+      ],
+      "9.7.10.21": [
+        {
+          "line": 793,
+          "companion_cells": [
+            "322/310",
+            "`createpolicy`",
+            "cache管理 §11；D/S"
+          ],
+          "valid_mapping_row": true
+        }
+      ],
+      "9.7.10.22": [
+        {
+          "line": 794,
+          "companion_cells": [
+            "324/312",
+            "`isspacep`",
+            "地址/cluster映射 §11、17；D/S"
+          ],
+          "valid_mapping_row": true
+        }
+      ],
+      "9.7.10.23": [
+        {
+          "line": 795,
+          "companion_cells": [
+            "325/313",
+            "`cvta`",
+            "地址/cluster映射 §11、17；D/S"
+          ],
+          "valid_mapping_row": true
+        }
+      ],
+      "9.7.10.24": [
+        {
+          "line": 796,
+          "companion_cells": [
+            "327/315",
+            "`cvt`",
+            "转换/packing §10；D/M"
+          ],
+          "valid_mapping_row": true
+        }
+      ],
+      "9.7.10.25": [
+        {
+          "line": 797,
+          "companion_cells": [
+            "341/329",
+            "`cvt.pack`",
+            "转换/packing §10；D/M"
+          ],
+          "valid_mapping_row": true
+        }
+      ],
+      "9.7.10.26": [
+        {
+          "line": 798,
+          "companion_cells": [
+            "342/330",
+            "`mapa`",
+            "地址/cluster映射 §11、17；D/S"
+          ],
+          "valid_mapping_row": true
+        }
+      ],
+      "9.7.10.27": [
+        {
+          "line": 799,
+          "companion_cells": [
+            "344/332",
+            "`getctarank`",
+            "地址/cluster映射 §11、17；D/S"
+          ],
+          "valid_mapping_row": true
+        }
+      ],
+      "9.7.10.28.3.1": [
+        {
+          "line": 800,
+          "companion_cells": [
+            "348/336",
+            "`cp.async`",
+            "经典cp.async §15；D/S"
+          ],
+          "valid_mapping_row": true
+        }
+      ],
+      "9.7.10.28.3.2": [
+        {
+          "line": 801,
+          "companion_cells": [
+            "350/338",
+            "`cp.async.commit_group`",
+            "经典cp.async §15；D/S"
+          ],
+          "valid_mapping_row": true
+        }
+      ],
+      "9.7.10.28.3.3": [
+        {
+          "line": 802,
+          "companion_cells": [
+            "351/339",
+            "`cp.async.wait_group`<br>`cp.async.wait_all`",
+            "经典cp.async §15；D/S"
+          ],
+          "valid_mapping_row": true
+        }
+      ],
+      "9.7.10.28.4.1": [
+        {
+          "line": 803,
+          "companion_cells": [
+            "352/340",
+            "`cp.async.bulk`",
+            "bulk/TMA §15；D/S"
+          ],
+          "valid_mapping_row": true
+        }
+      ],
+      "9.7.10.28.4.2": [
+        {
+          "line": 804,
+          "companion_cells": [
+            "358/346",
+            "`cp.reduce.async.bulk`",
+            "bulk/TMA §15；D/S"
+          ],
+          "valid_mapping_row": true
+        }
+      ],
+      "9.7.10.28.4.3": [
+        {
+          "line": 805,
+          "companion_cells": [
+            "362/350",
+            "`cp.async.bulk.prefetch`",
+            "bulk/TMA §15；D/S"
+          ],
+          "valid_mapping_row": true
+        }
+      ],
+      "9.7.10.28.4.4": [
+        {
+          "line": 806,
+          "companion_cells": [
+            "363/351",
+            "`multimem.cp.async.bulk`",
+            "SoC多位置异步 §15、18；S/R"
+          ],
+          "valid_mapping_row": true
+        }
+      ],
+      "9.7.10.28.4.5": [
+        {
+          "line": 807,
+          "companion_cells": [
+            "365/353",
+            "`multimem.cp.reduce.async.bulk`",
+            "SoC多位置异步 §15、18；S/R"
+          ],
+          "valid_mapping_row": true
+        }
+      ],
+      "9.7.10.28.5.5": [
+        {
+          "line": 808,
+          "companion_cells": [
+            "372/360",
+            "`cp.async.bulk.tensor`",
+            "bulk/TMA §15；D/S"
+          ],
+          "valid_mapping_row": true
+        }
+      ],
+      "9.7.10.28.5.6": [
+        {
+          "line": 809,
+          "companion_cells": [
+            "379/367",
+            "`cp.reduce.async.bulk.tensor`",
+            "bulk/TMA §15；D/S"
+          ],
+          "valid_mapping_row": true
+        }
+      ],
+      "9.7.10.28.5.7": [
+        {
+          "line": 810,
+          "companion_cells": [
+            "382/370",
+            "`cp.async.bulk.prefetch.tensor`",
+            "bulk/TMA §15；D/S"
+          ],
+          "valid_mapping_row": true
+        }
+      ],
+      "9.7.10.28.6.1": [
+        {
+          "line": 811,
+          "companion_cells": [
+            "385/373",
+            "`cp.async.bulk.commit_group`",
+            "bulk/TMA §15；D/S"
+          ],
+          "valid_mapping_row": true
+        }
+      ],
+      "9.7.10.28.6.2": [
+        {
+          "line": 812,
+          "companion_cells": [
+            "386/374",
+            "`cp.async.bulk.wait_group`",
+            "bulk/TMA §15；D/S"
+          ],
+          "valid_mapping_row": true
+        }
+      ],
+      "9.7.10.29": [
+        {
+          "line": 813,
+          "companion_cells": [
+            "388/376",
+            "`tensormap.replace`",
+            "tensor map更新 §15；D/M"
+          ],
+          "valid_mapping_row": true
+        }
+      ],
+      "9.7.10.30": [
+        {
+          "line": 814,
+          "companion_cells": [
+            "391/379",
+            "`spcompress`",
+            "稀疏寄存器 §10；D/M"
+          ],
+          "valid_mapping_row": true
+        }
+      ],
+      "9.7.10.31": [
+        {
+          "line": 815,
+          "companion_cells": [
+            "394/382",
+            "`spdecompress`",
+            "稀疏寄存器 §10；D/M"
+          ],
+          "valid_mapping_row": true
+        }
+      ],
+      "9.7.11.5.1": [
+        {
+          "line": 822,
+          "companion_cells": [
+            "399/387",
+            "`fabric.try_get`",
+            "Fabric/CFT §18；S/R"
+          ],
+          "valid_mapping_row": true
+        }
+      ],
+      "9.7.11.5.2": [
+        {
+          "line": 823,
+          "companion_cells": [
+            "401/389",
+            "`fabric.try_put`",
+            "Fabric/CFT §18；S/R"
+          ],
+          "valid_mapping_row": true
+        }
+      ],
+      "9.7.11.5.3": [
+        {
+          "line": 824,
+          "companion_cells": [
+            "403/391",
+            "`fabric.try_red`",
+            "Fabric/CFT §18；S/R"
+          ],
+          "valid_mapping_row": true
+        }
+      ],
+      "9.7.11.5.4": [
+        {
+          "line": 825,
+          "companion_cells": [
+            "405/393",
+            "`fabric.try_pullred`",
+            "Fabric/CFT §18；S/R"
+          ],
+          "valid_mapping_row": true
+        }
+      ],
+      "9.7.11.5.5": [
+        {
+          "line": 826,
+          "companion_cells": [
+            "407/395",
+            "`fabric.submit`",
+            "Fabric/CFT §18；S/R"
+          ],
+          "valid_mapping_row": true
+        }
+      ],
+      "9.7.11.5.6": [
+        {
+          "line": 827,
+          "companion_cells": [
+            "408/396",
+            "`fabric.wait`",
+            "Fabric/CFT §18；S/R"
+          ],
+          "valid_mapping_row": true
+        }
+      ],
+      "9.7.12.3": [
+        {
+          "line": 834,
+          "companion_cells": [
+            "411/399",
+            "`tex`",
+            "texture/sampler §19；S/R"
+          ],
+          "valid_mapping_row": true
+        }
+      ],
+      "9.7.12.4": [
+        {
+          "line": 835,
+          "companion_cells": [
+            "417/405",
+            "`tld4`",
+            "texture/sampler §19；S/R"
+          ],
+          "valid_mapping_row": true
+        }
+      ],
+      "9.7.12.5": [
+        {
+          "line": 836,
+          "companion_cells": [
+            "420/408",
+            "`txq`",
+            "texture/sampler §19；S/R"
+          ],
+          "valid_mapping_row": true
+        }
+      ],
+      "9.7.12.6": [
+        {
+          "line": 837,
+          "companion_cells": [
+            "422/410",
+            "`istypep`",
+            "texture/sampler §19；S/R"
+          ],
+          "valid_mapping_row": true
+        }
+      ],
+      "9.7.13.1": [
+        {
+          "line": 844,
+          "companion_cells": [
+            "423/411",
+            "`suld`",
+            "surface §19；S/R"
+          ],
+          "valid_mapping_row": true
+        }
+      ],
+      "9.7.13.2": [
+        {
+          "line": 845,
+          "companion_cells": [
+            "425/413",
+            "`sust`",
+            "surface §19；S/R"
+          ],
+          "valid_mapping_row": true
+        }
+      ],
+      "9.7.13.3": [
+        {
+          "line": 846,
+          "companion_cells": [
+            "427/415",
+            "`sured`",
+            "surface §19；S/R"
+          ],
+          "valid_mapping_row": true
+        }
+      ],
+      "9.7.13.4": [
+        {
+          "line": 847,
+          "companion_cells": [
+            "429/417",
+            "`suq`",
+            "surface §19；S/R"
+          ],
+          "valid_mapping_row": true
+        }
+      ],
+      "9.7.14.1": [
+        {
+          "line": 854,
+          "companion_cells": [
+            "431/419",
+            "`{}`",
+            "scope/谓词语法 §5；C"
+          ],
+          "valid_mapping_row": true
+        }
+      ],
+      "9.7.14.2": [
+        {
+          "line": 855,
+          "companion_cells": [
+            "432/420",
+            "`@`",
+            "scope/谓词语法 §5；C"
+          ],
+          "valid_mapping_row": true
+        }
+      ],
+      "9.7.14.3": [
+        {
+          "line": 856,
+          "companion_cells": [
+            "433/421",
+            "`bra`",
+            "ITS/控制/ABI §5、20；D/M"
+          ],
+          "valid_mapping_row": true
+        }
+      ],
+      "9.7.14.4": [
+        {
+          "line": 857,
+          "companion_cells": [
+            "434/422",
+            "`brx.idx`",
+            "ITS/控制/ABI §5、20；D/M"
+          ],
+          "valid_mapping_row": true
+        }
+      ],
+      "9.7.14.5": [
+        {
+          "line": 858,
+          "companion_cells": [
+            "435/423",
+            "`call`",
+            "ITS/控制/ABI §5、20；D/M"
+          ],
+          "valid_mapping_row": true
+        }
+      ],
+      "9.7.14.6": [
+        {
+          "line": 859,
+          "companion_cells": [
+            "437/425",
+            "`ret`",
+            "ITS/控制/ABI §5、20；D/M"
+          ],
+          "valid_mapping_row": true
+        }
+      ],
+      "9.7.14.7": [
+        {
+          "line": 860,
+          "companion_cells": [
+            "438/426",
+            "`exit`",
+            "ITS/控制/ABI §5、20；D/M"
+          ],
+          "valid_mapping_row": true
+        }
+      ],
+      "9.7.15.1": [
+        {
+          "line": 867,
+          "companion_cells": [
+            "440/428",
+            "`bar`<br>`barrier`",
+            "CTA/cluster同步 §14；D/S"
+          ],
+          "valid_mapping_row": true
+        }
+      ],
+      "9.7.15.2": [
+        {
+          "line": 868,
+          "companion_cells": [
+            "443/431",
+            "`bar.warp.sync`",
+            "warp通信/同步 §10、14；D/M"
+          ],
+          "valid_mapping_row": true
+        }
+      ],
+      "9.7.15.3": [
+        {
+          "line": 869,
+          "companion_cells": [
+            "444/432",
+            "`barrier.cluster`",
+            "CTA/cluster同步 §14；D/S"
+          ],
+          "valid_mapping_row": true
+        }
+      ],
+      "9.7.15.4": [
+        {
+          "line": 870,
+          "companion_cells": [
+            "446/434",
+            "`membar`<br>`fence`",
+            "scope/proxy顺序 §13、15；D/S"
+          ],
+          "valid_mapping_row": true
+        }
+      ],
+      "9.7.15.5": [
+        {
+          "line": 871,
+          "companion_cells": [
+            "449/437",
+            "`atom`",
+            "atomic/red §12–13；D/S"
+          ],
+          "valid_mapping_row": true
+        }
+      ],
+      "9.7.15.6": [
+        {
+          "line": 872,
+          "companion_cells": [
+            "455/443",
+            "`red`",
+            "atomic/red §12–13；D/S"
+          ],
+          "valid_mapping_row": true
+        }
+      ],
+      "9.7.15.7": [
+        {
+          "line": 873,
+          "companion_cells": [
+            "460/448",
+            "`red.async`",
+            "atomic/red §12–13；D/S"
+          ],
+          "valid_mapping_row": true
+        }
+      ],
+      "9.7.15.8": [
+        {
+          "line": 874,
+          "companion_cells": [
+            "463/451",
+            "`multimem.red.async`",
+            "SoC多位置异步 §15、18；S/R"
+          ],
+          "valid_mapping_row": true
+        }
+      ],
+      "9.7.15.9": [
+        {
+          "line": 875,
+          "companion_cells": [
+            "465/453",
+            "`vote`（deprecated）",
+            "warp通信/同步 §10、14；D/M"
+          ],
+          "valid_mapping_row": true
+        }
+      ],
+      "9.7.15.10": [
+        {
+          "line": 876,
+          "companion_cells": [
+            "466/454",
+            "`vote.sync`",
+            "warp通信/同步 §10、14；D/M"
+          ],
+          "valid_mapping_row": true
+        }
+      ],
+      "9.7.15.11": [
+        {
+          "line": 877,
+          "companion_cells": [
+            "468/456",
+            "`match.sync`",
+            "warp通信/同步 §10、14；D/M"
+          ],
+          "valid_mapping_row": true
+        }
+      ],
+      "9.7.15.12": [
+        {
+          "line": 878,
+          "companion_cells": [
+            "469/457",
+            "`activemask`",
+            "warp通信/同步 §10、14；D/M"
+          ],
+          "valid_mapping_row": true
+        }
+      ],
+      "9.7.15.13": [
+        {
+          "line": 879,
+          "companion_cells": [
+            "470/458",
+            "`redux.sync`",
+            "warp通信/同步 §10、14；D/M"
+          ],
+          "valid_mapping_row": true
+        }
+      ],
+      "9.7.15.14": [
+        {
+          "line": 880,
+          "companion_cells": [
+            "471/459",
+            "`griddepcontrol`",
+            "runtime grid依赖 §17；S/R"
+          ],
+          "valid_mapping_row": true
+        }
+      ],
+      "9.7.15.15": [
+        {
+          "line": 881,
+          "companion_cells": [
+            "472/460",
+            "`elect.sync`",
+            "warp通信/同步 §10、14；D/M"
+          ],
+          "valid_mapping_row": true
+        }
+      ],
+      "9.7.15.16.12": [
+        {
+          "line": 882,
+          "companion_cells": [
+            "479/467",
+            "`mbarrier.init`",
+            "SMEM barrier对象 §14；D/S"
+          ],
+          "valid_mapping_row": true
+        }
+      ],
+      "9.7.15.16.13": [
+        {
+          "line": 883,
+          "companion_cells": [
+            "480/468",
+            "`mbarrier.inval`",
+            "SMEM barrier对象 §14；D/S"
+          ],
+          "valid_mapping_row": true
+        }
+      ],
+      "9.7.15.16.14": [
+        {
+          "line": 884,
+          "companion_cells": [
+            "482/470",
+            "`mbarrier.expect_tx`",
+            "SMEM barrier对象 §14；D/S"
+          ],
+          "valid_mapping_row": true
+        }
+      ],
+      "9.7.15.16.15": [
+        {
+          "line": 885,
+          "companion_cells": [
+            "483/471",
+            "`mbarrier.complete_tx`",
+            "SMEM barrier对象 §14；D/S"
+          ],
+          "valid_mapping_row": true
+        }
+      ],
+      "9.7.15.16.16": [
+        {
+          "line": 886,
+          "companion_cells": [
+            "485/473",
+            "`mbarrier.arrive`",
+            "SMEM barrier对象 §14；D/S"
+          ],
+          "valid_mapping_row": true
+        }
+      ],
+      "9.7.15.16.17": [
+        {
+          "line": 887,
+          "companion_cells": [
+            "487/475",
+            "`mbarrier.arrive_drop`",
+            "SMEM barrier对象 §14；D/S"
+          ],
+          "valid_mapping_row": true
+        }
+      ],
+      "9.7.15.16.18": [
+        {
+          "line": 888,
+          "companion_cells": [
+            "490/478",
+            "`cp.async.mbarrier.arrive`",
+            "SMEM barrier对象 §14；D/S"
+          ],
+          "valid_mapping_row": true
+        }
+      ],
+      "9.7.15.16.19": [
+        {
+          "line": 889,
+          "companion_cells": [
+            "492/480",
+            "`mbarrier.test_wait`<br>`mbarrier.try_wait`",
+            "SMEM barrier对象 §14；D/S"
+          ],
+          "valid_mapping_row": true
+        }
+      ],
+      "9.7.15.16.20": [
+        {
+          "line": 890,
+          "companion_cells": [
+            "498/486",
+            "`mbarrier.pending_count`",
+            "SMEM barrier对象 §14；D/S"
+          ],
+          "valid_mapping_row": true
+        }
+      ],
+      "9.7.15.16.21": [
+        {
+          "line": 891,
+          "companion_cells": [
+            "499/487",
+            "`mbarrier.check_layout`",
+            "SMEM barrier对象 §14；D/S"
+          ],
+          "valid_mapping_row": true
+        }
+      ],
+      "9.7.15.17": [
+        {
+          "line": 892,
+          "companion_cells": [
+            "500/488",
+            "`tensormap.cp_fenceproxy`",
+            "scope/proxy顺序 §13、15；D/S"
+          ],
+          "valid_mapping_row": true
+        }
+      ],
+      "9.7.15.18": [
+        {
+          "line": 893,
+          "companion_cells": [
+            "501/489",
+            "`clusterlaunchcontrol.try_cancel`",
+            "设备工作取消 §17；S/R"
+          ],
+          "valid_mapping_row": true
+        }
+      ],
+      "9.7.15.19": [
+        {
+          "line": 894,
+          "companion_cells": [
+            "504/492",
+            "`clusterlaunchcontrol.query_cancel`",
+            "取消response解析 §17；D/M/R"
+          ],
+          "valid_mapping_row": true
+        }
+      ],
+      "9.7.16.4.3": [
+        {
+          "line": 901,
+          "companion_cells": [
+            "518/506",
+            "`wmma.load`",
+            "warp矩阵移动 §16；D/M/R"
+          ],
+          "valid_mapping_row": true
+        }
+      ],
+      "9.7.16.4.4": [
+        {
+          "line": 902,
+          "companion_cells": [
+            "521/509",
+            "`wmma.store`",
+            "warp矩阵移动 §16；D/M/R"
+          ],
+          "valid_mapping_row": true
+        }
+      ],
+      "9.7.16.4.5": [
+        {
+          "line": 903,
+          "companion_cells": [
+            "523/511",
+            "`wmma.mma`",
+            "warp矩阵适配 §16；D/M/R"
+          ],
+          "valid_mapping_row": true
+        }
+      ],
+      "9.7.16.5.14": [
+        {
+          "line": 904,
+          "companion_cells": [
+            "586/574",
+            "`mma`",
+            "warp矩阵适配 §16；D/M/R"
+          ],
+          "valid_mapping_row": true
+        }
+      ],
+      "9.7.16.5.15": [
+        {
+          "line": 905,
+          "companion_cells": [
+            "597/585",
+            "`ldmatrix`",
+            "warp矩阵移动 §16；D/M/R"
+          ],
+          "valid_mapping_row": true
+        }
+      ],
+      "9.7.16.5.16": [
+        {
+          "line": 906,
+          "companion_cells": [
+            "603/591",
+            "`stmatrix`",
+            "warp矩阵移动 §16；D/M/R"
+          ],
+          "valid_mapping_row": true
+        }
+      ],
+      "9.7.16.5.17": [
+        {
+          "line": 907,
+          "companion_cells": [
+            "606/594",
+            "`movmatrix`",
+            "warp矩阵重排 §16；D/M/R"
+          ],
+          "valid_mapping_row": true
+        }
+      ],
+      "9.7.16.6.3": [
+        {
+          "line": 908,
+          "companion_cells": [
+            "637/625",
+            "`mma.sp`<br>`mma.sp::ordered_metadata`",
+            "warp矩阵适配 §16；D/M/R"
+          ],
+          "valid_mapping_row": true
+        }
+      ],
+      "9.7.17.5.2": [
+        {
+          "line": 915,
+          "companion_cells": [
+            "675/663",
+            "`wgmma.mma_async`",
+            "WGMMA独立适配 §16；D/M/R"
+          ],
+          "valid_mapping_row": true
+        }
+      ],
+      "9.7.17.6.3": [
+        {
+          "line": 916,
+          "companion_cells": [
+            "690/678",
+            "`wgmma.mma_async.sp`",
+            "WGMMA独立适配 §16；D/M/R"
+          ],
+          "valid_mapping_row": true
+        }
+      ],
+      "9.7.17.7.1": [
+        {
+          "line": 917,
+          "companion_cells": [
+            "695/683",
+            "`wgmma.fence`",
+            "WGMMA group §16；D/R"
+          ],
+          "valid_mapping_row": true
+        }
+      ],
+      "9.7.17.7.2": [
+        {
+          "line": 918,
+          "companion_cells": [
+            "696/684",
+            "`wgmma.commit_group`",
+            "WGMMA group §16；D/R"
+          ],
+          "valid_mapping_row": true
+        }
+      ],
+      "9.7.17.7.3": [
+        {
+          "line": 919,
+          "companion_cells": [
+            "697/685",
+            "`wgmma.wait_group`",
+            "WGMMA group §16；D/R"
+          ],
+          "valid_mapping_row": true
+        }
+      ],
+      "9.7.18.7.1": [
+        {
+          "line": 926,
+          "companion_cells": [
+            "738/726",
+            "`tcgen05.alloc`<br>`tcgen05.dealloc`<br>`tcgen05.relinquish_alloc_permit`",
+            "TMEM owner/permit §16；D"
+          ],
+          "valid_mapping_row": true
+        }
+      ],
+      "9.7.18.8.3": [
+        {
+          "line": 927,
+          "companion_cells": [
+            "742/730",
+            "`tcgen05.ld`",
+            "TMEM↔RF/wait §16；D"
+          ],
+          "valid_mapping_row": true
+        }
+      ],
+      "9.7.18.8.4": [
+        {
+          "line": 928,
+          "companion_cells": [
+            "746/734",
+            "`tcgen05.st`",
+            "TMEM↔RF/wait §16；D"
+          ],
+          "valid_mapping_row": true
+        }
+      ],
+      "9.7.18.8.5": [
+        {
+          "line": 929,
+          "companion_cells": [
+            "748/736",
+            "`tcgen05.wait`",
+            "TMEM↔RF/wait §16；D"
+          ],
+          "valid_mapping_row": true
+        }
+      ],
+      "9.7.18.9.2": [
+        {
+          "line": 930,
+          "companion_cells": [
+            "751/739",
+            "`tcgen05.cp`",
+            "SMEM→TMEM/shift §16；D"
+          ],
+          "valid_mapping_row": true
+        }
+      ],
+      "9.7.18.9.3": [
+        {
+          "line": 931,
+          "companion_cells": [
+            "753/741",
+            "`tcgen05.shift`",
+            "SMEM→TMEM/shift §16；D"
+          ],
+          "valid_mapping_row": true
+        }
+      ],
+      "9.7.18.10.10.1": [
+        {
+          "line": 932,
+          "companion_cells": [
+            "823/811",
+            "`tcgen05.mma`",
+            "Tensor/tile→MALU §16；D"
+          ],
+          "valid_mapping_row": true
+        }
+      ],
+      "9.7.18.10.10.2": [
+        {
+          "line": 933,
+          "companion_cells": [
+            "830/818",
+            "`tcgen05.mma.sp`",
+            "Tensor/tile→MALU §16；D"
+          ],
+          "valid_mapping_row": true
+        }
+      ],
+      "9.7.18.10.10.3": [
+        {
+          "line": 934,
+          "companion_cells": [
+            "837/825",
+            "`tcgen05.mma.ws`",
+            "Tensor/tile→MALU §16；D"
+          ],
+          "valid_mapping_row": true
+        }
+      ],
+      "9.7.18.10.10.4": [
+        {
+          "line": 935,
+          "companion_cells": [
+            "840/828",
+            "`tcgen05.mma.ws.sp`",
+            "Tensor/tile→MALU §16；D"
+          ],
+          "valid_mapping_row": true
+        }
+      ],
+      "9.7.18.11.1": [
+        {
+          "line": 936,
+          "companion_cells": [
+            "843/831",
+            "`tcgen05.fence`",
+            "Tensor顺序/完成 §16；D"
+          ],
+          "valid_mapping_row": true
+        }
+      ],
+      "9.7.18.12.1": [
+        {
+          "line": 937,
+          "companion_cells": [
+            "844/832",
+            "`tcgen05.commit`",
+            "Tensor顺序/完成 §16；D"
+          ],
+          "valid_mapping_row": true
+        }
+      ],
+      "9.7.19.1": [
+        {
+          "line": 944,
+          "companion_cells": [
+            "847/835",
+            "`stacksave`",
+            "thread stack/ABI §20；D/M"
+          ],
+          "valid_mapping_row": true
+        }
+      ],
+      "9.7.19.2": [
+        {
+          "line": 945,
+          "companion_cells": [
+            "848/836",
+            "`stackrestore`",
+            "thread stack/ABI §20；D/M"
+          ],
+          "valid_mapping_row": true
+        }
+      ],
+      "9.7.19.3": [
+        {
+          "line": 946,
+          "companion_cells": [
+            "849/837",
+            "`alloca`",
+            "thread stack/ABI §20；D/M"
+          ],
+          "valid_mapping_row": true
+        }
+      ],
+      "9.7.20.1.1": [
+        {
+          "line": 953,
+          "companion_cells": [
+            "853/841",
+            "`vadd`<br>`vsub`<br>`vabsdiff`<br>`vmin`<br>`vmax`",
+            "packed INT/video §8；D/M"
+          ],
+          "valid_mapping_row": true
+        }
+      ],
+      "9.7.20.1.2": [
+        {
+          "line": 954,
+          "companion_cells": [
+            "854/842",
+            "`vshl`<br>`vshr`",
+            "packed INT/video §8；D/M"
+          ],
+          "valid_mapping_row": true
+        }
+      ],
+      "9.7.20.1.3": [
+        {
+          "line": 955,
+          "companion_cells": [
+            "856/844",
+            "`vmad`",
+            "packed INT/video §8；D/M"
+          ],
+          "valid_mapping_row": true
+        }
+      ],
+      "9.7.20.1.4": [
+        {
+          "line": 956,
+          "companion_cells": [
+            "858/846",
+            "`vset`",
+            "packed INT/video §8；D/M"
+          ],
+          "valid_mapping_row": true
+        }
+      ],
+      "9.7.20.2.1": [
+        {
+          "line": 957,
+          "companion_cells": [
+            "860/848",
+            "`vadd2`<br>`vsub2`<br>`vavrg2`<br>`vabsdiff2`<br>`vmin2`<br>`vmax2`",
+            "packed INT/video §8；D/M"
+          ],
+          "valid_mapping_row": true
+        }
+      ],
+      "9.7.20.2.2": [
+        {
+          "line": 958,
+          "companion_cells": [
+            "863/851",
+            "`vset2`",
+            "packed INT/video §8；D/M"
+          ],
+          "valid_mapping_row": true
+        }
+      ],
+      "9.7.20.2.3": [
+        {
+          "line": 959,
+          "companion_cells": [
+            "864/852",
+            "`vadd4`<br>`vsub4`<br>`vavrg4`<br>`vabsdiff4`<br>`vmin4`<br>`vmax4`",
+            "packed INT/video §8；D/M"
+          ],
+          "valid_mapping_row": true
+        }
+      ],
+      "9.7.20.2.4": [
+        {
+          "line": 960,
+          "companion_cells": [
+            "867/855",
+            "`vset4`",
+            "packed INT/video §8；D/M"
+          ],
+          "valid_mapping_row": true
+        }
+      ],
+      "9.7.21.1": [
+        {
+          "line": 967,
+          "companion_cells": [
+            "869/857",
+            "`brkpt`",
+            "debug/调度/系统 §20；D/S"
+          ],
+          "valid_mapping_row": true
+        }
+      ],
+      "9.7.21.2": [
+        {
+          "line": 968,
+          "companion_cells": [
+            "869/857",
+            "`nanosleep`",
+            "debug/调度/系统 §20；D/S"
+          ],
+          "valid_mapping_row": true
+        }
+      ],
+      "9.7.21.3": [
+        {
+          "line": 969,
+          "companion_cells": [
+            "870/858",
+            "`pmevent`",
+            "debug/调度/系统 §20；D/S"
+          ],
+          "valid_mapping_row": true
+        }
+      ],
+      "9.7.21.4": [
+        {
+          "line": 970,
+          "companion_cells": [
+            "871/859",
+            "`trap`",
+            "debug/调度/系统 §20；D/S"
+          ],
+          "valid_mapping_row": true
+        }
+      ],
+      "9.7.21.5": [
+        {
+          "line": 971,
+          "companion_cells": [
+            "872/860",
+            "`setmaxnreg`",
+            "动态RF池 §7；D"
+          ],
+          "valid_mapping_row": true
+        }
+      ]
+    },
+    "duplicate_instruction_section_rows": {},
+    "special_register_coverage_required": true,
+    "special_register_mapped_sections": [
+      "10.1",
+      "10.2",
+      "10.3",
+      "10.4",
+      "10.5",
+      "10.6",
+      "10.7",
+      "10.8",
+      "10.9",
+      "10.10",
+      "10.11",
+      "10.12",
+      "10.13",
+      "10.14",
+      "10.15",
+      "10.16",
+      "10.17",
+      "10.18",
+      "10.19",
+      "10.20",
+      "10.21",
+      "10.22",
+      "10.23",
+      "10.24",
+      "10.25",
+      "10.26",
+      "10.27",
+      "10.28",
+      "10.29",
+      "10.30",
+      "10.31",
+      "10.32",
+      "10.33",
+      "10.34",
+      "10.35"
+    ],
+    "special_register_missing_sections": []
+  },
+  "status": "pass"
+}

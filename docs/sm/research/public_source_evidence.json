@@ -1,0 +1,32 @@
+[
+  {
+    "key": "programming_model",
+    "url": "https://docs.nvidia.com/cuda/cuda-programming-guide/01-introduction/programming-model.html",
+    "access_date": "2026-11-01",
+    "error": "<urlopen error Tunnel connection failed: 403 Forbidden>"
+  },
+  {
+    "key": "blackwell_tuning",
+    "url": "https://docs.nvidia.com/cuda/blackwell-tuning-guide/index.html",
+    "access_date": "2026-11-01",
+    "error": "<urlopen error Tunnel connection failed: 403 Forbidden>"
+  },
+  {
+    "key": "blackwell_ultra",
+    "url": "https://developer.nvidia.com/blog/inside-nvidia-blackwell-ultra-the-chip-powering-the-ai-factory-era/",
+    "access_date": "2026-11-01",
+    "error": "<urlopen error Tunnel connection failed: 403 Forbidden>"
+  },
+  {
+    "key": "async_copies",
+    "url": "https://docs.nvidia.com/cuda/cuda-programming-guide/04-special-topics/async-copies.html",
+    "access_date": "2026-11-01",
+    "error": "<urlopen error Tunnel connection failed: 403 Forbidden>"
+  },
+  {
+    "key": "rubin",
+    "url": "https://www.nvidia.com/en-us/data-center/vera-rubin-nvl72/",
+    "access_date": "2026-11-01",
+    "error": "<urlopen error Tunnel connection failed: 403 Forbidden>"
+  }
+]

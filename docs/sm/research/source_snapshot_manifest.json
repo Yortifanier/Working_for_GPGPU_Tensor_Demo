@@ -1,0 +1,112 @@
+{
+  "generated_date": "2026-11-07",
+  "meaning": "Local reread of previously acquired snapshots; this is not a fresh successful web access. Historical access date is from the cited prior review; SHA256 records the files available now. Local snapshot files are not committed. Fixed PTX and source reviews are the review baseline.",
+  "historical_snapshots": [
+    {
+      "key": "cuda_programming_model",
+      "url": "https://docs.nvidia.com/cuda/cuda-programming-guide/01-introduction/programming-model.html",
+      "historical_access_date": "2026-10-26",
+      "historical_access_evidence": "docs/tcgen05/research/architecture_source_review.md",
+      "local_reread_date": "2026-11-07",
+      "files": [
+        {
+          "local_snapshot": "/workspace/output/tcgen05/sources/cuda_programming_model.html",
+          "bytes": 65207,
+          "sha256": "b273d2799a014cf3e74363388d4fbba05f46c4e271bed30e0f1240e84d283c05",
+          "included_in_repository": false
+        },
+        {
+          "local_snapshot": "/workspace/output/tcgen05/sources/cuda_programming_model.txt",
+          "bytes": 27234,
+          "sha256": "6fa55cbeb73fb3d3d92c2da04cca6804524eda0049cb7cc4350f61545ea7f471",
+          "included_in_repository": false
+        }
+      ]
+    },
+    {
+      "key": "cuda_async_copies",
+      "url": "https://docs.nvidia.com/cuda/cuda-programming-guide/04-special-topics/async-copies.html",
+      "historical_access_date": "2026-10-26",
+      "historical_access_evidence": "docs/tcgen05/research/architecture_source_review.md",
+      "local_reread_date": "2026-11-07",
+      "files": [
+        {
+          "local_snapshot": "/workspace/output/tcgen05/sources/cuda_async_copies.html",
+          "bytes": 357712,
+          "sha256": "0a9b465bd49692769c5976d7108ef5b33bd478b6e9e9dd35dd46029e468d9aa4",
+          "included_in_repository": false
+        },
+        {
+          "local_snapshot": "/workspace/output/tcgen05/sources/cuda_async_copies.txt",
+          "bytes": 87824,
+          "sha256": "f39a186dcd6f070a6abf8dea890d19f758b4a572d24d3c08d3b443fe83b856b5",
+          "included_in_repository": false
+        }
+      ]
+    },
+    {
+      "key": "blackwell_tuning",
+      "url": "https://docs.nvidia.com/cuda/blackwell-tuning-guide/index.html",
+      "historical_access_date": "2026-10-26",
+      "historical_access_evidence": "docs/tcgen05/research/architecture_source_review.md",
+      "local_reread_date": "2026-11-07",
+      "files": [
+        {
+          "local_snapshot": "/workspace/output/tcgen05/sources/blackwell_tuning.html",
+          "bytes": 26365,
+          "sha256": "320829e71146ccdbaf8c6c39b84c1b568aa90b19441c0e3905d7cb4251d9a401",
+          "included_in_repository": false
+        },
+        {
+          "local_snapshot": "/workspace/output/tcgen05/sources/blackwell_tuning.txt",
+          "bytes": 14369,
+          "sha256": "ae410abd30eb86f2dd07aeab09292366588892fef952ce8562c71ec8ce70afee",
+          "included_in_repository": false
+        }
+      ]
+    },
+    {
+      "key": "blackwell_blog",
+      "url": "https://developer.nvidia.com/blog/inside-nvidia-blackwell-ultra-the-chip-powering-the-ai-factory-era/",
+      "historical_access_date": "2026-10-26",
+      "historical_access_evidence": "docs/tcgen05/research/architecture_source_review.md",
+      "local_reread_date": "2026-11-07",
+      "files": [
+        {
+          "local_snapshot": "/workspace/output/tcgen05/sources/blackwell_blog.html",
+          "bytes": 302046,
+          "sha256": "3849341d29388182f9ba7d9918a9cbd313fdbdb168f152ec9957134d18150aa1",
+          "included_in_repository": false
+        },
+        {
+          "local_snapshot": "/workspace/output/tcgen05/sources/blackwell_blog.txt",
+          "bytes": 22564,
+          "sha256": "756bf52521452789fa2fd307bd7f1afd017c6cd4f5213e9461b89dfe49e7f3e3",
+          "included_in_repository": false
+        }
+      ]
+    },
+    {
+      "key": "rubin_product",
+      "url": "https://www.nvidia.com/en-us/data-center/vera-rubin-nvl72/",
+      "historical_access_date": "2026-10-26",
+      "historical_access_evidence": "docs/tcgen05/research/architecture_source_review.md",
+      "local_reread_date": "2026-11-07",
+      "files": [
+        {
+          "local_snapshot": "/workspace/output/tcgen05/sources/rubin_product.html",
+          "bytes": 302711,
+          "sha256": "6cc3116c2c9776e071a5929d18a83c6b041f4ae8450b8494424f9fc34577a9fd",
+          "included_in_repository": false
+        },
+        {
+          "local_snapshot": "/workspace/output/tcgen05/sources/rubin_product.txt",
+          "bytes": 17062,
+          "sha256": "88baaba21d541fac77da3617cd1bbe5993a8af33883e7c65b25b5bf944e9825a",
+          "included_in_repository": false
+        }
+      ]
+    }
+  ],
+  "current_attempt_log": "public_source_evidence.json"
+}
