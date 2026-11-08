@@ -1,0 +1,64 @@
+{
+  "date": "2026-11-08",
+  "check_kind": "ROOT_ARTIFACT_AUDIT",
+  "scope": "Vplan artifacts and metadata only; no generator/reference-model/SM/SoC cases executed.",
+  "artifacts": {
+    "SM_INSTR_GEN_VPLAN.md": {
+      "sha256": "71cd695ebdfbba906d17233c975762cec863187d2e4e96afc723a5d4e40915c9",
+      "bytes": 91412
+    },
+    "vplan_features.json": {
+      "sha256": "8ee62fb376abac123d8704fad8d12c03b681e5736890373436b29a585f67a17d",
+      "bytes": 94217
+    },
+    "testpoints.json": {
+      "sha256": "9a230465115ed9e01b8edf64da32aba41af7a2da80b12275e28a8894792018c3",
+      "bytes": 98099
+    },
+    "SM_Instruction_Generator_Vplan_v1.0.docx": {
+      "sha256": "73a195874e8e3708fbdda52f5b4f068a354d0996171ed58e17668e62adb69a24",
+      "bytes": 848633
+    },
+    "SM_Instruction_Generator_Vplan_v1.0.pdf": {
+      "sha256": "bdf61648e7216565a0b68455acfa9c1cf3bcf1a4fd542b4b8a1ba497dbf445b0",
+      "bytes": 2558901
+    }
+  },
+  "docx_testpoints_checked": 106,
+  "fields": [
+    "id",
+    "title",
+    "stimulus",
+    "checker",
+    "expected_result"
+  ],
+  "native_structure": {
+    "tables": 38,
+    "rows": 232,
+    "no_split_rows": 232,
+    "repeated_headers": 38,
+    "OMML": 1
+  },
+  "embedded_images": 2,
+  "pdf_pages": 43,
+  "text_outside_page_bounds": [],
+  "root_final_pages_actually_viewed": [
+    12,
+    31,
+    40
+  ],
+  "root_source_figures_actually_viewed": [
+    1,
+    2
+  ],
+  "P1_P2_DUT_coverage_references": 0,
+  "dynamic_testpoints_executed": 0,
+  "dynamic_execution": "NOT_RUN",
+  "all_catalogue_statuses": "PLANNED/NOT_RUN",
+  "passed": true,
+  "eof_only_normalization_pixel_equivalence": {
+    "previous_pdf_sha256": "eb296561a79ad9f8793b57fceaa3919dc29838741be5521b1a70f8e7e2525968",
+    "current_pdf_sha256": "bdf61648e7216565a0b68455acfa9c1cf3bcf1a4fd542b4b8a1ba497dbf445b0",
+    "all_43_pages_identical_at_72_DPI": true
+  }
+}

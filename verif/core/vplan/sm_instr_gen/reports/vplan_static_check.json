@@ -1,0 +1,37 @@
+{
+  "check_kind": "PLAN_STATIC_CHECK",
+  "result": "PASS",
+  "passed": true,
+  "scope": "Schema, source fidelity and planning associations only; not generator, reference-model, adapter or DUT execution.",
+  "dynamic_execution": "NOT_RUN",
+  "dynamic_testpoints_executed": 0,
+  "counts": {
+    "instruction_traceability": 217,
+    "special_register_traceability": 35,
+    "features": 25,
+    "testpoints": 106,
+    "coverage_points": 75,
+    "source_sections": 252
+  },
+  "input_sha256": {
+    "vplan_features.json": "8ee62fb376abac123d8704fad8d12c03b681e5736890373436b29a585f67a17d",
+    "testpoints.json": "9a230465115ed9e01b8edf64da32aba41af7a2da80b12275e28a8894792018c3",
+    "instruction_traceability.json": "ea38633754fa45931cfa11e79dd980957f8f7fb10cc563c81c5833b166be25b6",
+    "special_register_traceability.json": "25752e2c68668e5f66ba270ffe2339729bcd0e1a37726e70a6a1de611069b40e",
+    "instruction_traceability.csv": "4826f9a1474657d02ee06939bf2a4aabbadf7219dc6f64c41ebfa2d1e8f4018e",
+    "special_register_traceability.csv": "1b15dacbb56448405bde0e691fbd271129a64f2b39907c8bbeb5e84cecc8a02b",
+    "SM_INSTR_GEN_VPLAN.md": "71cd695ebdfbba906d17233c975762cec863187d2e4e96afc723a5d4e40915c9"
+  },
+  "source_inventory_sha256": {
+    "docs/sm/research/ptx94_instruction_inventory.json": "77f932724a2ab3c91f7d3ab8b60269b6e274afcf43db2c82bed3056f542c126a",
+    "docs/sm/research/ptx94_special_register_inventory.json": "7dfe04b4778c9490864ce705318d353ad17241596ef8d632ea0cf3fc8ac43465",
+    "docs/sm/SM_ARCHITECTURE.md": "b28eaee5bf381c7dbcc8387687c62bc8030eb722935e11774cf3eaecb20fb0ba"
+  },
+  "checker_sha256": "21aed2d9eca33bb3ab9e2588702be953325fc0af39237121cc7e445d08e4aae1",
+  "schema_sha256": {
+    "testpoints.schema.json": "c293317cace5c65b5584d98a3f798c8ba8f5588205aa42a4c80c27a10d771e3b",
+    "trace.schema.json": "2eb1eeed56dcc529eb72a89624872869d68f26bd66bc38952688f693ebe5bf72",
+    "vplan_features.schema.json": "77fea9d4affd826a5d52af5e4435d2de84c17c4326baa8dc260640cd74dbf2bd"
+  },
+  "errors": []
+}

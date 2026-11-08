@@ -1,0 +1,2062 @@
+{
+  "schema_version": "1.0",
+  "generated_date": "2026-11-08",
+  "artifact_kind": "special_register_traceability",
+  "source_inventories": [
+    {
+      "path": "docs/sm/research/ptx94_special_register_inventory.json",
+      "sha256": "7dfe04b4778c9490864ce705318d353ad17241596ef8d632ea0cf3fc8ac43465"
+    }
+  ],
+  "source_pdf": {
+    "file_name": "ptx_isa_9.4.pdf",
+    "sha256": "4be2905e240b70a8b176b4d6fb162714f2fc361a9503572d848ff723abf289c3",
+    "release": "9.4"
+  },
+  "feature_catalog": [
+    {
+      "id": "GEN-ISA-01",
+      "description": "源版本、target、合法形式与能力入口"
+    },
+    {
+      "id": "GEN-ALU-01",
+      "description": "整数、逻辑、选择、寄存器重排与video"
+    },
+    {
+      "id": "GEN-FP-01",
+      "description": "浮点、packed/mixed精度与特殊函数"
+    },
+    {
+      "id": "GEN-CVT-01",
+      "description": "数值转换、packing与稀疏格式处理"
+    },
+    {
+      "id": "GEN-CTRL-01",
+      "description": "控制流、谓词、作用域与调用"
+    },
+    {
+      "id": "GEN-COLL-01",
+      "description": "warp collective成员与通信"
+    },
+    {
+      "id": "GEN-MEM-01",
+      "description": "地址空间、普通访存、cache与内存原子"
+    },
+    {
+      "id": "GEN-SMEM-01",
+      "description": "shared对象、分配边界与区域初始化"
+    },
+    {
+      "id": "GEN-SYNC-01",
+      "description": "barrier、mbarrier、fence与proxy顺序"
+    },
+    {
+      "id": "GEN-ASYNC-01",
+      "description": "异步复制、TMA、组提交与完成"
+    },
+    {
+      "id": "GEN-TMEM-01",
+      "description": "TMEM资源与传输"
+    },
+    {
+      "id": "GEN-MATRIX-01",
+      "description": "WMMA/MMA/WGMMA/tcgen05矩阵形式"
+    },
+    {
+      "id": "GEN-CLUSTER-01",
+      "description": "cluster、CTA pair、DSM及launch协同"
+    },
+    {
+      "id": "GEN-FABRIC-01",
+      "description": "Fabric、CFT与multimem系统服务"
+    },
+    {
+      "id": "GEN-TEX-01",
+      "description": "texture与surface对象服务"
+    },
+    {
+      "id": "GEN-SYS-01",
+      "description": "stack、寄存器资源、运行时、调试和特殊状态"
+    }
+  ],
+  "counts": {
+    "entries": 35,
+    "actual_instruction_description_sections": 0,
+    "control_syntax_sections": 0,
+    "special_register_description_sections": 35,
+    "executed_tests": 0
+  },
+  "counting_policy": "Index counts are description-section coverage only, not unique SASS opcodes, legal tuple counts, implemented capabilities, executed tests or PASS results. Special registers are indexed separately.",
+  "planning_policy": {
+    "positive_selection": "VALIDATED_TARGET_LEGAL_FORMS_ONLY",
+    "disabled_capability_expected": "CAPABILITY_DISABLED at generator/legalization boundary; this is a project diagnostic, not a PTX hardware exception",
+    "ambiguous_source_expected": "BLOCKED_SOURCE_REVIEW for affected forms only",
+    "undefined_behavior_policy": "Reject invalid generator input or inspect frontend-only diagnostics; do not emit PTX-undefined executable cases and invent a trap oracle",
+    "readiness": "PLANNED: validated tuple registry, generator, independent checker/reference model and selected backend capability must be available before executing applicable tests"
+  },
+  "entries": [
+    {
+      "trace_id": "SREG-10.1",
+      "section": "10.1",
+      "category_section": "10",
+      "category": "Special Registers",
+      "names": [
+        "%tid"
+      ],
+      "pdf_page_start": 876,
+      "printed_page_start": 864,
+      "entry_kind": "special_register_description",
+      "is_executable_instruction_description": false,
+      "domain": "SPECIAL_REGISTER_STATE_PROVIDER",
+      "domain_description": "CTA/thread启动身份与线程坐标",
+      "domain_evidence_status": "project_state_routing_suggestion_not_NVIDIA_physical_register_file_fact",
+      "source_refs": [
+        "docs/sm/research/ptx94_special_register_inventory.json#10.1"
+      ],
+      "primary_feature_id": "GEN-SYS-01",
+      "related_feature_ids": [
+        "GEN-CTRL-01",
+        "GEN-CVT-01",
+        "GEN-ISA-01"
+      ],
+      "test_family": "special_register_read",
+      "planned_stimulus": [
+        "按本节预定义声明和target生成mov/cvt等合法读取上下文；range/vector标签不假装只代表一个物理CSR。"
+      ],
+      "planned_checks": [
+        "检查预定义读的类型/分量/target及状态来源；不是额外instruction opcode，不能混入215/217计数。",
+        "读取期望来自规范和已注册launch/runtime状态模型；undefined/target-specific值不得编造固定golden。"
+      ],
+      "coverage_dimensions": [
+        "source_section",
+        "capability_state",
+        "generation_mode",
+        "read_type",
+        "read_width",
+        "target_profile",
+        "runtime_context",
+        "state_provider"
+      ],
+      "capability_policy": {
+        "positive_selection": "VALIDATED_TARGET_LEGAL_FORMS_ONLY",
+        "disabled_capability_expected": "CAPABILITY_DISABLED at generator/legalization boundary; this is a project diagnostic, not a PTX hardware exception",
+        "ambiguous_source_expected": "BLOCKED_SOURCE_REVIEW for affected forms only",
+        "undefined_behavior_policy": "Reject invalid generator input or inspect frontend-only diagnostics; do not emit PTX-undefined executable cases and invent a trap oracle",
+        "readiness": "PLANNED: validated tuple registry, generator, independent checker/reference model and selected backend capability must be available before executing applicable tests"
+      },
+      "blocked_form_conditions": [],
+      "source_review_note": null,
+      "status": "PLANNED",
+      "execution": "NOT_RUN"
+    },
+    {
+      "trace_id": "SREG-10.2",
+      "section": "10.2",
+      "category_section": "10",
+      "category": "Special Registers",
+      "names": [
+        "%ntid"
+      ],
+      "pdf_page_start": 877,
+      "printed_page_start": 865,
+      "entry_kind": "special_register_description",
+      "is_executable_instruction_description": false,
+      "domain": "SPECIAL_REGISTER_STATE_PROVIDER",
+      "domain_description": "CTA launch维度",
+      "domain_evidence_status": "project_state_routing_suggestion_not_NVIDIA_physical_register_file_fact",
+      "source_refs": [
+        "docs/sm/research/ptx94_special_register_inventory.json#10.2"
+      ],
+      "primary_feature_id": "GEN-SYS-01",
+      "related_feature_ids": [
+        "GEN-CTRL-01",
+        "GEN-CVT-01",
+        "GEN-ISA-01"
+      ],
+      "test_family": "special_register_read",
+      "planned_stimulus": [
+        "按本节预定义声明和target生成mov/cvt等合法读取上下文；range/vector标签不假装只代表一个物理CSR。"
+      ],
+      "planned_checks": [
+        "检查预定义读的类型/分量/target及状态来源；不是额外instruction opcode，不能混入215/217计数。",
+        "读取期望来自规范和已注册launch/runtime状态模型；undefined/target-specific值不得编造固定golden。"
+      ],
+      "coverage_dimensions": [
+        "source_section",
+        "capability_state",
+        "generation_mode",
+        "read_type",
+        "read_width",
+        "target_profile",
+        "runtime_context",
+        "state_provider"
+      ],
+      "capability_policy": {
+        "positive_selection": "VALIDATED_TARGET_LEGAL_FORMS_ONLY",
+        "disabled_capability_expected": "CAPABILITY_DISABLED at generator/legalization boundary; this is a project diagnostic, not a PTX hardware exception",
+        "ambiguous_source_expected": "BLOCKED_SOURCE_REVIEW for affected forms only",
+        "undefined_behavior_policy": "Reject invalid generator input or inspect frontend-only diagnostics; do not emit PTX-undefined executable cases and invent a trap oracle",
+        "readiness": "PLANNED: validated tuple registry, generator, independent checker/reference model and selected backend capability must be available before executing applicable tests"
+      },
+      "blocked_form_conditions": [],
+      "source_review_note": null,
+      "status": "PLANNED",
+      "execution": "NOT_RUN"
+    },
+    {
+      "trace_id": "SREG-10.3",
+      "section": "10.3",
+      "category_section": "10",
+      "category": "Special Registers",
+      "names": [
+        "%laneid"
+      ],
+      "pdf_page_start": 878,
+      "printed_page_start": 866,
+      "entry_kind": "special_register_description",
+      "is_executable_instruction_description": false,
+      "domain": "SPECIAL_REGISTER_STATE_PROVIDER",
+      "domain_description": "warp内lane编号",
+      "domain_evidence_status": "project_state_routing_suggestion_not_NVIDIA_physical_register_file_fact",
+      "source_refs": [
+        "docs/sm/research/ptx94_special_register_inventory.json#10.3"
+      ],
+      "primary_feature_id": "GEN-SYS-01",
+      "related_feature_ids": [
+        "GEN-CTRL-01",
+        "GEN-CVT-01",
+        "GEN-ISA-01"
+      ],
+      "test_family": "special_register_read",
+      "planned_stimulus": [
+        "按本节预定义声明和target生成mov/cvt等合法读取上下文；range/vector标签不假装只代表一个物理CSR。"
+      ],
+      "planned_checks": [
+        "检查预定义读的类型/分量/target及状态来源；不是额外instruction opcode，不能混入215/217计数。",
+        "读取期望来自规范和已注册launch/runtime状态模型；undefined/target-specific值不得编造固定golden。"
+      ],
+      "coverage_dimensions": [
+        "source_section",
+        "capability_state",
+        "generation_mode",
+        "read_type",
+        "read_width",
+        "target_profile",
+        "runtime_context",
+        "state_provider"
+      ],
+      "capability_policy": {
+        "positive_selection": "VALIDATED_TARGET_LEGAL_FORMS_ONLY",
+        "disabled_capability_expected": "CAPABILITY_DISABLED at generator/legalization boundary; this is a project diagnostic, not a PTX hardware exception",
+        "ambiguous_source_expected": "BLOCKED_SOURCE_REVIEW for affected forms only",
+        "undefined_behavior_policy": "Reject invalid generator input or inspect frontend-only diagnostics; do not emit PTX-undefined executable cases and invent a trap oracle",
+        "readiness": "PLANNED: validated tuple registry, generator, independent checker/reference model and selected backend capability must be available before executing applicable tests"
+      },
+      "blocked_form_conditions": [],
+      "source_review_note": null,
+      "status": "PLANNED",
+      "execution": "NOT_RUN"
+    },
+    {
+      "trace_id": "SREG-10.4",
+      "section": "10.4",
+      "category_section": "10",
+      "category": "Special Registers",
+      "names": [
+        "%warpid"
+      ],
+      "pdf_page_start": 879,
+      "printed_page_start": 867,
+      "entry_kind": "special_register_description",
+      "is_executable_instruction_description": false,
+      "domain": "SPECIAL_REGISTER_STATE_PROVIDER",
+      "domain_description": "当前warp调度位置诊断状态",
+      "domain_evidence_status": "project_state_routing_suggestion_not_NVIDIA_physical_register_file_fact",
+      "source_refs": [
+        "docs/sm/research/ptx94_special_register_inventory.json#10.4"
+      ],
+      "primary_feature_id": "GEN-SYS-01",
+      "related_feature_ids": [
+        "GEN-CTRL-01",
+        "GEN-CVT-01",
+        "GEN-ISA-01"
+      ],
+      "test_family": "special_register_read",
+      "planned_stimulus": [
+        "按本节预定义声明和target生成mov/cvt等合法读取上下文；range/vector标签不假装只代表一个物理CSR。"
+      ],
+      "planned_checks": [
+        "检查预定义读的类型/分量/target及状态来源；不是额外instruction opcode，不能混入215/217计数。",
+        "读取期望来自规范和已注册launch/runtime状态模型；undefined/target-specific值不得编造固定golden。",
+        "调度位置ID可在重调度后改变；不把它当稳定逻辑身份。"
+      ],
+      "coverage_dimensions": [
+        "source_section",
+        "capability_state",
+        "generation_mode",
+        "read_type",
+        "read_width",
+        "target_profile",
+        "runtime_context",
+        "state_provider",
+        "preemption_reschedule"
+      ],
+      "capability_policy": {
+        "positive_selection": "VALIDATED_TARGET_LEGAL_FORMS_ONLY",
+        "disabled_capability_expected": "CAPABILITY_DISABLED at generator/legalization boundary; this is a project diagnostic, not a PTX hardware exception",
+        "ambiguous_source_expected": "BLOCKED_SOURCE_REVIEW for affected forms only",
+        "undefined_behavior_policy": "Reject invalid generator input or inspect frontend-only diagnostics; do not emit PTX-undefined executable cases and invent a trap oracle",
+        "readiness": "PLANNED: validated tuple registry, generator, independent checker/reference model and selected backend capability must be available before executing applicable tests"
+      },
+      "blocked_form_conditions": [],
+      "source_review_note": "%warpid可在preemption/reschedule后改变；不能当kernel逻辑warp的稳定身份。",
+      "status": "PLANNED",
+      "execution": "NOT_RUN"
+    },
+    {
+      "trace_id": "SREG-10.5",
+      "section": "10.5",
+      "category_section": "10",
+      "category": "Special Registers",
+      "names": [
+        "%nwarpid"
+      ],
+      "pdf_page_start": 880,
+      "printed_page_start": 868,
+      "entry_kind": "special_register_description",
+      "is_executable_instruction_description": false,
+      "domain": "SPECIAL_REGISTER_STATE_PROVIDER",
+      "domain_description": "warp编号上界/能力状态",
+      "domain_evidence_status": "project_state_routing_suggestion_not_NVIDIA_physical_register_file_fact",
+      "source_refs": [
+        "docs/sm/research/ptx94_special_register_inventory.json#10.5"
+      ],
+      "primary_feature_id": "GEN-SYS-01",
+      "related_feature_ids": [
+        "GEN-CTRL-01",
+        "GEN-CVT-01",
+        "GEN-ISA-01"
+      ],
+      "test_family": "special_register_read",
+      "planned_stimulus": [
+        "按本节预定义声明和target生成mov/cvt等合法读取上下文；range/vector标签不假装只代表一个物理CSR。"
+      ],
+      "planned_checks": [
+        "检查预定义读的类型/分量/target及状态来源；不是额外instruction opcode，不能混入215/217计数。",
+        "读取期望来自规范和已注册launch/runtime状态模型；undefined/target-specific值不得编造固定golden。",
+        "最大ID数量/编号上界不等于瞬时活跃数；SM ID可有空洞。"
+      ],
+      "coverage_dimensions": [
+        "source_section",
+        "capability_state",
+        "generation_mode",
+        "read_type",
+        "read_width",
+        "target_profile",
+        "runtime_context",
+        "state_provider",
+        "identifier_upper_bound"
+      ],
+      "capability_policy": {
+        "positive_selection": "VALIDATED_TARGET_LEGAL_FORMS_ONLY",
+        "disabled_capability_expected": "CAPABILITY_DISABLED at generator/legalization boundary; this is a project diagnostic, not a PTX hardware exception",
+        "ambiguous_source_expected": "BLOCKED_SOURCE_REVIEW for affected forms only",
+        "undefined_behavior_policy": "Reject invalid generator input or inspect frontend-only diagnostics; do not emit PTX-undefined executable cases and invent a trap oracle",
+        "readiness": "PLANNED: validated tuple registry, generator, independent checker/reference model and selected backend capability must be available before executing applicable tests"
+      },
+      "blocked_form_conditions": [],
+      "source_review_note": "返回maximum number of warp identifiers；不能直接等同于当前活跃warp数或ceil(ntid/32)。",
+      "status": "PLANNED",
+      "execution": "NOT_RUN"
+    },
+    {
+      "trace_id": "SREG-10.6",
+      "section": "10.6",
+      "category_section": "10",
+      "category": "Special Registers",
+      "names": [
+        "%ctaid"
+      ],
+      "pdf_page_start": 880,
+      "printed_page_start": 868,
+      "entry_kind": "special_register_description",
+      "is_executable_instruction_description": false,
+      "domain": "SPECIAL_REGISTER_STATE_PROVIDER",
+      "domain_description": "grid内CTA启动坐标",
+      "domain_evidence_status": "project_state_routing_suggestion_not_NVIDIA_physical_register_file_fact",
+      "source_refs": [
+        "docs/sm/research/ptx94_special_register_inventory.json#10.6"
+      ],
+      "primary_feature_id": "GEN-SYS-01",
+      "related_feature_ids": [
+        "GEN-CTRL-01",
+        "GEN-CVT-01",
+        "GEN-ISA-01"
+      ],
+      "test_family": "special_register_read",
+      "planned_stimulus": [
+        "按本节预定义声明和target生成mov/cvt等合法读取上下文；range/vector标签不假装只代表一个物理CSR。"
+      ],
+      "planned_checks": [
+        "检查预定义读的类型/分量/target及状态来源；不是额外instruction opcode，不能混入215/217计数。",
+        "读取期望来自规范和已注册launch/runtime状态模型；undefined/target-specific值不得编造固定golden。"
+      ],
+      "coverage_dimensions": [
+        "source_section",
+        "capability_state",
+        "generation_mode",
+        "read_type",
+        "read_width",
+        "target_profile",
+        "runtime_context",
+        "state_provider"
+      ],
+      "capability_policy": {
+        "positive_selection": "VALIDATED_TARGET_LEGAL_FORMS_ONLY",
+        "disabled_capability_expected": "CAPABILITY_DISABLED at generator/legalization boundary; this is a project diagnostic, not a PTX hardware exception",
+        "ambiguous_source_expected": "BLOCKED_SOURCE_REVIEW for affected forms only",
+        "undefined_behavior_policy": "Reject invalid generator input or inspect frontend-only diagnostics; do not emit PTX-undefined executable cases and invent a trap oracle",
+        "readiness": "PLANNED: validated tuple registry, generator, independent checker/reference model and selected backend capability must be available before executing applicable tests"
+      },
+      "blocked_form_conditions": [],
+      "source_review_note": null,
+      "status": "PLANNED",
+      "execution": "NOT_RUN"
+    },
+    {
+      "trace_id": "SREG-10.7",
+      "section": "10.7",
+      "category_section": "10",
+      "category": "Special Registers",
+      "names": [
+        "%nctaid"
+      ],
+      "pdf_page_start": 881,
+      "printed_page_start": 869,
+      "entry_kind": "special_register_description",
+      "is_executable_instruction_description": false,
+      "domain": "SPECIAL_REGISTER_STATE_PROVIDER",
+      "domain_description": "grid CTA维度",
+      "domain_evidence_status": "project_state_routing_suggestion_not_NVIDIA_physical_register_file_fact",
+      "source_refs": [
+        "docs/sm/research/ptx94_special_register_inventory.json#10.7"
+      ],
+      "primary_feature_id": "GEN-SYS-01",
+      "related_feature_ids": [
+        "GEN-CTRL-01",
+        "GEN-CVT-01",
+        "GEN-ISA-01"
+      ],
+      "test_family": "special_register_read",
+      "planned_stimulus": [
+        "按本节预定义声明和target生成mov/cvt等合法读取上下文；range/vector标签不假装只代表一个物理CSR。"
+      ],
+      "planned_checks": [
+        "检查预定义读的类型/分量/target及状态来源；不是额外instruction opcode，不能混入215/217计数。",
+        "读取期望来自规范和已注册launch/runtime状态模型；undefined/target-specific值不得编造固定golden。"
+      ],
+      "coverage_dimensions": [
+        "source_section",
+        "capability_state",
+        "generation_mode",
+        "read_type",
+        "read_width",
+        "target_profile",
+        "runtime_context",
+        "state_provider"
+      ],
+      "capability_policy": {
+        "positive_selection": "VALIDATED_TARGET_LEGAL_FORMS_ONLY",
+        "disabled_capability_expected": "CAPABILITY_DISABLED at generator/legalization boundary; this is a project diagnostic, not a PTX hardware exception",
+        "ambiguous_source_expected": "BLOCKED_SOURCE_REVIEW for affected forms only",
+        "undefined_behavior_policy": "Reject invalid generator input or inspect frontend-only diagnostics; do not emit PTX-undefined executable cases and invent a trap oracle",
+        "readiness": "PLANNED: validated tuple registry, generator, independent checker/reference model and selected backend capability must be available before executing applicable tests"
+      },
+      "blocked_form_conditions": [],
+      "source_review_note": null,
+      "status": "PLANNED",
+      "execution": "NOT_RUN"
+    },
+    {
+      "trace_id": "SREG-10.8",
+      "section": "10.8",
+      "category_section": "10",
+      "category": "Special Registers",
+      "names": [
+        "%smid"
+      ],
+      "pdf_page_start": 882,
+      "printed_page_start": 870,
+      "entry_kind": "special_register_description",
+      "is_executable_instruction_description": false,
+      "domain": "SPECIAL_REGISTER_STATE_PROVIDER",
+      "domain_description": "当前SM调度位置诊断状态",
+      "domain_evidence_status": "project_state_routing_suggestion_not_NVIDIA_physical_register_file_fact",
+      "source_refs": [
+        "docs/sm/research/ptx94_special_register_inventory.json#10.8"
+      ],
+      "primary_feature_id": "GEN-SYS-01",
+      "related_feature_ids": [
+        "GEN-CVT-01",
+        "GEN-ISA-01"
+      ],
+      "test_family": "special_register_read",
+      "planned_stimulus": [
+        "按本节预定义声明和target生成mov/cvt等合法读取上下文；range/vector标签不假装只代表一个物理CSR。"
+      ],
+      "planned_checks": [
+        "检查预定义读的类型/分量/target及状态来源；不是额外instruction opcode，不能混入215/217计数。",
+        "读取期望来自规范和已注册launch/runtime状态模型；undefined/target-specific值不得编造固定golden。",
+        "调度位置ID可在重调度后改变；不把它当稳定逻辑身份。"
+      ],
+      "coverage_dimensions": [
+        "source_section",
+        "capability_state",
+        "generation_mode",
+        "read_type",
+        "read_width",
+        "target_profile",
+        "runtime_context",
+        "state_provider",
+        "preemption_reschedule"
+      ],
+      "capability_policy": {
+        "positive_selection": "VALIDATED_TARGET_LEGAL_FORMS_ONLY",
+        "disabled_capability_expected": "CAPABILITY_DISABLED at generator/legalization boundary; this is a project diagnostic, not a PTX hardware exception",
+        "ambiguous_source_expected": "BLOCKED_SOURCE_REVIEW for affected forms only",
+        "undefined_behavior_policy": "Reject invalid generator input or inspect frontend-only diagnostics; do not emit PTX-undefined executable cases and invent a trap oracle",
+        "readiness": "PLANNED: validated tuple registry, generator, independent checker/reference model and selected backend capability must be available before executing applicable tests"
+      },
+      "blocked_form_conditions": [],
+      "source_review_note": "%smid为读时执行位置，可改变，且ID编号未保证连续。",
+      "status": "PLANNED",
+      "execution": "NOT_RUN"
+    },
+    {
+      "trace_id": "SREG-10.9",
+      "section": "10.9",
+      "category_section": "10",
+      "category": "Special Registers",
+      "names": [
+        "%nsmid"
+      ],
+      "pdf_page_start": 883,
+      "printed_page_start": 871,
+      "entry_kind": "special_register_description",
+      "is_executable_instruction_description": false,
+      "domain": "SPECIAL_REGISTER_STATE_PROVIDER",
+      "domain_description": "SM编号上界/能力状态",
+      "domain_evidence_status": "project_state_routing_suggestion_not_NVIDIA_physical_register_file_fact",
+      "source_refs": [
+        "docs/sm/research/ptx94_special_register_inventory.json#10.9"
+      ],
+      "primary_feature_id": "GEN-SYS-01",
+      "related_feature_ids": [
+        "GEN-CVT-01",
+        "GEN-ISA-01"
+      ],
+      "test_family": "special_register_read",
+      "planned_stimulus": [
+        "按本节预定义声明和target生成mov/cvt等合法读取上下文；range/vector标签不假装只代表一个物理CSR。"
+      ],
+      "planned_checks": [
+        "检查预定义读的类型/分量/target及状态来源；不是额外instruction opcode，不能混入215/217计数。",
+        "读取期望来自规范和已注册launch/runtime状态模型；undefined/target-specific值不得编造固定golden。",
+        "最大ID数量/编号上界不等于瞬时活跃数；SM ID可有空洞。"
+      ],
+      "coverage_dimensions": [
+        "source_section",
+        "capability_state",
+        "generation_mode",
+        "read_type",
+        "read_width",
+        "target_profile",
+        "runtime_context",
+        "state_provider",
+        "identifier_upper_bound"
+      ],
+      "capability_policy": {
+        "positive_selection": "VALIDATED_TARGET_LEGAL_FORMS_ONLY",
+        "disabled_capability_expected": "CAPABILITY_DISABLED at generator/legalization boundary; this is a project diagnostic, not a PTX hardware exception",
+        "ambiguous_source_expected": "BLOCKED_SOURCE_REVIEW for affected forms only",
+        "undefined_behavior_policy": "Reject invalid generator input or inspect frontend-only diagnostics; do not emit PTX-undefined executable cases and invent a trap oracle",
+        "readiness": "PLANNED: validated tuple registry, generator, independent checker/reference model and selected backend capability must be available before executing applicable tests"
+      },
+      "blocked_form_conditions": [],
+      "source_review_note": "%nsmid是SM identifier范围的上界，可能大于设备实际SM个数。",
+      "status": "PLANNED",
+      "execution": "NOT_RUN"
+    },
+    {
+      "trace_id": "SREG-10.10",
+      "section": "10.10",
+      "category_section": "10",
+      "category": "Special Registers",
+      "names": [
+        "%gridid"
+      ],
+      "pdf_page_start": 884,
+      "printed_page_start": 872,
+      "entry_kind": "special_register_description",
+      "is_executable_instruction_description": false,
+      "domain": "SPECIAL_REGISTER_STATE_PROVIDER",
+      "domain_description": "context内grid launch时序身份",
+      "domain_evidence_status": "project_state_routing_suggestion_not_NVIDIA_physical_register_file_fact",
+      "source_refs": [
+        "docs/sm/research/ptx94_special_register_inventory.json#10.10"
+      ],
+      "primary_feature_id": "GEN-SYS-01",
+      "related_feature_ids": [
+        "GEN-CTRL-01",
+        "GEN-CVT-01",
+        "GEN-ISA-01"
+      ],
+      "test_family": "special_register_read",
+      "planned_stimulus": [
+        "按本节预定义声明和target生成mov/cvt等合法读取上下文；range/vector标签不假装只代表一个物理CSR。"
+      ],
+      "planned_checks": [
+        "检查预定义读的类型/分量/target及状态来源；不是额外instruction opcode，不能混入215/217计数。",
+        "读取期望来自规范和已注册launch/runtime状态模型；undefined/target-specific值不得编造固定golden。"
+      ],
+      "coverage_dimensions": [
+        "source_section",
+        "capability_state",
+        "generation_mode",
+        "read_type",
+        "read_width",
+        "target_profile",
+        "runtime_context",
+        "state_provider"
+      ],
+      "capability_policy": {
+        "positive_selection": "VALIDATED_TARGET_LEGAL_FORMS_ONLY",
+        "disabled_capability_expected": "CAPABILITY_DISABLED at generator/legalization boundary; this is a project diagnostic, not a PTX hardware exception",
+        "ambiguous_source_expected": "BLOCKED_SOURCE_REVIEW for affected forms only",
+        "undefined_behavior_policy": "Reject invalid generator input or inspect frontend-only diagnostics; do not emit PTX-undefined executable cases and invent a trap oracle",
+        "readiness": "PLANNED: validated tuple registry, generator, independent checker/reference model and selected backend capability must be available before executing applicable tests"
+      },
+      "blocked_form_conditions": [],
+      "source_review_note": "%gridid是temporal grid launch identifier，不是SM内部resident grid slot号。",
+      "status": "PLANNED",
+      "execution": "NOT_RUN"
+    },
+    {
+      "trace_id": "SREG-10.11",
+      "section": "10.11",
+      "category_section": "10",
+      "category": "Special Registers",
+      "names": [
+        "%is_explicit_cluster"
+      ],
+      "pdf_page_start": 885,
+      "printed_page_start": 873,
+      "entry_kind": "special_register_description",
+      "is_executable_instruction_description": false,
+      "domain": "SPECIAL_REGISTER_STATE_PROVIDER",
+      "domain_description": "显式cluster launch标志",
+      "domain_evidence_status": "project_state_routing_suggestion_not_NVIDIA_physical_register_file_fact",
+      "source_refs": [
+        "docs/sm/research/ptx94_special_register_inventory.json#10.11"
+      ],
+      "primary_feature_id": "GEN-CLUSTER-01",
+      "related_feature_ids": [
+        "GEN-CVT-01",
+        "GEN-ISA-01",
+        "GEN-SYS-01"
+      ],
+      "test_family": "special_register_read",
+      "planned_stimulus": [
+        "按本节预定义声明和target生成mov/cvt等合法读取上下文；range/vector标签不假装只代表一个物理CSR。"
+      ],
+      "planned_checks": [
+        "检查预定义读的类型/分量/target及状态来源；不是额外instruction opcode，不能混入215/217计数。",
+        "读取期望来自规范和已注册launch/runtime状态模型；undefined/target-specific值不得编造固定golden。"
+      ],
+      "coverage_dimensions": [
+        "source_section",
+        "capability_state",
+        "generation_mode",
+        "read_type",
+        "read_width",
+        "target_profile",
+        "runtime_context",
+        "state_provider",
+        "cluster_shape",
+        "cta_rank"
+      ],
+      "capability_policy": {
+        "positive_selection": "VALIDATED_TARGET_LEGAL_FORMS_ONLY",
+        "disabled_capability_expected": "CAPABILITY_DISABLED at generator/legalization boundary; this is a project diagnostic, not a PTX hardware exception",
+        "ambiguous_source_expected": "BLOCKED_SOURCE_REVIEW for affected forms only",
+        "undefined_behavior_policy": "Reject invalid generator input or inspect frontend-only diagnostics; do not emit PTX-undefined executable cases and invent a trap oracle",
+        "readiness": "PLANNED: validated tuple registry, generator, independent checker/reference model and selected backend capability must be available before executing applicable tests"
+      },
+      "blocked_form_conditions": [],
+      "source_review_note": null,
+      "status": "PLANNED",
+      "execution": "NOT_RUN"
+    },
+    {
+      "trace_id": "SREG-10.12",
+      "section": "10.12",
+      "category_section": "10",
+      "category": "Special Registers",
+      "names": [
+        "%clusterid"
+      ],
+      "pdf_page_start": 886,
+      "printed_page_start": 874,
+      "entry_kind": "special_register_description",
+      "is_executable_instruction_description": false,
+      "domain": "SPECIAL_REGISTER_STATE_PROVIDER",
+      "domain_description": "grid内cluster坐标",
+      "domain_evidence_status": "project_state_routing_suggestion_not_NVIDIA_physical_register_file_fact",
+      "source_refs": [
+        "docs/sm/research/ptx94_special_register_inventory.json#10.12"
+      ],
+      "primary_feature_id": "GEN-CLUSTER-01",
+      "related_feature_ids": [
+        "GEN-CVT-01",
+        "GEN-ISA-01",
+        "GEN-SYS-01"
+      ],
+      "test_family": "special_register_read",
+      "planned_stimulus": [
+        "按本节预定义声明和target生成mov/cvt等合法读取上下文；range/vector标签不假装只代表一个物理CSR。"
+      ],
+      "planned_checks": [
+        "检查预定义读的类型/分量/target及状态来源；不是额外instruction opcode，不能混入215/217计数。",
+        "读取期望来自规范和已注册launch/runtime状态模型；undefined/target-specific值不得编造固定golden。"
+      ],
+      "coverage_dimensions": [
+        "source_section",
+        "capability_state",
+        "generation_mode",
+        "read_type",
+        "read_width",
+        "target_profile",
+        "runtime_context",
+        "state_provider",
+        "cluster_shape",
+        "cta_rank"
+      ],
+      "capability_policy": {
+        "positive_selection": "VALIDATED_TARGET_LEGAL_FORMS_ONLY",
+        "disabled_capability_expected": "CAPABILITY_DISABLED at generator/legalization boundary; this is a project diagnostic, not a PTX hardware exception",
+        "ambiguous_source_expected": "BLOCKED_SOURCE_REVIEW for affected forms only",
+        "undefined_behavior_policy": "Reject invalid generator input or inspect frontend-only diagnostics; do not emit PTX-undefined executable cases and invent a trap oracle",
+        "readiness": "PLANNED: validated tuple registry, generator, independent checker/reference model and selected backend capability must be available before executing applicable tests"
+      },
+      "blocked_form_conditions": [],
+      "source_review_note": null,
+      "status": "PLANNED",
+      "execution": "NOT_RUN"
+    },
+    {
+      "trace_id": "SREG-10.13",
+      "section": "10.13",
+      "category_section": "10",
+      "category": "Special Registers",
+      "names": [
+        "%nclusterid"
+      ],
+      "pdf_page_start": 887,
+      "printed_page_start": 875,
+      "entry_kind": "special_register_description",
+      "is_executable_instruction_description": false,
+      "domain": "SPECIAL_REGISTER_STATE_PROVIDER",
+      "domain_description": "grid cluster维度",
+      "domain_evidence_status": "project_state_routing_suggestion_not_NVIDIA_physical_register_file_fact",
+      "source_refs": [
+        "docs/sm/research/ptx94_special_register_inventory.json#10.13"
+      ],
+      "primary_feature_id": "GEN-CLUSTER-01",
+      "related_feature_ids": [
+        "GEN-CVT-01",
+        "GEN-ISA-01",
+        "GEN-SYS-01"
+      ],
+      "test_family": "special_register_read",
+      "planned_stimulus": [
+        "按本节预定义声明和target生成mov/cvt等合法读取上下文；range/vector标签不假装只代表一个物理CSR。"
+      ],
+      "planned_checks": [
+        "检查预定义读的类型/分量/target及状态来源；不是额外instruction opcode，不能混入215/217计数。",
+        "读取期望来自规范和已注册launch/runtime状态模型；undefined/target-specific值不得编造固定golden。"
+      ],
+      "coverage_dimensions": [
+        "source_section",
+        "capability_state",
+        "generation_mode",
+        "read_type",
+        "read_width",
+        "target_profile",
+        "runtime_context",
+        "state_provider",
+        "cluster_shape",
+        "cta_rank"
+      ],
+      "capability_policy": {
+        "positive_selection": "VALIDATED_TARGET_LEGAL_FORMS_ONLY",
+        "disabled_capability_expected": "CAPABILITY_DISABLED at generator/legalization boundary; this is a project diagnostic, not a PTX hardware exception",
+        "ambiguous_source_expected": "BLOCKED_SOURCE_REVIEW for affected forms only",
+        "undefined_behavior_policy": "Reject invalid generator input or inspect frontend-only diagnostics; do not emit PTX-undefined executable cases and invent a trap oracle",
+        "readiness": "PLANNED: validated tuple registry, generator, independent checker/reference model and selected backend capability must be available before executing applicable tests"
+      },
+      "blocked_form_conditions": [],
+      "source_review_note": null,
+      "status": "PLANNED",
+      "execution": "NOT_RUN"
+    },
+    {
+      "trace_id": "SREG-10.14",
+      "section": "10.14",
+      "category_section": "10",
+      "category": "Special Registers",
+      "names": [
+        "%cluster_ctaid"
+      ],
+      "pdf_page_start": 888,
+      "printed_page_start": 876,
+      "entry_kind": "special_register_description",
+      "is_executable_instruction_description": false,
+      "domain": "SPECIAL_REGISTER_STATE_PROVIDER",
+      "domain_description": "cluster内CTA坐标",
+      "domain_evidence_status": "project_state_routing_suggestion_not_NVIDIA_physical_register_file_fact",
+      "source_refs": [
+        "docs/sm/research/ptx94_special_register_inventory.json#10.14"
+      ],
+      "primary_feature_id": "GEN-CLUSTER-01",
+      "related_feature_ids": [
+        "GEN-CVT-01",
+        "GEN-ISA-01",
+        "GEN-SYS-01"
+      ],
+      "test_family": "special_register_read",
+      "planned_stimulus": [
+        "按本节预定义声明和target生成mov/cvt等合法读取上下文；range/vector标签不假装只代表一个物理CSR。"
+      ],
+      "planned_checks": [
+        "检查预定义读的类型/分量/target及状态来源；不是额外instruction opcode，不能混入215/217计数。",
+        "读取期望来自规范和已注册launch/runtime状态模型；undefined/target-specific值不得编造固定golden。"
+      ],
+      "coverage_dimensions": [
+        "source_section",
+        "capability_state",
+        "generation_mode",
+        "read_type",
+        "read_width",
+        "target_profile",
+        "runtime_context",
+        "state_provider",
+        "cluster_shape",
+        "cta_rank"
+      ],
+      "capability_policy": {
+        "positive_selection": "VALIDATED_TARGET_LEGAL_FORMS_ONLY",
+        "disabled_capability_expected": "CAPABILITY_DISABLED at generator/legalization boundary; this is a project diagnostic, not a PTX hardware exception",
+        "ambiguous_source_expected": "BLOCKED_SOURCE_REVIEW for affected forms only",
+        "undefined_behavior_policy": "Reject invalid generator input or inspect frontend-only diagnostics; do not emit PTX-undefined executable cases and invent a trap oracle",
+        "readiness": "PLANNED: validated tuple registry, generator, independent checker/reference model and selected backend capability must be available before executing applicable tests"
+      },
+      "blocked_form_conditions": [],
+      "source_review_note": null,
+      "status": "PLANNED",
+      "execution": "NOT_RUN"
+    },
+    {
+      "trace_id": "SREG-10.15",
+      "section": "10.15",
+      "category_section": "10",
+      "category": "Special Registers",
+      "names": [
+        "%cluster_nctaid"
+      ],
+      "pdf_page_start": 889,
+      "printed_page_start": 877,
+      "entry_kind": "special_register_description",
+      "is_executable_instruction_description": false,
+      "domain": "SPECIAL_REGISTER_STATE_PROVIDER",
+      "domain_description": "cluster CTA维度",
+      "domain_evidence_status": "project_state_routing_suggestion_not_NVIDIA_physical_register_file_fact",
+      "source_refs": [
+        "docs/sm/research/ptx94_special_register_inventory.json#10.15"
+      ],
+      "primary_feature_id": "GEN-CLUSTER-01",
+      "related_feature_ids": [
+        "GEN-CVT-01",
+        "GEN-ISA-01",
+        "GEN-SYS-01"
+      ],
+      "test_family": "special_register_read",
+      "planned_stimulus": [
+        "按本节预定义声明和target生成mov/cvt等合法读取上下文；range/vector标签不假装只代表一个物理CSR。"
+      ],
+      "planned_checks": [
+        "检查预定义读的类型/分量/target及状态来源；不是额外instruction opcode，不能混入215/217计数。",
+        "读取期望来自规范和已注册launch/runtime状态模型；undefined/target-specific值不得编造固定golden。"
+      ],
+      "coverage_dimensions": [
+        "source_section",
+        "capability_state",
+        "generation_mode",
+        "read_type",
+        "read_width",
+        "target_profile",
+        "runtime_context",
+        "state_provider",
+        "cluster_shape",
+        "cta_rank"
+      ],
+      "capability_policy": {
+        "positive_selection": "VALIDATED_TARGET_LEGAL_FORMS_ONLY",
+        "disabled_capability_expected": "CAPABILITY_DISABLED at generator/legalization boundary; this is a project diagnostic, not a PTX hardware exception",
+        "ambiguous_source_expected": "BLOCKED_SOURCE_REVIEW for affected forms only",
+        "undefined_behavior_policy": "Reject invalid generator input or inspect frontend-only diagnostics; do not emit PTX-undefined executable cases and invent a trap oracle",
+        "readiness": "PLANNED: validated tuple registry, generator, independent checker/reference model and selected backend capability must be available before executing applicable tests"
+      },
+      "blocked_form_conditions": [],
+      "source_review_note": null,
+      "status": "PLANNED",
+      "execution": "NOT_RUN"
+    },
+    {
+      "trace_id": "SREG-10.16",
+      "section": "10.16",
+      "category_section": "10",
+      "category": "Special Registers",
+      "names": [
+        "%cluster_ctarank"
+      ],
+      "pdf_page_start": 890,
+      "printed_page_start": 878,
+      "entry_kind": "special_register_description",
+      "is_executable_instruction_description": false,
+      "domain": "SPECIAL_REGISTER_STATE_PROVIDER",
+      "domain_description": "cluster内线性CTA rank",
+      "domain_evidence_status": "project_state_routing_suggestion_not_NVIDIA_physical_register_file_fact",
+      "source_refs": [
+        "docs/sm/research/ptx94_special_register_inventory.json#10.16"
+      ],
+      "primary_feature_id": "GEN-CLUSTER-01",
+      "related_feature_ids": [
+        "GEN-CVT-01",
+        "GEN-ISA-01",
+        "GEN-SYS-01"
+      ],
+      "test_family": "special_register_read",
+      "planned_stimulus": [
+        "按本节预定义声明和target生成mov/cvt等合法读取上下文；range/vector标签不假装只代表一个物理CSR。"
+      ],
+      "planned_checks": [
+        "检查预定义读的类型/分量/target及状态来源；不是额外instruction opcode，不能混入215/217计数。",
+        "读取期望来自规范和已注册launch/runtime状态模型；undefined/target-specific值不得编造固定golden。"
+      ],
+      "coverage_dimensions": [
+        "source_section",
+        "capability_state",
+        "generation_mode",
+        "read_type",
+        "read_width",
+        "target_profile",
+        "runtime_context",
+        "state_provider",
+        "cluster_shape",
+        "cta_rank"
+      ],
+      "capability_policy": {
+        "positive_selection": "VALIDATED_TARGET_LEGAL_FORMS_ONLY",
+        "disabled_capability_expected": "CAPABILITY_DISABLED at generator/legalization boundary; this is a project diagnostic, not a PTX hardware exception",
+        "ambiguous_source_expected": "BLOCKED_SOURCE_REVIEW for affected forms only",
+        "undefined_behavior_policy": "Reject invalid generator input or inspect frontend-only diagnostics; do not emit PTX-undefined executable cases and invent a trap oracle",
+        "readiness": "PLANNED: validated tuple registry, generator, independent checker/reference model and selected backend capability must be available before executing applicable tests"
+      },
+      "blocked_form_conditions": [],
+      "source_review_note": null,
+      "status": "PLANNED",
+      "execution": "NOT_RUN"
+    },
+    {
+      "trace_id": "SREG-10.17",
+      "section": "10.17",
+      "category_section": "10",
+      "category": "Special Registers",
+      "names": [
+        "%cluster_nctarank"
+      ],
+      "pdf_page_start": 891,
+      "printed_page_start": 879,
+      "entry_kind": "special_register_description",
+      "is_executable_instruction_description": false,
+      "domain": "SPECIAL_REGISTER_STATE_PROVIDER",
+      "domain_description": "cluster CTA总rank数",
+      "domain_evidence_status": "project_state_routing_suggestion_not_NVIDIA_physical_register_file_fact",
+      "source_refs": [
+        "docs/sm/research/ptx94_special_register_inventory.json#10.17"
+      ],
+      "primary_feature_id": "GEN-CLUSTER-01",
+      "related_feature_ids": [
+        "GEN-CVT-01",
+        "GEN-ISA-01",
+        "GEN-SYS-01"
+      ],
+      "test_family": "special_register_read",
+      "planned_stimulus": [
+        "按本节预定义声明和target生成mov/cvt等合法读取上下文；range/vector标签不假装只代表一个物理CSR。"
+      ],
+      "planned_checks": [
+        "检查预定义读的类型/分量/target及状态来源；不是额外instruction opcode，不能混入215/217计数。",
+        "读取期望来自规范和已注册launch/runtime状态模型；undefined/target-specific值不得编造固定golden。"
+      ],
+      "coverage_dimensions": [
+        "source_section",
+        "capability_state",
+        "generation_mode",
+        "read_type",
+        "read_width",
+        "target_profile",
+        "runtime_context",
+        "state_provider",
+        "cluster_shape",
+        "cta_rank"
+      ],
+      "capability_policy": {
+        "positive_selection": "VALIDATED_TARGET_LEGAL_FORMS_ONLY",
+        "disabled_capability_expected": "CAPABILITY_DISABLED at generator/legalization boundary; this is a project diagnostic, not a PTX hardware exception",
+        "ambiguous_source_expected": "BLOCKED_SOURCE_REVIEW for affected forms only",
+        "undefined_behavior_policy": "Reject invalid generator input or inspect frontend-only diagnostics; do not emit PTX-undefined executable cases and invent a trap oracle",
+        "readiness": "PLANNED: validated tuple registry, generator, independent checker/reference model and selected backend capability must be available before executing applicable tests"
+      },
+      "blocked_form_conditions": [],
+      "source_review_note": null,
+      "status": "PLANNED",
+      "execution": "NOT_RUN"
+    },
+    {
+      "trace_id": "SREG-10.18",
+      "section": "10.18",
+      "category_section": "10",
+      "category": "Special Registers",
+      "names": [
+        "%lanemask_eq"
+      ],
+      "pdf_page_start": 892,
+      "printed_page_start": 880,
+      "entry_kind": "special_register_description",
+      "is_executable_instruction_description": false,
+      "domain": "SPECIAL_REGISTER_STATE_PROVIDER",
+      "domain_description": "由lane编号生成的mask",
+      "domain_evidence_status": "project_state_routing_suggestion_not_NVIDIA_physical_register_file_fact",
+      "source_refs": [
+        "docs/sm/research/ptx94_special_register_inventory.json#10.18"
+      ],
+      "primary_feature_id": "GEN-COLL-01",
+      "related_feature_ids": [
+        "GEN-CVT-01",
+        "GEN-ISA-01"
+      ],
+      "test_family": "special_register_read",
+      "planned_stimulus": [
+        "按本节预定义声明和target生成mov/cvt等合法读取上下文；range/vector标签不假装只代表一个物理CSR。"
+      ],
+      "planned_checks": [
+        "检查预定义读的类型/分量/target及状态来源；不是额外instruction opcode，不能混入215/217计数。",
+        "读取期望来自规范和已注册launch/runtime状态模型；undefined/target-specific值不得编造固定golden。",
+        "lane比较mask不是动态active mask。"
+      ],
+      "coverage_dimensions": [
+        "source_section",
+        "capability_state",
+        "generation_mode",
+        "read_type",
+        "read_width",
+        "target_profile",
+        "runtime_context",
+        "state_provider",
+        "lane_id",
+        "mask_relation"
+      ],
+      "capability_policy": {
+        "positive_selection": "VALIDATED_TARGET_LEGAL_FORMS_ONLY",
+        "disabled_capability_expected": "CAPABILITY_DISABLED at generator/legalization boundary; this is a project diagnostic, not a PTX hardware exception",
+        "ambiguous_source_expected": "BLOCKED_SOURCE_REVIEW for affected forms only",
+        "undefined_behavior_policy": "Reject invalid generator input or inspect frontend-only diagnostics; do not emit PTX-undefined executable cases and invent a trap oracle",
+        "readiness": "PLANNED: validated tuple registry, generator, independent checker/reference model and selected backend capability must be available before executing applicable tests"
+      },
+      "blocked_form_conditions": [],
+      "source_review_note": "lane比较mask是静态lane编号关系，不是当前active mask；后者由activemask指令获取。",
+      "status": "PLANNED",
+      "execution": "NOT_RUN"
+    },
+    {
+      "trace_id": "SREG-10.19",
+      "section": "10.19",
+      "category_section": "10",
+      "category": "Special Registers",
+      "names": [
+        "%lanemask_le"
+      ],
+      "pdf_page_start": 892,
+      "printed_page_start": 880,
+      "entry_kind": "special_register_description",
+      "is_executable_instruction_description": false,
+      "domain": "SPECIAL_REGISTER_STATE_PROVIDER",
+      "domain_description": "由lane编号生成的mask",
+      "domain_evidence_status": "project_state_routing_suggestion_not_NVIDIA_physical_register_file_fact",
+      "source_refs": [
+        "docs/sm/research/ptx94_special_register_inventory.json#10.19"
+      ],
+      "primary_feature_id": "GEN-COLL-01",
+      "related_feature_ids": [
+        "GEN-CVT-01",
+        "GEN-ISA-01"
+      ],
+      "test_family": "special_register_read",
+      "planned_stimulus": [
+        "按本节预定义声明和target生成mov/cvt等合法读取上下文；range/vector标签不假装只代表一个物理CSR。"
+      ],
+      "planned_checks": [
+        "检查预定义读的类型/分量/target及状态来源；不是额外instruction opcode，不能混入215/217计数。",
+        "读取期望来自规范和已注册launch/runtime状态模型；undefined/target-specific值不得编造固定golden。",
+        "lane比较mask不是动态active mask。"
+      ],
+      "coverage_dimensions": [
+        "source_section",
+        "capability_state",
+        "generation_mode",
+        "read_type",
+        "read_width",
+        "target_profile",
+        "runtime_context",
+        "state_provider",
+        "lane_id",
+        "mask_relation"
+      ],
+      "capability_policy": {
+        "positive_selection": "VALIDATED_TARGET_LEGAL_FORMS_ONLY",
+        "disabled_capability_expected": "CAPABILITY_DISABLED at generator/legalization boundary; this is a project diagnostic, not a PTX hardware exception",
+        "ambiguous_source_expected": "BLOCKED_SOURCE_REVIEW for affected forms only",
+        "undefined_behavior_policy": "Reject invalid generator input or inspect frontend-only diagnostics; do not emit PTX-undefined executable cases and invent a trap oracle",
+        "readiness": "PLANNED: validated tuple registry, generator, independent checker/reference model and selected backend capability must be available before executing applicable tests"
+      },
+      "blocked_form_conditions": [],
+      "source_review_note": "lane比较mask是静态lane编号关系，不是当前active mask。",
+      "status": "PLANNED",
+      "execution": "NOT_RUN"
+    },
+    {
+      "trace_id": "SREG-10.20",
+      "section": "10.20",
+      "category_section": "10",
+      "category": "Special Registers",
+      "names": [
+        "%lanemask_lt"
+      ],
+      "pdf_page_start": 893,
+      "printed_page_start": 881,
+      "entry_kind": "special_register_description",
+      "is_executable_instruction_description": false,
+      "domain": "SPECIAL_REGISTER_STATE_PROVIDER",
+      "domain_description": "由lane编号生成的mask",
+      "domain_evidence_status": "project_state_routing_suggestion_not_NVIDIA_physical_register_file_fact",
+      "source_refs": [
+        "docs/sm/research/ptx94_special_register_inventory.json#10.20"
+      ],
+      "primary_feature_id": "GEN-COLL-01",
+      "related_feature_ids": [
+        "GEN-CVT-01",
+        "GEN-ISA-01"
+      ],
+      "test_family": "special_register_read",
+      "planned_stimulus": [
+        "按本节预定义声明和target生成mov/cvt等合法读取上下文；range/vector标签不假装只代表一个物理CSR。"
+      ],
+      "planned_checks": [
+        "检查预定义读的类型/分量/target及状态来源；不是额外instruction opcode，不能混入215/217计数。",
+        "读取期望来自规范和已注册launch/runtime状态模型；undefined/target-specific值不得编造固定golden。",
+        "lane比较mask不是动态active mask。"
+      ],
+      "coverage_dimensions": [
+        "source_section",
+        "capability_state",
+        "generation_mode",
+        "read_type",
+        "read_width",
+        "target_profile",
+        "runtime_context",
+        "state_provider",
+        "lane_id",
+        "mask_relation"
+      ],
+      "capability_policy": {
+        "positive_selection": "VALIDATED_TARGET_LEGAL_FORMS_ONLY",
+        "disabled_capability_expected": "CAPABILITY_DISABLED at generator/legalization boundary; this is a project diagnostic, not a PTX hardware exception",
+        "ambiguous_source_expected": "BLOCKED_SOURCE_REVIEW for affected forms only",
+        "undefined_behavior_policy": "Reject invalid generator input or inspect frontend-only diagnostics; do not emit PTX-undefined executable cases and invent a trap oracle",
+        "readiness": "PLANNED: validated tuple registry, generator, independent checker/reference model and selected backend capability must be available before executing applicable tests"
+      },
+      "blocked_form_conditions": [],
+      "source_review_note": "lane比较mask是静态lane编号关系，不是当前active mask。",
+      "status": "PLANNED",
+      "execution": "NOT_RUN"
+    },
+    {
+      "trace_id": "SREG-10.21",
+      "section": "10.21",
+      "category_section": "10",
+      "category": "Special Registers",
+      "names": [
+        "%lanemask_ge"
+      ],
+      "pdf_page_start": 894,
+      "printed_page_start": 882,
+      "entry_kind": "special_register_description",
+      "is_executable_instruction_description": false,
+      "domain": "SPECIAL_REGISTER_STATE_PROVIDER",
+      "domain_description": "由lane编号生成的mask",
+      "domain_evidence_status": "project_state_routing_suggestion_not_NVIDIA_physical_register_file_fact",
+      "source_refs": [
+        "docs/sm/research/ptx94_special_register_inventory.json#10.21"
+      ],
+      "primary_feature_id": "GEN-COLL-01",
+      "related_feature_ids": [
+        "GEN-CVT-01",
+        "GEN-ISA-01"
+      ],
+      "test_family": "special_register_read",
+      "planned_stimulus": [
+        "按本节预定义声明和target生成mov/cvt等合法读取上下文；range/vector标签不假装只代表一个物理CSR。"
+      ],
+      "planned_checks": [
+        "检查预定义读的类型/分量/target及状态来源；不是额外instruction opcode，不能混入215/217计数。",
+        "读取期望来自规范和已注册launch/runtime状态模型；undefined/target-specific值不得编造固定golden。",
+        "lane比较mask不是动态active mask。"
+      ],
+      "coverage_dimensions": [
+        "source_section",
+        "capability_state",
+        "generation_mode",
+        "read_type",
+        "read_width",
+        "target_profile",
+        "runtime_context",
+        "state_provider",
+        "lane_id",
+        "mask_relation"
+      ],
+      "capability_policy": {
+        "positive_selection": "VALIDATED_TARGET_LEGAL_FORMS_ONLY",
+        "disabled_capability_expected": "CAPABILITY_DISABLED at generator/legalization boundary; this is a project diagnostic, not a PTX hardware exception",
+        "ambiguous_source_expected": "BLOCKED_SOURCE_REVIEW for affected forms only",
+        "undefined_behavior_policy": "Reject invalid generator input or inspect frontend-only diagnostics; do not emit PTX-undefined executable cases and invent a trap oracle",
+        "readiness": "PLANNED: validated tuple registry, generator, independent checker/reference model and selected backend capability must be available before executing applicable tests"
+      },
+      "blocked_form_conditions": [],
+      "source_review_note": "lane比较mask是静态lane编号关系，不是当前active mask。",
+      "status": "PLANNED",
+      "execution": "NOT_RUN"
+    },
+    {
+      "trace_id": "SREG-10.22",
+      "section": "10.22",
+      "category_section": "10",
+      "category": "Special Registers",
+      "names": [
+        "%lanemask_gt"
+      ],
+      "pdf_page_start": 895,
+      "printed_page_start": 883,
+      "entry_kind": "special_register_description",
+      "is_executable_instruction_description": false,
+      "domain": "SPECIAL_REGISTER_STATE_PROVIDER",
+      "domain_description": "由lane编号生成的mask",
+      "domain_evidence_status": "project_state_routing_suggestion_not_NVIDIA_physical_register_file_fact",
+      "source_refs": [
+        "docs/sm/research/ptx94_special_register_inventory.json#10.22"
+      ],
+      "primary_feature_id": "GEN-COLL-01",
+      "related_feature_ids": [
+        "GEN-CVT-01",
+        "GEN-ISA-01"
+      ],
+      "test_family": "special_register_read",
+      "planned_stimulus": [
+        "按本节预定义声明和target生成mov/cvt等合法读取上下文；range/vector标签不假装只代表一个物理CSR。"
+      ],
+      "planned_checks": [
+        "检查预定义读的类型/分量/target及状态来源；不是额外instruction opcode，不能混入215/217计数。",
+        "读取期望来自规范和已注册launch/runtime状态模型；undefined/target-specific值不得编造固定golden。",
+        "lane比较mask不是动态active mask。"
+      ],
+      "coverage_dimensions": [
+        "source_section",
+        "capability_state",
+        "generation_mode",
+        "read_type",
+        "read_width",
+        "target_profile",
+        "runtime_context",
+        "state_provider",
+        "lane_id",
+        "mask_relation"
+      ],
+      "capability_policy": {
+        "positive_selection": "VALIDATED_TARGET_LEGAL_FORMS_ONLY",
+        "disabled_capability_expected": "CAPABILITY_DISABLED at generator/legalization boundary; this is a project diagnostic, not a PTX hardware exception",
+        "ambiguous_source_expected": "BLOCKED_SOURCE_REVIEW for affected forms only",
+        "undefined_behavior_policy": "Reject invalid generator input or inspect frontend-only diagnostics; do not emit PTX-undefined executable cases and invent a trap oracle",
+        "readiness": "PLANNED: validated tuple registry, generator, independent checker/reference model and selected backend capability must be available before executing applicable tests"
+      },
+      "blocked_form_conditions": [],
+      "source_review_note": "lane比较mask是静态lane编号关系，不是当前active mask。",
+      "status": "PLANNED",
+      "execution": "NOT_RUN"
+    },
+    {
+      "trace_id": "SREG-10.23",
+      "section": "10.23",
+      "category_section": "10",
+      "category": "Special Registers",
+      "names": [
+        "%clock",
+        "%clock_hi"
+      ],
+      "pdf_page_start": 895,
+      "printed_page_start": 883,
+      "entry_kind": "special_register_description",
+      "is_executable_instruction_description": false,
+      "domain": "SPECIAL_REGISTER_STATE_PROVIDER",
+      "domain_description": "执行平台cycle counter读取",
+      "domain_evidence_status": "project_state_routing_suggestion_not_NVIDIA_physical_register_file_fact",
+      "source_refs": [
+        "docs/sm/research/ptx94_special_register_inventory.json#10.23"
+      ],
+      "primary_feature_id": "GEN-SYS-01",
+      "related_feature_ids": [
+        "GEN-CVT-01",
+        "GEN-ISA-01"
+      ],
+      "test_family": "special_register_read",
+      "planned_stimulus": [
+        "按本节预定义声明和target生成mov/cvt等合法读取上下文；range/vector标签不假装只代表一个物理CSR。"
+      ],
+      "planned_checks": [
+        "检查预定义读的类型/分量/target及状态来源；不是额外instruction opcode，不能混入215/217计数。",
+        "读取期望来自规范和已注册launch/runtime状态模型；undefined/target-specific值不得编造固定golden。",
+        "计数器wrap和分段读按规范/平台模型检查，不假设分开的高低位读为原子快照。"
+      ],
+      "coverage_dimensions": [
+        "source_section",
+        "capability_state",
+        "generation_mode",
+        "read_type",
+        "read_width",
+        "target_profile",
+        "runtime_context",
+        "state_provider",
+        "counter_wrap",
+        "split_read_order"
+      ],
+      "capability_policy": {
+        "positive_selection": "VALIDATED_TARGET_LEGAL_FORMS_ONLY",
+        "disabled_capability_expected": "CAPABILITY_DISABLED at generator/legalization boundary; this is a project diagnostic, not a PTX hardware exception",
+        "ambiguous_source_expected": "BLOCKED_SOURCE_REVIEW for affected forms only",
+        "undefined_behavior_policy": "Reject invalid generator input or inspect frontend-only diagnostics; do not emit PTX-undefined executable cases and invent a trap oracle",
+        "readiness": "PLANNED: validated tuple registry, generator, independent checker/reference model and selected backend capability must be available before executing applicable tests"
+      },
+      "blocked_form_conditions": [],
+      "source_review_note": "32bit计数器静默wrap；clock_hi对应clock64高32bit，分两次读取不能假设是同一瞬间快照。",
+      "status": "PLANNED",
+      "execution": "NOT_RUN"
+    },
+    {
+      "trace_id": "SREG-10.24",
+      "section": "10.24",
+      "category_section": "10",
+      "category": "Special Registers",
+      "names": [
+        "%clock64"
+      ],
+      "pdf_page_start": 896,
+      "printed_page_start": 884,
+      "entry_kind": "special_register_description",
+      "is_executable_instruction_description": false,
+      "domain": "SPECIAL_REGISTER_STATE_PROVIDER",
+      "domain_description": "执行平台64bit cycle counter读取",
+      "domain_evidence_status": "project_state_routing_suggestion_not_NVIDIA_physical_register_file_fact",
+      "source_refs": [
+        "docs/sm/research/ptx94_special_register_inventory.json#10.24"
+      ],
+      "primary_feature_id": "GEN-SYS-01",
+      "related_feature_ids": [
+        "GEN-CVT-01",
+        "GEN-ISA-01"
+      ],
+      "test_family": "special_register_read",
+      "planned_stimulus": [
+        "按本节预定义声明和target生成mov/cvt等合法读取上下文；range/vector标签不假装只代表一个物理CSR。"
+      ],
+      "planned_checks": [
+        "检查预定义读的类型/分量/target及状态来源；不是额外instruction opcode，不能混入215/217计数。",
+        "读取期望来自规范和已注册launch/runtime状态模型；undefined/target-specific值不得编造固定golden。",
+        "计数器wrap和分段读按规范/平台模型检查，不假设分开的高低位读为原子快照。"
+      ],
+      "coverage_dimensions": [
+        "source_section",
+        "capability_state",
+        "generation_mode",
+        "read_type",
+        "read_width",
+        "target_profile",
+        "runtime_context",
+        "state_provider",
+        "counter_wrap",
+        "split_read_order"
+      ],
+      "capability_policy": {
+        "positive_selection": "VALIDATED_TARGET_LEGAL_FORMS_ONLY",
+        "disabled_capability_expected": "CAPABILITY_DISABLED at generator/legalization boundary; this is a project diagnostic, not a PTX hardware exception",
+        "ambiguous_source_expected": "BLOCKED_SOURCE_REVIEW for affected forms only",
+        "undefined_behavior_policy": "Reject invalid generator input or inspect frontend-only diagnostics; do not emit PTX-undefined executable cases and invent a trap oracle",
+        "readiness": "PLANNED: validated tuple registry, generator, independent checker/reference model and selected backend capability must be available before executing applicable tests"
+      },
+      "blocked_form_conditions": [],
+      "source_review_note": "64bit cycle counter静默wrap；低/高32bit与clock/clock_hi对应。",
+      "status": "PLANNED",
+      "execution": "NOT_RUN"
+    },
+    {
+      "trace_id": "SREG-10.25",
+      "section": "10.25",
+      "category_section": "10",
+      "category": "Special Registers",
+      "names": [
+        "%pm0 … %pm7"
+      ],
+      "pdf_page_start": 897,
+      "printed_page_start": 885,
+      "entry_kind": "special_register_description",
+      "is_executable_instruction_description": false,
+      "domain": "SPECIAL_REGISTER_STATE_PROVIDER",
+      "domain_description": "性能计数器/工具接口",
+      "domain_evidence_status": "project_state_routing_suggestion_not_NVIDIA_physical_register_file_fact",
+      "source_refs": [
+        "docs/sm/research/ptx94_special_register_inventory.json#10.25"
+      ],
+      "primary_feature_id": "GEN-SYS-01",
+      "related_feature_ids": [
+        "GEN-CVT-01",
+        "GEN-ISA-01"
+      ],
+      "test_family": "special_register_read",
+      "planned_stimulus": [
+        "按本节预定义声明和target生成mov/cvt等合法读取上下文；range/vector标签不假装只代表一个物理CSR。"
+      ],
+      "planned_checks": [
+        "检查预定义读的类型/分量/target及状态来源；不是额外instruction opcode，不能混入215/217计数。",
+        "读取期望来自规范和已注册launch/runtime状态模型；undefined/target-specific值不得编造固定golden。",
+        "PM值行为undefined，仅验证合法访问/目标及已声明工具合同，不计数值golden mismatch。"
+      ],
+      "coverage_dimensions": [
+        "source_section",
+        "capability_state",
+        "generation_mode",
+        "read_type",
+        "read_width",
+        "target_profile",
+        "runtime_context",
+        "state_provider",
+        "undefined_value_oracle_excluded"
+      ],
+      "capability_policy": {
+        "positive_selection": "VALIDATED_TARGET_LEGAL_FORMS_ONLY",
+        "disabled_capability_expected": "CAPABILITY_DISABLED at generator/legalization boundary; this is a project diagnostic, not a PTX hardware exception",
+        "ambiguous_source_expected": "BLOCKED_SOURCE_REVIEW for affected forms only",
+        "undefined_behavior_policy": "Reject invalid generator input or inspect frontend-only diagnostics; do not emit PTX-undefined executable cases and invent a trap oracle",
+        "readiness": "PLANNED: validated tuple registry, generator, independent checker/reference model and selected backend capability must be available before executing applicable tests"
+      },
+      "blocked_form_conditions": [],
+      "source_review_note": "文档明确计数器行为currently undefined，不能虚构event含义/精确计数保证。",
+      "status": "PLANNED",
+      "execution": "NOT_RUN"
+    },
+    {
+      "trace_id": "SREG-10.26",
+      "section": "10.26",
+      "category_section": "10",
+      "category": "Special Registers",
+      "names": [
+        "%pm0_64 … %pm7_64"
+      ],
+      "pdf_page_start": 898,
+      "printed_page_start": 886,
+      "entry_kind": "special_register_description",
+      "is_executable_instruction_description": false,
+      "domain": "SPECIAL_REGISTER_STATE_PROVIDER",
+      "domain_description": "64bit性能计数器/工具接口",
+      "domain_evidence_status": "project_state_routing_suggestion_not_NVIDIA_physical_register_file_fact",
+      "source_refs": [
+        "docs/sm/research/ptx94_special_register_inventory.json#10.26"
+      ],
+      "primary_feature_id": "GEN-SYS-01",
+      "related_feature_ids": [
+        "GEN-CVT-01",
+        "GEN-ISA-01"
+      ],
+      "test_family": "special_register_read",
+      "planned_stimulus": [
+        "按本节预定义声明和target生成mov/cvt等合法读取上下文；range/vector标签不假装只代表一个物理CSR。"
+      ],
+      "planned_checks": [
+        "检查预定义读的类型/分量/target及状态来源；不是额外instruction opcode，不能混入215/217计数。",
+        "读取期望来自规范和已注册launch/runtime状态模型；undefined/target-specific值不得编造固定golden。",
+        "PM值行为undefined，仅验证合法访问/目标及已声明工具合同，不计数值golden mismatch。"
+      ],
+      "coverage_dimensions": [
+        "source_section",
+        "capability_state",
+        "generation_mode",
+        "read_type",
+        "read_width",
+        "target_profile",
+        "runtime_context",
+        "state_provider",
+        "undefined_value_oracle_excluded"
+      ],
+      "capability_policy": {
+        "positive_selection": "VALIDATED_TARGET_LEGAL_FORMS_ONLY",
+        "disabled_capability_expected": "CAPABILITY_DISABLED at generator/legalization boundary; this is a project diagnostic, not a PTX hardware exception",
+        "ambiguous_source_expected": "BLOCKED_SOURCE_REVIEW for affected forms only",
+        "undefined_behavior_policy": "Reject invalid generator input or inspect frontend-only diagnostics; do not emit PTX-undefined executable cases and invent a trap oracle",
+        "readiness": "PLANNED: validated tuple registry, generator, independent checker/reference model and selected backend capability must be available before executing applicable tests"
+      },
+      "blocked_form_conditions": [],
+      "source_review_note": "文档明确行为currently undefined；低32bit对应pm0..7，不能假设独立自由编程CSR。",
+      "status": "PLANNED",
+      "execution": "NOT_RUN"
+    },
+    {
+      "trace_id": "SREG-10.27",
+      "section": "10.27",
+      "category_section": "10",
+      "category": "Special Registers",
+      "names": [
+        "%envreg<32>"
+      ],
+      "pdf_page_start": 899,
+      "printed_page_start": 887,
+      "entry_kind": "special_register_description",
+      "is_executable_instruction_description": false,
+      "domain": "SPECIAL_REGISTER_STATE_PROVIDER",
+      "domain_description": "driver初始化的执行环境ABI",
+      "domain_evidence_status": "project_state_routing_suggestion_not_NVIDIA_physical_register_file_fact",
+      "source_refs": [
+        "docs/sm/research/ptx94_special_register_inventory.json#10.27"
+      ],
+      "primary_feature_id": "GEN-SYS-01",
+      "related_feature_ids": [
+        "GEN-CVT-01",
+        "GEN-ISA-01"
+      ],
+      "test_family": "special_register_read",
+      "planned_stimulus": [
+        "按本节预定义声明和target生成mov/cvt等合法读取上下文；range/vector标签不假装只代表一个物理CSR。"
+      ],
+      "planned_checks": [
+        "检查预定义读的类型/分量/target及状态来源；不是额外instruction opcode，不能混入215/217计数。",
+        "读取期望来自规范和已注册launch/runtime状态模型；undefined/target-specific值不得编造固定golden。",
+        "envreg值由driver ABI模型提供，不能虚构通用用途。"
+      ],
+      "coverage_dimensions": [
+        "source_section",
+        "capability_state",
+        "generation_mode",
+        "read_type",
+        "read_width",
+        "target_profile",
+        "runtime_context",
+        "state_provider",
+        "driver_environment"
+      ],
+      "capability_policy": {
+        "positive_selection": "VALIDATED_TARGET_LEGAL_FORMS_ONLY",
+        "disabled_capability_expected": "CAPABILITY_DISABLED at generator/legalization boundary; this is a project diagnostic, not a PTX hardware exception",
+        "ambiguous_source_expected": "BLOCKED_SOURCE_REVIEW for affected forms only",
+        "undefined_behavior_policy": "Reject invalid generator input or inspect frontend-only diagnostics; do not emit PTX-undefined executable cases and invent a trap oracle",
+        "readiness": "PLANNED: validated tuple registry, generator, independent checker/reference model and selected backend capability must be available before executing applicable tests"
+      },
+      "blocked_form_conditions": [],
+      "source_review_note": "32个driver-defined只读register，精确语义由driver文档定义；SM文档不能编造用途。",
+      "status": "PLANNED",
+      "execution": "NOT_RUN"
+    },
+    {
+      "trace_id": "SREG-10.28",
+      "section": "10.28",
+      "category_section": "10",
+      "category": "Special Registers",
+      "names": [
+        "%globaltimer",
+        "%globaltimer_lo",
+        "%globaltimer_hi"
+      ],
+      "pdf_page_start": 900,
+      "printed_page_start": 888,
+      "entry_kind": "special_register_description",
+      "is_executable_instruction_description": false,
+      "domain": "SPECIAL_REGISTER_STATE_PROVIDER",
+      "domain_description": "NVIDIA工具/平台global timer接口",
+      "domain_evidence_status": "project_state_routing_suggestion_not_NVIDIA_physical_register_file_fact",
+      "source_refs": [
+        "docs/sm/research/ptx94_special_register_inventory.json#10.28"
+      ],
+      "primary_feature_id": "GEN-SYS-01",
+      "related_feature_ids": [
+        "GEN-CVT-01",
+        "GEN-ISA-01"
+      ],
+      "test_family": "special_register_read",
+      "planned_stimulus": [
+        "按本节预定义声明和target生成mov/cvt等合法读取上下文；range/vector标签不假装只代表一个物理CSR。"
+      ],
+      "planned_checks": [
+        "检查预定义读的类型/分量/target及状态来源；不是额外instruction opcode，不能混入215/217计数。",
+        "读取期望来自规范和已注册launch/runtime状态模型；undefined/target-specific值不得编造固定golden。",
+        "globaltimer用于工具且target-specific；JIT其他target时值unspecified，不声明通用精确时钟。"
+      ],
+      "coverage_dimensions": [
+        "source_section",
+        "capability_state",
+        "generation_mode",
+        "read_type",
+        "read_width",
+        "target_profile",
+        "runtime_context",
+        "state_provider",
+        "target_specific_timer"
+      ],
+      "capability_policy": {
+        "positive_selection": "VALIDATED_TARGET_LEGAL_FORMS_ONLY",
+        "disabled_capability_expected": "CAPABILITY_DISABLED at generator/legalization boundary; this is a project diagnostic, not a PTX hardware exception",
+        "ambiguous_source_expected": "BLOCKED_SOURCE_REVIEW for affected forms only",
+        "undefined_behavior_policy": "Reject invalid generator input or inspect frontend-only diagnostics; do not emit PTX-undefined executable cases and invent a trap oracle",
+        "readiness": "PLANNED: validated tuple registry, generator, independent checker/reference model and selected backend capability must be available before executing applicable tests"
+      },
+      "blocked_form_conditions": [],
+      "source_review_note": "globaltimer是工具导向、target-specific；JIT到其他target时值unspecified，不承诺跨设备统一精确时钟。",
+      "status": "PLANNED",
+      "execution": "NOT_RUN"
+    },
+    {
+      "trace_id": "SREG-10.29",
+      "section": "10.29",
+      "category_section": "10",
+      "category": "Special Registers",
+      "names": [
+        "%reserved_smem_offset_begin",
+        "%reserved_smem_offset_end",
+        "%reserved_smem_offset_cap",
+        "%reserved_smem_offset_<2>"
+      ],
+      "pdf_page_start": 901,
+      "printed_page_start": 889,
+      "entry_kind": "special_register_description",
+      "is_executable_instruction_description": false,
+      "domain": "SPECIAL_REGISTER_STATE_PROVIDER",
+      "domain_description": "launch/system ABI保留shared区域元数据",
+      "domain_evidence_status": "project_state_routing_suggestion_not_NVIDIA_physical_register_file_fact",
+      "source_refs": [
+        "docs/sm/research/ptx94_special_register_inventory.json#10.29"
+      ],
+      "primary_feature_id": "GEN-SMEM-01",
+      "related_feature_ids": [
+        "GEN-CVT-01",
+        "GEN-ISA-01",
+        "GEN-MEM-01",
+        "GEN-SYS-01"
+      ],
+      "test_family": "special_register_read",
+      "planned_stimulus": [
+        "按本节预定义声明和target生成mov/cvt等合法读取上下文；range/vector标签不假装只代表一个物理CSR。"
+      ],
+      "planned_checks": [
+        "检查预定义读的类型/分量/target及状态来源；不是额外instruction opcode，不能混入215/217计数。",
+        "读取期望来自规范和已注册launch/runtime状态模型；undefined/target-specific值不得编造固定golden。",
+        "对照真实CTA launch分配状态；total排除system reserved，aggr包含，dynamic仅动态部分，不返回整个SMEM池。"
+      ],
+      "coverage_dimensions": [
+        "source_section",
+        "capability_state",
+        "generation_mode",
+        "read_type",
+        "read_width",
+        "target_profile",
+        "runtime_context",
+        "state_provider",
+        "static_dynamic_reserved",
+        "allocation_unit",
+        "cta_owner"
+      ],
+      "capability_policy": {
+        "positive_selection": "VALIDATED_TARGET_LEGAL_FORMS_ONLY",
+        "disabled_capability_expected": "CAPABILITY_DISABLED at generator/legalization boundary; this is a project diagnostic, not a PTX hardware exception",
+        "ambiguous_source_expected": "BLOCKED_SOURCE_REVIEW for affected forms only",
+        "undefined_behavior_policy": "Reject invalid generator input or inspect frontend-only diagnostics; do not emit PTX-undefined executable cases and invent a trap oracle",
+        "readiness": "PLANNED: validated tuple registry, generator, independent checker/reference model and selected backend capability must be available before executing applicable tests"
+      },
+      "blocked_form_conditions": [],
+      "source_review_note": "system保留shared区不对用户开放，用户访问是undefined behavior；<2>表示offset_0/offset_1这两个命名实例。",
+      "status": "PLANNED",
+      "execution": "NOT_RUN"
+    },
+    {
+      "trace_id": "SREG-10.30",
+      "section": "10.30",
+      "category_section": "10",
+      "category": "Special Registers",
+      "names": [
+        "%total_smem_size"
+      ],
+      "pdf_page_start": 902,
+      "printed_page_start": 890,
+      "entry_kind": "special_register_description",
+      "is_executable_instruction_description": false,
+      "domain": "SPECIAL_REGISTER_STATE_PROVIDER",
+      "domain_description": "CTA launch用户shared分配大小",
+      "domain_evidence_status": "project_state_routing_suggestion_not_NVIDIA_physical_register_file_fact",
+      "source_refs": [
+        "docs/sm/research/ptx94_special_register_inventory.json#10.30"
+      ],
+      "primary_feature_id": "GEN-SMEM-01",
+      "related_feature_ids": [
+        "GEN-CVT-01",
+        "GEN-ISA-01",
+        "GEN-MEM-01",
+        "GEN-SYS-01"
+      ],
+      "test_family": "special_register_read",
+      "planned_stimulus": [
+        "按本节预定义声明和target生成mov/cvt等合法读取上下文；range/vector标签不假装只代表一个物理CSR。"
+      ],
+      "planned_checks": [
+        "检查预定义读的类型/分量/target及状态来源；不是额外instruction opcode，不能混入215/217计数。",
+        "读取期望来自规范和已注册launch/runtime状态模型；undefined/target-specific值不得编造固定golden。",
+        "对照真实CTA launch分配状态；total排除system reserved，aggr包含，dynamic仅动态部分，不返回整个SMEM池。"
+      ],
+      "coverage_dimensions": [
+        "source_section",
+        "capability_state",
+        "generation_mode",
+        "read_type",
+        "read_width",
+        "target_profile",
+        "runtime_context",
+        "state_provider",
+        "static_dynamic_reserved",
+        "allocation_unit",
+        "cta_owner"
+      ],
+      "capability_policy": {
+        "positive_selection": "VALIDATED_TARGET_LEGAL_FORMS_ONLY",
+        "disabled_capability_expected": "CAPABILITY_DISABLED at generator/legalization boundary; this is a project diagnostic, not a PTX hardware exception",
+        "ambiguous_source_expected": "BLOCKED_SOURCE_REVIEW for affected forms only",
+        "undefined_behavior_policy": "Reject invalid generator input or inspect frontend-only diagnostics; do not emit PTX-undefined executable cases and invent a trap oracle",
+        "readiness": "PLANNED: validated tuple registry, generator, independent checker/reference model and selected backend capability must be available before executing applicable tests"
+      },
+      "blocked_form_conditions": [],
+      "source_review_note": "静态+动态用户shared，排除system reserved；返回按目标allocation unit取值，不能反推物理bank组织。",
+      "status": "PLANNED",
+      "execution": "NOT_RUN"
+    },
+    {
+      "trace_id": "SREG-10.31",
+      "section": "10.31",
+      "category_section": "10",
+      "category": "Special Registers",
+      "names": [
+        "%aggr_smem_size"
+      ],
+      "pdf_page_start": 903,
+      "printed_page_start": 891,
+      "entry_kind": "special_register_description",
+      "is_executable_instruction_description": false,
+      "domain": "SPECIAL_REGISTER_STATE_PROVIDER",
+      "domain_description": "CTA launch用户及system保留shared聚合大小",
+      "domain_evidence_status": "project_state_routing_suggestion_not_NVIDIA_physical_register_file_fact",
+      "source_refs": [
+        "docs/sm/research/ptx94_special_register_inventory.json#10.31"
+      ],
+      "primary_feature_id": "GEN-SMEM-01",
+      "related_feature_ids": [
+        "GEN-CVT-01",
+        "GEN-ISA-01",
+        "GEN-MEM-01",
+        "GEN-SYS-01"
+      ],
+      "test_family": "special_register_read",
+      "planned_stimulus": [
+        "按本节预定义声明和target生成mov/cvt等合法读取上下文；range/vector标签不假装只代表一个物理CSR。"
+      ],
+      "planned_checks": [
+        "检查预定义读的类型/分量/target及状态来源；不是额外instruction opcode，不能混入215/217计数。",
+        "读取期望来自规范和已注册launch/runtime状态模型；undefined/target-specific值不得编造固定golden。",
+        "对照真实CTA launch分配状态；total排除system reserved，aggr包含，dynamic仅动态部分，不返回整个SMEM池。"
+      ],
+      "coverage_dimensions": [
+        "source_section",
+        "capability_state",
+        "generation_mode",
+        "read_type",
+        "read_width",
+        "target_profile",
+        "runtime_context",
+        "state_provider",
+        "static_dynamic_reserved",
+        "allocation_unit",
+        "cta_owner"
+      ],
+      "capability_policy": {
+        "positive_selection": "VALIDATED_TARGET_LEGAL_FORMS_ONLY",
+        "disabled_capability_expected": "CAPABILITY_DISABLED at generator/legalization boundary; this is a project diagnostic, not a PTX hardware exception",
+        "ambiguous_source_expected": "BLOCKED_SOURCE_REVIEW for affected forms only",
+        "undefined_behavior_policy": "Reject invalid generator input or inspect frontend-only diagnostics; do not emit PTX-undefined executable cases and invent a trap oracle",
+        "readiness": "PLANNED: validated tuple registry, generator, independent checker/reference model and selected backend capability must be available before executing applicable tests"
+      },
+      "blocked_form_conditions": [],
+      "source_review_note": "用户静态+动态shared加system reserved；不能和total_smem_size混用。",
+      "status": "PLANNED",
+      "execution": "NOT_RUN"
+    },
+    {
+      "trace_id": "SREG-10.32",
+      "section": "10.32",
+      "category_section": "10",
+      "category": "Special Registers",
+      "names": [
+        "%dynamic_smem_size"
+      ],
+      "pdf_page_start": 904,
+      "printed_page_start": 892,
+      "entry_kind": "special_register_description",
+      "is_executable_instruction_description": false,
+      "domain": "SPECIAL_REGISTER_STATE_PROVIDER",
+      "domain_description": "CTA launch动态shared大小",
+      "domain_evidence_status": "project_state_routing_suggestion_not_NVIDIA_physical_register_file_fact",
+      "source_refs": [
+        "docs/sm/research/ptx94_special_register_inventory.json#10.32"
+      ],
+      "primary_feature_id": "GEN-SMEM-01",
+      "related_feature_ids": [
+        "GEN-CVT-01",
+        "GEN-ISA-01",
+        "GEN-MEM-01",
+        "GEN-SYS-01"
+      ],
+      "test_family": "special_register_read",
+      "planned_stimulus": [
+        "按本节预定义声明和target生成mov/cvt等合法读取上下文；range/vector标签不假装只代表一个物理CSR。"
+      ],
+      "planned_checks": [
+        "检查预定义读的类型/分量/target及状态来源；不是额外instruction opcode，不能混入215/217计数。",
+        "读取期望来自规范和已注册launch/runtime状态模型；undefined/target-specific值不得编造固定golden。",
+        "对照真实CTA launch分配状态；total排除system reserved，aggr包含，dynamic仅动态部分，不返回整个SMEM池。"
+      ],
+      "coverage_dimensions": [
+        "source_section",
+        "capability_state",
+        "generation_mode",
+        "read_type",
+        "read_width",
+        "target_profile",
+        "runtime_context",
+        "state_provider",
+        "static_dynamic_reserved",
+        "allocation_unit",
+        "cta_owner"
+      ],
+      "capability_policy": {
+        "positive_selection": "VALIDATED_TARGET_LEGAL_FORMS_ONLY",
+        "disabled_capability_expected": "CAPABILITY_DISABLED at generator/legalization boundary; this is a project diagnostic, not a PTX hardware exception",
+        "ambiguous_source_expected": "BLOCKED_SOURCE_REVIEW for affected forms only",
+        "undefined_behavior_policy": "Reject invalid generator input or inspect frontend-only diagnostics; do not emit PTX-undefined executable cases and invent a trap oracle",
+        "readiness": "PLANNED: validated tuple registry, generator, independent checker/reference model and selected backend capability must be available before executing applicable tests"
+      },
+      "blocked_form_conditions": [],
+      "source_review_note": "只报告kernel launch动态shared分配量，不是运行时TMEM allocation或当前shared剩余量。",
+      "status": "PLANNED",
+      "execution": "NOT_RUN"
+    },
+    {
+      "trace_id": "SREG-10.33",
+      "section": "10.33",
+      "category_section": "10",
+      "category": "Special Registers",
+      "names": [
+        "%current_graph_exec"
+      ],
+      "pdf_page_start": 905,
+      "printed_page_start": 893,
+      "entry_kind": "special_register_description",
+      "is_executable_instruction_description": false,
+      "domain": "SPECIAL_REGISTER_STATE_PROVIDER",
+      "domain_description": "CUDA device graph执行上下文",
+      "domain_evidence_status": "project_state_routing_suggestion_not_NVIDIA_physical_register_file_fact",
+      "source_refs": [
+        "docs/sm/research/ptx94_special_register_inventory.json#10.33"
+      ],
+      "primary_feature_id": "GEN-SYS-01",
+      "related_feature_ids": [
+        "GEN-CVT-01",
+        "GEN-ISA-01"
+      ],
+      "test_family": "special_register_read",
+      "planned_stimulus": [
+        "按本节预定义声明和target生成mov/cvt等合法读取上下文；range/vector标签不假装只代表一个物理CSR。"
+      ],
+      "planned_checks": [
+        "检查预定义读的类型/分量/target及状态来源；不是额外instruction opcode，不能混入215/217计数。",
+        "读取期望来自规范和已注册launch/runtime状态模型；undefined/target-specific值不得编造固定golden。",
+        "非device graph kernel时current_graph_exec为0；graph时使用运行时身份模型。"
+      ],
+      "coverage_dimensions": [
+        "source_section",
+        "capability_state",
+        "generation_mode",
+        "read_type",
+        "read_width",
+        "target_profile",
+        "runtime_context",
+        "state_provider",
+        "graph_vs_non_graph"
+      ],
+      "capability_policy": {
+        "positive_selection": "VALIDATED_TARGET_LEGAL_FORMS_ONLY",
+        "disabled_capability_expected": "CAPABILITY_DISABLED at generator/legalization boundary; this is a project diagnostic, not a PTX hardware exception",
+        "ambiguous_source_expected": "BLOCKED_SOURCE_REVIEW for affected forms only",
+        "undefined_behavior_policy": "Reject invalid generator input or inspect frontend-only diagnostics; do not emit PTX-undefined executable cases and invent a trap oracle",
+        "readiness": "PLANNED: validated tuple registry, generator, independent checker/reference model and selected backend capability must be available before executing applicable tests"
+      },
+      "blocked_form_conditions": [],
+      "source_review_note": "非CUDA device graph kernel时值0；不是任意SM本地graph scheduler状态。",
+      "status": "PLANNED",
+      "execution": "NOT_RUN"
+    },
+    {
+      "trace_id": "SREG-10.34",
+      "section": "10.34",
+      "category_section": "10",
+      "category": "Special Registers",
+      "names": [
+        "%perctamemoryoffset"
+      ],
+      "pdf_page_start": 906,
+      "printed_page_start": 894,
+      "entry_kind": "special_register_description",
+      "is_executable_instruction_description": false,
+      "domain": "SPECIAL_REGISTER_STATE_PROVIDER",
+      "domain_description": "driver per-CTA global memory slice地址",
+      "domain_evidence_status": "project_state_routing_suggestion_not_NVIDIA_physical_register_file_fact",
+      "source_refs": [
+        "docs/sm/research/ptx94_special_register_inventory.json#10.34"
+      ],
+      "primary_feature_id": "GEN-MEM-01",
+      "related_feature_ids": [
+        "GEN-CVT-01",
+        "GEN-ISA-01",
+        "GEN-SYS-01"
+      ],
+      "test_family": "per_cta_global_slice_register",
+      "planned_stimulus": [
+        "按本节预定义声明和target生成mov/cvt等合法读取上下文；range/vector标签不假装只代表一个物理CSR。"
+      ],
+      "planned_checks": [
+        "检查预定义读的类型/分量/target及状态来源；不是额外instruction opcode，不能混入215/217计数。",
+        "读取期望来自规范和已注册launch/runtime状态模型；undefined/target-specific值不得编造固定golden。",
+        "仅在带.minperctamemory的entry选择；size为1024B倍数，driver不支持时可0；不可用SMEM/TMEM/local stack地址模型。"
+      ],
+      "coverage_dimensions": [
+        "source_section",
+        "capability_state",
+        "generation_mode",
+        "read_type",
+        "read_width",
+        "target_profile",
+        "runtime_context",
+        "state_provider",
+        "minperctamemory_present",
+        "driver_support",
+        "slice_address_or_pitch"
+      ],
+      "capability_policy": {
+        "positive_selection": "VALIDATED_TARGET_LEGAL_FORMS_ONLY",
+        "disabled_capability_expected": "CAPABILITY_DISABLED at generator/legalization boundary; this is a project diagnostic, not a PTX hardware exception",
+        "ambiguous_source_expected": "BLOCKED_SOURCE_REVIEW for affected forms only",
+        "undefined_behavior_policy": "Reject invalid generator input or inspect frontend-only diagnostics; do not emit PTX-undefined executable cases and invent a trap oracle",
+        "readiness": "PLANNED: validated tuple registry, generator, independent checker/reference model and selected backend capability must be available before executing applicable tests"
+      },
+      "blocked_form_conditions": [],
+      "source_review_note": "PTX9.4新增，sm80+；只有声明.minperctamemory的entry内使用才有效。返回当前CTA global slice的64bit地址。",
+      "status": "PLANNED",
+      "execution": "NOT_RUN"
+    },
+    {
+      "trace_id": "SREG-10.35",
+      "section": "10.35",
+      "category_section": "10",
+      "category": "Special Registers",
+      "names": [
+        "%perctamemorysize"
+      ],
+      "pdf_page_start": 907,
+      "printed_page_start": 895,
+      "entry_kind": "special_register_description",
+      "is_executable_instruction_description": false,
+      "domain": "SPECIAL_REGISTER_STATE_PROVIDER",
+      "domain_description": "driver per-CTA global memory slice大小/stride",
+      "domain_evidence_status": "project_state_routing_suggestion_not_NVIDIA_physical_register_file_fact",
+      "source_refs": [
+        "docs/sm/research/ptx94_special_register_inventory.json#10.35"
+      ],
+      "primary_feature_id": "GEN-MEM-01",
+      "related_feature_ids": [
+        "GEN-CVT-01",
+        "GEN-ISA-01",
+        "GEN-SYS-01"
+      ],
+      "test_family": "per_cta_global_slice_register",
+      "planned_stimulus": [
+        "按本节预定义声明和target生成mov/cvt等合法读取上下文；range/vector标签不假装只代表一个物理CSR。"
+      ],
+      "planned_checks": [
+        "检查预定义读的类型/分量/target及状态来源；不是额外instruction opcode，不能混入215/217计数。",
+        "读取期望来自规范和已注册launch/runtime状态模型；undefined/target-specific值不得编造固定golden。",
+        "仅在带.minperctamemory的entry选择；size为1024B倍数，driver不支持时可0；不可用SMEM/TMEM/local stack地址模型。"
+      ],
+      "coverage_dimensions": [
+        "source_section",
+        "capability_state",
+        "generation_mode",
+        "read_type",
+        "read_width",
+        "target_profile",
+        "runtime_context",
+        "state_provider",
+        "minperctamemory_present",
+        "driver_support",
+        "slice_address_or_pitch"
+      ],
+      "capability_policy": {
+        "positive_selection": "VALIDATED_TARGET_LEGAL_FORMS_ONLY",
+        "disabled_capability_expected": "CAPABILITY_DISABLED at generator/legalization boundary; this is a project diagnostic, not a PTX hardware exception",
+        "ambiguous_source_expected": "BLOCKED_SOURCE_REVIEW for affected forms only",
+        "undefined_behavior_policy": "Reject invalid generator input or inspect frontend-only diagnostics; do not emit PTX-undefined executable cases and invent a trap oracle",
+        "readiness": "PLANNED: validated tuple registry, generator, independent checker/reference model and selected backend capability must be available before executing applicable tests"
+      },
+      "blocked_form_conditions": [],
+      "source_review_note": "PTX9.4新增，sm80+；仅带.minperctamemory的entry可用。1024B倍数，driver不支持时为0；支持时至少为directive申请大小。",
+      "status": "PLANNED",
+      "execution": "NOT_RUN"
+    }
+  ]
+}

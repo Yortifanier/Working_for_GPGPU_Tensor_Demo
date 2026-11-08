@@ -1,0 +1,315 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "SM instruction generator vplan vplan_features",
+  "type": "object",
+  "properties": {
+    "schema_version": {
+      "const": "1.0"
+    },
+    "plan_id": {
+      "const": "SM-INSTR-GEN-VPLAN"
+    },
+    "version": {
+      "type": "string",
+      "minLength": 1
+    },
+    "date": {
+      "type": "string",
+      "format": "date"
+    },
+    "source_inventory": {
+      "type": "object",
+      "properties": {
+        "instructions": {
+          "type": "object",
+          "properties": {
+            "path": {
+              "type": "string",
+              "minLength": 1
+            },
+            "sha256": {
+              "type": "string",
+              "pattern": "^[a-f0-9]{64}$"
+            }
+          },
+          "required": [
+            "path",
+            "sha256"
+          ]
+        },
+        "special_registers": {
+          "type": "object",
+          "properties": {
+            "path": {
+              "type": "string",
+              "minLength": 1
+            },
+            "sha256": {
+              "type": "string",
+              "pattern": "^[a-f0-9]{64}$"
+            }
+          },
+          "required": [
+            "path",
+            "sha256"
+          ]
+        },
+        "sm_architecture": {
+          "type": "object",
+          "properties": {
+            "path": {
+              "type": "string",
+              "minLength": 1
+            },
+            "sha256": {
+              "type": "string",
+              "pattern": "^[a-f0-9]{64}$"
+            }
+          },
+          "required": [
+            "path",
+            "sha256"
+          ]
+        }
+      },
+      "required": [
+        "instructions",
+        "special_registers",
+        "sm_architecture"
+      ]
+    },
+    "phases": {
+      "type": "array",
+      "items": {
+        "oneOf": [
+          {
+            "enum": [
+              "P0_PLAN_STATIC",
+              "P1_GENERATOR_UNIT",
+              "P2_REFERENCE_PROGRAM",
+              "P3_SM_RTL",
+              "P4_SOC"
+            ]
+          },
+          {
+            "type": "object",
+            "properties": {
+              "id": {
+                "enum": [
+                  "P0_PLAN_STATIC",
+                  "P1_GENERATOR_UNIT",
+                  "P2_REFERENCE_PROGRAM",
+                  "P3_SM_RTL",
+                  "P4_SOC"
+                ]
+              }
+            },
+            "required": [
+              "id"
+            ]
+          }
+        ]
+      },
+      "minItems": 1,
+      "uniqueItems": true
+    },
+    "features": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "pattern": "^GEN-[A-Z0-9][A-Z0-9_-]*$"
+          },
+          "title": {
+            "type": "string",
+            "minLength": 1
+          },
+          "requirement": {
+            "type": "string",
+            "minLength": 1
+          },
+          "stimulus": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "minLength": 1
+            },
+            "minItems": 1,
+            "uniqueItems": true
+          },
+          "checks": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "minLength": 1
+            },
+            "minItems": 1,
+            "uniqueItems": true
+          },
+          "coverage_points": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "id": {
+                  "type": "string",
+                  "pattern": "^CV-[A-Z0-9_-]+-[0-9]{3}$"
+                },
+                "description": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "sample_stage": {
+                  "enum": [
+                    "GENERATED",
+                    "LEGALIZED",
+                    "ADMITTED",
+                    "COMPLETED",
+                    "CHECKED",
+                    "REJECTED",
+                    "REPORT_CLASSIFIED"
+                  ]
+                },
+                "scope": {
+                  "enum": [
+                    "GENERATOR",
+                    "DUT_SCENARIO"
+                  ]
+                },
+                "bins": {
+                  "oneOf": [
+                    {
+                      "type": "array",
+                      "items": {
+                        "oneOf": [
+                          {
+                            "type": "string",
+                            "minLength": 1
+                          },
+                          {
+                            "type": "object",
+                            "minProperties": 1
+                          }
+                        ]
+                      },
+                      "minItems": 1
+                    },
+                    {
+                      "type": "object",
+                      "minProperties": 1
+                    }
+                  ]
+                }
+              },
+              "required": [
+                "id",
+                "description",
+                "sample_stage",
+                "scope",
+                "bins"
+              ]
+            },
+            "minItems": 1,
+            "uniqueItems": true
+          },
+          "pass_criteria": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "minLength": 1
+            },
+            "minItems": 1,
+            "uniqueItems": true
+          },
+          "phases": {
+            "type": "array",
+            "items": {
+              "enum": [
+                "P0_PLAN_STATIC",
+                "P1_GENERATOR_UNIT",
+                "P2_REFERENCE_PROGRAM",
+                "P3_SM_RTL",
+                "P4_SOC"
+              ]
+            },
+            "minItems": 1,
+            "uniqueItems": true
+          },
+          "priority": {
+            "type": "string",
+            "minLength": 1
+          },
+          "status": {
+            "const": "PLANNED"
+          },
+          "execution": {
+            "const": "NOT_RUN"
+          },
+          "test_ids": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "pattern": "^SIG-[A-Z0-9_-]+-[0-9]{3}$"
+            },
+            "minItems": 1,
+            "uniqueItems": true
+          },
+          "source_refs": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "pattern": "^[^#]+#[^#]+$"
+            },
+            "minItems": 1,
+            "uniqueItems": true
+          },
+          "dependency_gate": {
+            "oneOf": [
+              {
+                "type": "string",
+                "minLength": 1
+              },
+              {
+                "type": "array",
+                "items": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "minItems": 1,
+                "uniqueItems": true
+              }
+            ]
+          }
+        },
+        "required": [
+          "id",
+          "title",
+          "requirement",
+          "stimulus",
+          "checks",
+          "coverage_points",
+          "pass_criteria",
+          "phases",
+          "priority",
+          "status",
+          "execution",
+          "test_ids",
+          "source_refs"
+        ]
+      },
+      "minItems": 1,
+      "uniqueItems": true
+    }
+  },
+  "required": [
+    "schema_version",
+    "plan_id",
+    "version",
+    "date",
+    "source_inventory",
+    "phases",
+    "features"
+  ]
+}

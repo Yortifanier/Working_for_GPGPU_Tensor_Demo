@@ -1,0 +1,2277 @@
+{
+  "schema_version": "1.0",
+  "plan_id": "SM-INSTR-GEN-VPLAN",
+  "version": "1.0",
+  "date": "2026-11-08",
+  "scope": "Verification-side constrained SM instruction/program generator; plan only, not a generator or SM implementation.",
+  "source_inventory": {
+    "instructions": {
+      "path": "docs/sm/research/ptx94_instruction_inventory.json",
+      "sha256": "77f932724a2ab3c91f7d3ab8b60269b6e274afcf43db2c82bed3056f542c126a"
+    },
+    "special_registers": {
+      "path": "docs/sm/research/ptx94_special_register_inventory.json",
+      "sha256": "7dfe04b4778c9490864ce705318d353ad17241596ef8d632ea0cf3fc8ac43465"
+    },
+    "sm_architecture": {
+      "path": "docs/sm/SM_ARCHITECTURE.md",
+      "sha256": "b28eaee5bf381c7dbcc8387687c62bc8030eb722935e11774cf3eaecb20fb0ba"
+    }
+  },
+  "phases": [
+    {
+      "id": "P0_PLAN_STATIC",
+      "title": "计划静态一致性",
+      "current_gate": "仅此层可在本次交付实际执行；不是发生器功能测试。"
+    },
+    {
+      "id": "P1_GENERATOR_UNIT",
+      "title": "发生器/独立审计器单元验证",
+      "current_gate": "BLOCKED: generator and unit harness absent"
+    },
+    {
+      "id": "P2_REFERENCE_PROGRAM",
+      "title": "参考模型/编译程序验证",
+      "current_gate": "BLOCKED: independent model/compiler/IR backend absent"
+    },
+    {
+      "id": "P3_SM_RTL",
+      "title": "SM RTL执行验证",
+      "current_gate": "BLOCKED: full SM RTL/adapter absent"
+    },
+    {
+      "id": "P4_SOC",
+      "title": "SoC/cluster/Fabric协同验证",
+      "current_gate": "BLOCKED: SoC service implementation/models absent"
+    }
+  ],
+  "features": [
+    {
+      "id": "GEN-ISA-01",
+      "title": "规范、target与项目capability合法性",
+      "requirement": "每个候选按release/target/opcode/type/modifier/shape/space/scope/participant联合检查；规范合法和项目已实现分开。",
+      "stimulus": [
+        "遍历217说明节，保留同名不同类型与同节多名称；另读35特殊寄存器。",
+        "从已知合法tuple每次只改target、family、类型或一个modifier；覆盖sm90a WGMMA与sm107相关门限。",
+        "在规范合法但project关闭的形式上尝试native、lowering与service路线。",
+        "把合法化通过与明确项目非法命令分别送真实SM adapter；非法不属于普通PTX UB测试。"
+      ],
+      "checks": [
+        "对独立源索引比对section集合/名称/页号，语法和directive不计opcode。",
+        "独立规则表判断与拒绝理由；规则缺失fail-closed，禁止调用generator legality函数。",
+        "检查lowering证书/规则版本，禁止无证据fallback或静默no-op。",
+        "独立入口monitor比对动态实例/route及项目定义错误合同。"
+      ],
+      "coverage_points": [
+        {
+          "id": "CV-ISA-001",
+          "description": "候选来源与门限分布",
+          "scope": "GENERATOR",
+          "sample_stage": "GENERATED",
+          "bins": [
+            "215_instruction_topics",
+            "2_syntax_topics",
+            "same_family",
+            "architecture_specific",
+            "deprecated",
+            "disabled_project_capability"
+          ],
+          "mandatory": true,
+          "bin_resolution": "Concrete enum bins plus capability-resolved legal-form bins; unresolved forms block closure rather than disappear."
+        },
+        {
+          "id": "CV-ISA-002",
+          "description": "独立合法化结果",
+          "scope": "GENERATOR",
+          "sample_stage": "CHECKED",
+          "bins": [
+            "accept_enabled_legal",
+            "reject_target",
+            "reject_tuple",
+            "reject_project_disabled",
+            "reject_missing_rule"
+          ],
+          "mandatory": true,
+          "bin_resolution": "Concrete enum bins plus capability-resolved legal-form bins; unresolved forms block closure rather than disappear.",
+          "sampling_note": "Sample only after the independent generator-side audit classifies its result; accepted and rejected outcomes retain distinct decision-stage counters. This is not a DUT result event."
+        },
+        {
+          "id": "CV-ISA-003",
+          "description": "实际适配入口只接收合法形式",
+          "scope": "DUT_SCENARIO",
+          "sample_stage": "CHECKED",
+          "bins": [
+            "correct_accept",
+            "correct_reject",
+            "no_dropped_instruction"
+          ],
+          "mandatory": true,
+          "bin_resolution": "Concrete enum bins plus capability-resolved legal-form bins; unresolved forms block closure rather than disappear."
+        }
+      ],
+      "pass_criteria": [
+        "All mandatory cases and resolved legal-form bins have matching nonempty checked evidence at their required phase.",
+        "No unexpected accept/reject, illegal positive program, missing side effect, duplicate completion or orphan resource.",
+        "PLANNED/NOT_RUN stays unchanged until an actual generator or DUT campaign records a replayable result."
+      ],
+      "phases": [
+        "P1_GENERATOR_UNIT",
+        "P2_REFERENCE_PROGRAM",
+        "P3_SM_RTL"
+      ],
+      "priority": "CRITICAL",
+      "status": "PLANNED",
+      "execution": "NOT_RUN",
+      "test_ids": [
+        "SIG-ISA-001",
+        "SIG-ISA-002",
+        "SIG-ISA-003",
+        "SIG-ISA-004"
+      ],
+      "source_refs": [
+        "docs/sm/SM_ARCHITECTURE.md#3"
+      ]
+    },
+    {
+      "id": "GEN-IR-01",
+      "title": "语义IR、序列化与adapter边界",
+      "requirement": "冻结semantic IR与recipe以后再编码；PTX文本、项目IR与native字节不得互相冒充。",
+      "stimulus": [
+        "序列化/反序列化寄存器、立即数、packed载体、symbolic地址、descriptor与metadata。",
+        "native编码未冻结时请求native输出，并尝试unknown schema/保留位。",
+        "对选定可证明序列比较原语义和lowered trace，含helper临时寄存器及CC。",
+        "同一IR实例在随机ready下提交所有分片，覆盖同tag不同generation。"
+      ],
+      "checks": [
+        "使用独立schema解码器比较语义AST，不比较无意义JSON字段顺序。",
+        "检查拒绝记录与backend version，不使用PTX字节作为fetch指令。",
+        "独立解释器做relation检查，保留predication/rounding/side effects。",
+        "driver monitor逐拍检查valid阻塞稳定、唯一accept及payload hash。"
+      ],
+      "coverage_points": [
+        {
+          "id": "CV-IR-001",
+          "description": "IR载体",
+          "scope": "GENERATOR",
+          "sample_stage": "GENERATED",
+          "bins": [
+            "ptx_semantic",
+            "project_ir",
+            "lowered_sequence",
+            "native_backend_disabled"
+          ],
+          "mandatory": true,
+          "bin_resolution": "Concrete enum bins plus capability-resolved legal-form bins; unresolved forms block closure rather than disappear."
+        },
+        {
+          "id": "CV-IR-002",
+          "description": "往返与拒绝",
+          "scope": "GENERATOR",
+          "sample_stage": "CHECKED",
+          "bins": [
+            "roundtrip_equal",
+            "unknown_field_reject",
+            "width_sign_preserved",
+            "layout_version_mismatch"
+          ],
+          "mandatory": true,
+          "bin_resolution": "Concrete enum bins plus capability-resolved legal-form bins; unresolved forms block closure rather than disappear.",
+          "sampling_note": "Sample only after the independent generator-side audit classifies its result; accepted and rejected outcomes retain distinct decision-stage counters. This is not a DUT result event."
+        },
+        {
+          "id": "CV-IR-003",
+          "description": "adapter责任",
+          "scope": "DUT_SCENARIO",
+          "sample_stage": "CHECKED",
+          "bins": [
+            "exact_payload",
+            "stable_under_backpressure",
+            "correct_instance_route"
+          ],
+          "mandatory": true,
+          "bin_resolution": "Concrete enum bins plus capability-resolved legal-form bins; unresolved forms block closure rather than disappear."
+        }
+      ],
+      "pass_criteria": [
+        "All mandatory cases and resolved legal-form bins have matching nonempty checked evidence at their required phase.",
+        "No unexpected accept/reject, illegal positive program, missing side effect, duplicate completion or orphan resource.",
+        "PLANNED/NOT_RUN stays unchanged until an actual generator or DUT campaign records a replayable result."
+      ],
+      "phases": [
+        "P1_GENERATOR_UNIT",
+        "P2_REFERENCE_PROGRAM",
+        "P3_SM_RTL"
+      ],
+      "priority": "HIGH",
+      "status": "PLANNED",
+      "execution": "NOT_RUN",
+      "test_ids": [
+        "SIG-IR-001",
+        "SIG-IR-002",
+        "SIG-IR-003",
+        "SIG-IR-004"
+      ],
+      "source_refs": [
+        "docs/sm/SM_ARCHITECTURE.md#3"
+      ]
+    },
+    {
+      "id": "GEN-DEP-01",
+      "title": "寄存器、谓词、CC与访存依赖",
+      "requirement": "生成器用独立数据流和别名账本构造RAW/WAR/WAW及隐式状态依赖，不预设固定执行时延。",
+      "stimulus": [
+        "构造短/长RAW链，交错WAR/WAW与独立算术，包含packed和64/128bit载体。",
+        "CC链/双谓词/masked定义后跨分支使用；helper故意申请冲突临时寄存器。",
+        "为global/shared/local别名与narrow/wide重叠建立必须顺序，另生成合法无冲突对。",
+        "对依赖流注入长延迟和多片返回，与短算术及CC链并发。"
+      ],
+      "checks": [
+        "独立SSA/def-use分析器核对源定义、live范围和副作用。",
+        "检查per-thread path-sensitive definition及CC clobber规则。",
+        "独立byte-range与happens-before分析，不仅比较寄存器索引。",
+        "scoreboard按动态实例/lane/fragment检查值与ready点。"
+      ],
+      "coverage_points": [
+        {
+          "id": "CV-DEP-001",
+          "description": "依赖形状",
+          "scope": "GENERATOR",
+          "sample_stage": "GENERATED",
+          "bins": [
+            "RAW",
+            "WAR",
+            "WAW",
+            "independent",
+            "partial_overlap",
+            "predicate",
+            "CC"
+          ],
+          "mandatory": true,
+          "bin_resolution": "Concrete enum bins plus capability-resolved legal-form bins; unresolved forms block closure rather than disappear."
+        },
+        {
+          "id": "CV-DEP-002",
+          "description": "依赖合法性",
+          "scope": "GENERATOR",
+          "sample_stage": "CHECKED",
+          "bins": [
+            "defined_before_use",
+            "guarded_definition",
+            "helper_clobber_free",
+            "alias_edge_present"
+          ],
+          "mandatory": true,
+          "bin_resolution": "Concrete enum bins plus capability-resolved legal-form bins; unresolved forms block closure rather than disappear.",
+          "sampling_note": "Sample only after the independent generator-side audit classifies its result; accepted and rejected outcomes retain distinct decision-stage counters. This is not a DUT result event."
+        },
+        {
+          "id": "CV-DEP-003",
+          "description": "动态依赖完成",
+          "scope": "DUT_SCENARIO",
+          "sample_stage": "CHECKED",
+          "bins": [
+            "partial_return_not_ready",
+            "all_fragments_ready",
+            "cross_warp_isolation",
+            "correct_forwarding"
+          ],
+          "mandatory": true,
+          "bin_resolution": "Concrete enum bins plus capability-resolved legal-form bins; unresolved forms block closure rather than disappear."
+        }
+      ],
+      "pass_criteria": [
+        "All mandatory cases and resolved legal-form bins have matching nonempty checked evidence at their required phase.",
+        "No unexpected accept/reject, illegal positive program, missing side effect, duplicate completion or orphan resource.",
+        "PLANNED/NOT_RUN stays unchanged until an actual generator or DUT campaign records a replayable result."
+      ],
+      "phases": [
+        "P1_GENERATOR_UNIT",
+        "P2_REFERENCE_PROGRAM",
+        "P3_SM_RTL"
+      ],
+      "priority": "CRITICAL",
+      "status": "PLANNED",
+      "execution": "NOT_RUN",
+      "test_ids": [
+        "SIG-DEP-001",
+        "SIG-DEP-002",
+        "SIG-DEP-003",
+        "SIG-DEP-004"
+      ],
+      "source_refs": [
+        "docs/sm/SM_ARCHITECTURE.md#6"
+      ]
+    },
+    {
+      "id": "GEN-ALU-01",
+      "title": "整数、位操作、packed dot与video",
+      "requirement": "覆盖整数符号/宽度、hi/lo/wide、CC、carryless、video选择与merge；不把dp4a当矩阵MMA。",
+      "stimulus": [
+        "生成0/±1/min/max、跨32/64边界carry/borrow、mul.hi/wide及mad链。",
+        "覆盖shift 0/width−1/width/>width、bitfield边界和clmad高低多项式。",
+        "按element抽取、扩展、clamp、secondary op、merge生成video及dp2a/dp4a。",
+        "在多warp中交错整数/乘法/CC/packed流并注入返回stall。"
+      ],
+      "checks": [
+        "独立任意精度整数oracle截取/扩展并单独检查CC。",
+        "XOR/shift多项式oracle独立于普通乘法；逐条mask/shift规则。",
+        "标量化的独立逐元素模型，不调用DUT decoder或MALU oracle作全部ALU模型。",
+        "独立值scoreboard+隐式CC monitor。"
+      ],
+      "coverage_points": [
+        {
+          "id": "CV-ALU-001",
+          "description": "算术边界",
+          "scope": "GENERATOR",
+          "sample_stage": "GENERATED",
+          "bins": [
+            "zero",
+            "signed_min_max",
+            "carry_borrow",
+            "hi_lo_wide",
+            "shift_edge",
+            "clmad",
+            "dp2a_dp4a",
+            "video_merge"
+          ],
+          "mandatory": true,
+          "bin_resolution": "Concrete enum bins plus capability-resolved legal-form bins; unresolved forms block closure rather than disappear."
+        },
+        {
+          "id": "CV-ALU-002",
+          "description": "操作数规则",
+          "scope": "GENERATOR",
+          "sample_stage": "CHECKED",
+          "bins": [
+            "signed_unsigned",
+            "packed_element_independent",
+            "legal_16bit_profile",
+            "no_undefined_read"
+          ],
+          "mandatory": true,
+          "bin_resolution": "Concrete enum bins plus capability-resolved legal-form bins; unresolved forms block closure rather than disappear.",
+          "sampling_note": "Sample only after the independent generator-side audit classifies its result; accepted and rejected outcomes retain distinct decision-stage counters. This is not a DUT result event."
+        },
+        {
+          "id": "CV-ALU-003",
+          "description": "数值和状态结果",
+          "scope": "DUT_SCENARIO",
+          "sample_stage": "CHECKED",
+          "bins": [
+            "exact_integer",
+            "correct_CC",
+            "correct_selected_bits",
+            "per_thread_isolation"
+          ],
+          "mandatory": true,
+          "bin_resolution": "Concrete enum bins plus capability-resolved legal-form bins; unresolved forms block closure rather than disappear."
+        }
+      ],
+      "pass_criteria": [
+        "All mandatory cases and resolved legal-form bins have matching nonempty checked evidence at their required phase.",
+        "No unexpected accept/reject, illegal positive program, missing side effect, duplicate completion or orphan resource.",
+        "PLANNED/NOT_RUN stays unchanged until an actual generator or DUT campaign records a replayable result."
+      ],
+      "phases": [
+        "P1_GENERATOR_UNIT",
+        "P2_REFERENCE_PROGRAM",
+        "P3_SM_RTL"
+      ],
+      "priority": "HIGH",
+      "status": "PLANNED",
+      "execution": "NOT_RUN",
+      "test_ids": [
+        "SIG-ALU-001",
+        "SIG-ALU-002",
+        "SIG-ALU-003",
+        "SIG-ALU-004"
+      ],
+      "source_refs": [
+        "docs/sm/SM_ARCHITECTURE.md#8"
+      ]
+    },
+    {
+      "id": "GEN-FP-01",
+      "title": "普通浮点、混合/packed与SFU",
+      "requirement": "区分普通FMA、packed独立结果、精确/近似数学与Matrix PROJECT_EXACT，逐形式固定舍入/误差。",
+      "stimulus": [
+        "生成半ULP、相消、subnormal、±0、Inf/NaN及溢出/下溢组合。",
+        "覆盖FP8/6/4 x4与F16/BF16/F32x2形式，单独变异carrier/target。",
+        "构造FMA与先乘后加会不同的值，另测sin/cos/lg2/ex2/div/rcp/rsqrt边界。",
+        "多warp交错FP32/FP64/packed/SFU及dependent consumers。"
+      ],
+      "checks": [
+        "独立MPFR/SoftFloat或有理数+逐形式舍入模型；固定工具/version。",
+        "独立tuple表与每元素运算模型；验证不是四元素dot。",
+        "精确形式与approx采用不同判据；误差/范围和特殊值规则独立记录。",
+        "值/误差scoreboard与per-op profile检查。"
+      ],
+      "coverage_points": [
+        {
+          "id": "CV-FP-001",
+          "description": "数值类别",
+          "scope": "GENERATOR",
+          "sample_stage": "GENERATED",
+          "bins": [
+            "normal",
+            "subnormal",
+            "signed_zero",
+            "infinity",
+            "qNaN_sNaN_as_defined",
+            "cancellation",
+            "overflow_underflow",
+            "tie"
+          ],
+          "mandatory": true,
+          "bin_resolution": "Concrete enum bins plus capability-resolved legal-form bins; unresolved forms block closure rather than disappear."
+        },
+        {
+          "id": "CV-FP-002",
+          "description": "形式与profile",
+          "scope": "GENERATOR",
+          "sample_stage": "CHECKED",
+          "bins": [
+            "f16_bf16_f32_f64",
+            "mixed_x2",
+            "alternate_x4",
+            "fma_vs_mad",
+            "approx_vs_rounded",
+            "target_tuple"
+          ],
+          "mandatory": true,
+          "bin_resolution": "Concrete enum bins plus capability-resolved legal-form bins; unresolved forms block closure rather than disappear.",
+          "sampling_note": "Sample only after the independent generator-side audit classifies its result; accepted and rejected outcomes retain distinct decision-stage counters. This is not a DUT result event."
+        },
+        {
+          "id": "CV-FP-003",
+          "description": "数值验收",
+          "scope": "DUT_SCENARIO",
+          "sample_stage": "CHECKED",
+          "bins": [
+            "exact_bits_when_required",
+            "allowed_NaN_set",
+            "bounded_error",
+            "no_cross_element_reduction"
+          ],
+          "mandatory": true,
+          "bin_resolution": "Concrete enum bins plus capability-resolved legal-form bins; unresolved forms block closure rather than disappear."
+        }
+      ],
+      "pass_criteria": [
+        "All mandatory cases and resolved legal-form bins have matching nonempty checked evidence at their required phase.",
+        "No unexpected accept/reject, illegal positive program, missing side effect, duplicate completion or orphan resource.",
+        "PLANNED/NOT_RUN stays unchanged until an actual generator or DUT campaign records a replayable result."
+      ],
+      "phases": [
+        "P1_GENERATOR_UNIT",
+        "P2_REFERENCE_PROGRAM",
+        "P3_SM_RTL"
+      ],
+      "priority": "HIGH",
+      "status": "PLANNED",
+      "execution": "NOT_RUN",
+      "test_ids": [
+        "SIG-FP-001",
+        "SIG-FP-002",
+        "SIG-FP-003",
+        "SIG-FP-004"
+      ],
+      "source_refs": [
+        "docs/sm/SM_ARCHITECTURE.md#9"
+      ]
+    },
+    {
+      "id": "GEN-CVT-01",
+      "title": "转换、packing及寄存器稀疏变换",
+      "requirement": "转换与位搬运分开，保留随机舍入rbits、padding、稀疏选取/补零及多寄存器限制。",
+      "stimulus": [
+        "为整数↔FP、FP↔FP、pzo/rz/sat与随机舍入构造边界并固定rbits。",
+        "spcompress/spdecompress覆盖所有启用spfactor/idxsize/num，触及253寄存器总量与重叠边界。",
+        "含NaN、±0、重复最大值/最小值及metadata边界。",
+        "对大.num变换和宽转换施加RF返回反压。"
+      ],
+      "checks": [
+        "独立转换模型与序列化检查，rbits写入manifest不使用隐藏RNG状态。",
+        "独立源/目的集合及descriptor/shape判定，非法仅送legalizer。",
+        "独立集合判据验证允许的tie-break，逐位置检查解压补零。",
+        "按全部目的片段检查结果、就绪和源保持。"
+      ],
+      "coverage_points": [
+        {
+          "id": "CV-CVT-001",
+          "description": "数据变换",
+          "scope": "GENERATOR",
+          "sample_stage": "GENERATED",
+          "bins": [
+            "cvt",
+            "cvt_pack",
+            "mov_prmt",
+            "pzo_rz_scaled",
+            "rs_rbits",
+            "spcompress",
+            "spdecompress"
+          ],
+          "mandatory": true,
+          "bin_resolution": "Concrete enum bins plus capability-resolved legal-form bins; unresolved forms block closure rather than disappear."
+        },
+        {
+          "id": "CV-CVT-002",
+          "description": "载体与限制",
+          "scope": "GENERATOR",
+          "sample_stage": "CHECKED",
+          "bins": [
+            "padding_valid_invalid",
+            "vector_length_edge",
+            "overlap_forbidden",
+            "descriptor_type",
+            "NaN_priority"
+          ],
+          "mandatory": true,
+          "bin_resolution": "Concrete enum bins plus capability-resolved legal-form bins; unresolved forms block closure rather than disappear.",
+          "sampling_note": "Sample only after the independent generator-side audit classifies its result; accepted and rejected outcomes retain distinct decision-stage counters. This is not a DUT result event."
+        },
+        {
+          "id": "CV-CVT-003",
+          "description": "变换结果",
+          "scope": "DUT_SCENARIO",
+          "sample_stage": "CHECKED",
+          "bins": [
+            "rounding_result",
+            "rbits_replay",
+            "sparse_allowed_selection",
+            "decompress_zero_fill"
+          ],
+          "mandatory": true,
+          "bin_resolution": "Concrete enum bins plus capability-resolved legal-form bins; unresolved forms block closure rather than disappear."
+        }
+      ],
+      "pass_criteria": [
+        "All mandatory cases and resolved legal-form bins have matching nonempty checked evidence at their required phase.",
+        "No unexpected accept/reject, illegal positive program, missing side effect, duplicate completion or orphan resource.",
+        "PLANNED/NOT_RUN stays unchanged until an actual generator or DUT campaign records a replayable result."
+      ],
+      "phases": [
+        "P1_GENERATOR_UNIT",
+        "P2_REFERENCE_PROGRAM",
+        "P3_SM_RTL"
+      ],
+      "priority": "HIGH",
+      "status": "PLANNED",
+      "execution": "NOT_RUN",
+      "test_ids": [
+        "SIG-CVT-001",
+        "SIG-CVT-002",
+        "SIG-CVT-003",
+        "SIG-CVT-004"
+      ],
+      "source_refs": [
+        "docs/sm/SM_ARCHITECTURE.md#10"
+      ]
+    },
+    {
+      "id": "GEN-CTRL-01",
+      "title": "CFG、predication、ITS与调用",
+      "requirement": "生成有界可达CFG并证明lane级定义/参与/终止条件，避免把branch.uni当所有数据uniform。",
+      "stimulus": [
+        "生成diamond/嵌套分歧/循环和间接目标集合，覆盖0/1/边界迭代。",
+        "生成全true/allfalse/mixed guard，并为.uni给出guard/target一致证明。",
+        "分歧调用/返回、多个return site、部分lane exit与stack lifetime。",
+        "同warp部分thread等待，其他thread执行解除依赖；含动态相同PC多轮collective。"
+      ],
+      "checks": [
+        "独立CFG分析检查目标、可达性、终止ranking与path-sensitive def-use。",
+        "独立lane symbolic执行；禁止仅检查某次随机值恰好相同。",
+        "独立每thread控制解释器与ABI/栈对象生命周期模型。",
+        "基于允许调度公平假设的进度monitor，不保证未驻留任意CTA锁前进。"
+      ],
+      "coverage_points": [
+        {
+          "id": "CV-CTRL-001",
+          "description": "CFG结构",
+          "scope": "GENERATOR",
+          "sample_stage": "GENERATED",
+          "bins": [
+            "straight",
+            "diamond",
+            "nested_divergence",
+            "bounded_loop",
+            "direct_indirect_call",
+            "return_exit",
+            "partial_warp"
+          ],
+          "mandatory": true,
+          "bin_resolution": "Concrete enum bins plus capability-resolved legal-form bins; unresolved forms block closure rather than disappear."
+        },
+        {
+          "id": "CV-CTRL-002",
+          "description": "静态控制审计",
+          "scope": "GENERATOR",
+          "sample_stage": "CHECKED",
+          "bins": [
+            "reachable",
+            "bounded_termination",
+            "path_defined",
+            "uni_proven",
+            "predicated_off_no_effect"
+          ],
+          "mandatory": true,
+          "bin_resolution": "Concrete enum bins plus capability-resolved legal-form bins; unresolved forms block closure rather than disappear.",
+          "sampling_note": "Sample only after the independent generator-side audit classifies its result; accepted and rejected outcomes retain distinct decision-stage counters. This is not a DUT result event."
+        },
+        {
+          "id": "CV-CTRL-003",
+          "description": "动态控制语义",
+          "scope": "DUT_SCENARIO",
+          "sample_stage": "CHECKED",
+          "bins": [
+            "per_thread_PC_return",
+            "ITS_progress",
+            "correct_side_effect_mask",
+            "no_instance_merge"
+          ],
+          "mandatory": true,
+          "bin_resolution": "Concrete enum bins plus capability-resolved legal-form bins; unresolved forms block closure rather than disappear."
+        }
+      ],
+      "pass_criteria": [
+        "All mandatory cases and resolved legal-form bins have matching nonempty checked evidence at their required phase.",
+        "No unexpected accept/reject, illegal positive program, missing side effect, duplicate completion or orphan resource.",
+        "PLANNED/NOT_RUN stays unchanged until an actual generator or DUT campaign records a replayable result."
+      ],
+      "phases": [
+        "P1_GENERATOR_UNIT",
+        "P2_REFERENCE_PROGRAM",
+        "P3_SM_RTL"
+      ],
+      "priority": "HIGH",
+      "status": "PLANNED",
+      "execution": "NOT_RUN",
+      "test_ids": [
+        "SIG-CTRL-001",
+        "SIG-CTRL-002",
+        "SIG-CTRL-003",
+        "SIG-CTRL-004"
+      ],
+      "source_refs": [
+        "docs/sm/SM_ARCHITECTURE.md#5"
+      ]
+    },
+    {
+      "id": "GEN-COLL-01",
+      "title": "Warp通信与collective参与者",
+      "requirement": "各条独立检查membermask/active/exited/guard/实例与同参条件，不共用一个过宽sync规则。",
+      "stimulus": [
+        "组合mask、width、source clamp、非连续subset和partial warp。",
+        "只破坏一项member/guard/target条件，含legacy指令移除target。",
+        "多轮同PC交错shfl/vote/match/redux/elect/activemask。",
+        "对合法collective交错lane等待与执行域stall。"
+      ],
+      "checks": [
+        "独立每条参与规则与逐lane交换模型。",
+        "preflight合法化拒绝，UB不进入普通DUT值比较。",
+        "独立dynamic instance模型及允许结果/NaN/signed-zero规则。",
+        "rendezvous monitor按warp+dynamic_instance+generation检查。"
+      ],
+      "coverage_points": [
+        {
+          "id": "CV-COLL-001",
+          "description": "通信形式",
+          "scope": "GENERATOR",
+          "sample_stage": "GENERATED",
+          "bins": [
+            "shfl",
+            "vote",
+            "match",
+            "redux",
+            "elect",
+            "activemask",
+            "warp_barrier"
+          ],
+          "mandatory": true,
+          "bin_resolution": "Concrete enum bins plus capability-resolved legal-form bins; unresolved forms block closure rather than disappear."
+        },
+        {
+          "id": "CV-COLL-002",
+          "description": "参与条件",
+          "scope": "GENERATOR",
+          "sample_stage": "CHECKED",
+          "bins": [
+            "full_mask",
+            "legal_subset",
+            "exited_rule",
+            "predicated_member",
+            "aligned_instance",
+            "legacy_target"
+          ],
+          "mandatory": true,
+          "bin_resolution": "Concrete enum bins plus capability-resolved legal-form bins; unresolved forms block closure rather than disappear.",
+          "sampling_note": "Sample only after the independent generator-side audit classifies its result; accepted and rejected outcomes retain distinct decision-stage counters. This is not a DUT result event."
+        },
+        {
+          "id": "CV-COLL-003",
+          "description": "结果与会合",
+          "scope": "DUT_SCENARIO",
+          "sample_stage": "CHECKED",
+          "bins": [
+            "selected_source",
+            "matching_set",
+            "reduction",
+            "deterministic_election",
+            "rendezvous"
+          ],
+          "mandatory": true,
+          "bin_resolution": "Concrete enum bins plus capability-resolved legal-form bins; unresolved forms block closure rather than disappear."
+        }
+      ],
+      "pass_criteria": [
+        "All mandatory cases and resolved legal-form bins have matching nonempty checked evidence at their required phase.",
+        "No unexpected accept/reject, illegal positive program, missing side effect, duplicate completion or orphan resource.",
+        "PLANNED/NOT_RUN stays unchanged until an actual generator or DUT campaign records a replayable result."
+      ],
+      "phases": [
+        "P1_GENERATOR_UNIT",
+        "P2_REFERENCE_PROGRAM",
+        "P3_SM_RTL"
+      ],
+      "priority": "HIGH",
+      "status": "PLANNED",
+      "execution": "NOT_RUN",
+      "test_ids": [
+        "SIG-COLL-001",
+        "SIG-COLL-002",
+        "SIG-COLL-003",
+        "SIG-COLL-004"
+      ],
+      "source_refs": [
+        "docs/sm/SM_ARCHITECTURE.md#10"
+      ]
+    },
+    {
+      "id": "GEN-MEM-01",
+      "title": "地址空间、别名、普通LDST与缓存",
+      "requirement": "生成typed地址对象与有效初始化，保留scope/proxy/MMIO属性，不把local/readonly等同shared。",
+      "stimulus": [
+        "在各启用空间生成size/align/boundary/stride和合法别名；填充canary区。",
+        "覆盖volatile/MMIO/readonly/nc/prefetch/discard/createpolicy及优先级。",
+        "生成有HB的确定子集、并发atomic返回/最终值次序和专门weak-memory litmus；允许集合独立标注。",
+        "随机地址分布、多个fragment和长延迟SoC返回，穿插MMIO。"
+      ],
+      "checks": [
+        "独立对象/byte-range oracle检查转换、权限、初始化和visible范围。",
+        "独立语义分类：hint、破坏性操作、完成承载指令和强访问分别检查。",
+        "独立内存模型allowed-outcome或可验证线性化关系；仅允许集合已证明为单例时逐值比对。",
+        "lane/byte响应scoreboard、MMIO访问次数/顺序monitor。"
+      ],
+      "coverage_points": [
+        {
+          "id": "CV-MEM-001",
+          "description": "访存对象",
+          "scope": "GENERATOR",
+          "sample_stage": "GENERATED",
+          "bins": [
+            "global",
+            "local",
+            "param",
+            "const",
+            "shared",
+            "generic_cvta",
+            "readonly_nc",
+            "mmio",
+            "cache_policy"
+          ],
+          "mandatory": true,
+          "bin_resolution": "Concrete enum bins plus capability-resolved legal-form bins; unresolved forms block closure rather than disappear."
+        },
+        {
+          "id": "CV-MEM-002",
+          "description": "合法性与别名",
+          "scope": "GENERATOR",
+          "sample_stage": "CHECKED",
+          "bins": [
+            "aligned",
+            "in_range",
+            "initialized",
+            "same_object_alias",
+            "MMIO_nonmerge",
+            "readonly_kernel_lifetime"
+          ],
+          "mandatory": true,
+          "bin_resolution": "Concrete enum bins plus capability-resolved legal-form bins; unresolved forms block closure rather than disappear.",
+          "sampling_note": "Sample only after the independent generator-side audit classifies its result; accepted and rejected outcomes retain distinct decision-stage counters. This is not a DUT result event."
+        },
+        {
+          "id": "CV-MEM-003",
+          "description": "访存结果与事件",
+          "scope": "DUT_SCENARIO",
+          "sample_stage": "CHECKED",
+          "bins": [
+            "load_extension",
+            "store_mask",
+            "lane_coalescing_identity",
+            "atomic_side_effect",
+            "scope_visibility"
+          ],
+          "mandatory": true,
+          "bin_resolution": "Concrete enum bins plus capability-resolved legal-form bins; unresolved forms block closure rather than disappear."
+        }
+      ],
+      "pass_criteria": [
+        "All mandatory cases and resolved legal-form bins have matching nonempty checked evidence at their required phase.",
+        "No unexpected accept/reject, illegal positive program, missing side effect, duplicate completion or orphan resource.",
+        "PLANNED/NOT_RUN stays unchanged until an actual generator or DUT campaign records a replayable result."
+      ],
+      "phases": [
+        "P1_GENERATOR_UNIT",
+        "P2_REFERENCE_PROGRAM",
+        "P3_SM_RTL"
+      ],
+      "priority": "HIGH",
+      "status": "PLANNED",
+      "execution": "NOT_RUN",
+      "test_ids": [
+        "SIG-MEM-001",
+        "SIG-MEM-002",
+        "SIG-MEM-003",
+        "SIG-MEM-004"
+      ],
+      "source_refs": [
+        "docs/sm/SM_ARCHITECTURE.md#11"
+      ]
+    },
+    {
+      "id": "GEN-SMEM-01",
+      "title": "SMEM owner、共享服务与RMW",
+      "requirement": "所有客户端共享同一256KiB池，owner/base/range先于物理访问；正向流不依赖确定bank时延。",
+      "stimulus": [
+        "同offset不同owner、多size和reserved；有8槽但总shared超256KiB的请求。",
+        "narrow write、标量/packed atomic，关闭b128时尝试对应形式。",
+        "generic store后建立规定proxy发布，保留活动不可变snapshot、使future reuse失效。",
+        "LSU/TMA/Tensor/peer/barrier饱和竞争；启用ECC模型时注入迟到scrub与新store。"
+      ],
+      "checks": [
+        "独立interval allocator模型核对target单CTA限/RF/warp/shared预算。",
+        "独立原子宽度/逐元素规则；不把b128拆普通store当合法实现。",
+        "HB与版本模型分开bankcommit、invalidation生效和publish。",
+        "真实owner/RMW/响应monitor；scrub锁后重读当前字；控制公平假设明确。"
+      ],
+      "coverage_points": [
+        {
+          "id": "CV-SMEM-001",
+          "description": "资源模式",
+          "scope": "GENERATOR",
+          "sample_stage": "GENERATED",
+          "bins": [
+            "same_offset_different_owner",
+            "boundary_fragment",
+            "narrow_RMW",
+            "scalar_atomic",
+            "packed_atomic",
+            "multiple_clients"
+          ],
+          "mandatory": true,
+          "bin_resolution": "Concrete enum bins plus capability-resolved legal-form bins; unresolved forms block closure rather than disappear."
+        },
+        {
+          "id": "CV-SMEM-002",
+          "description": "静态资源审计",
+          "scope": "GENERATOR",
+          "sample_stage": "CHECKED",
+          "bins": [
+            "joint_budget",
+            "target_CTA_limit",
+            "owner_alive",
+            "byte_range_valid",
+            "atomic_width_capability"
+          ],
+          "mandatory": true,
+          "bin_resolution": "Concrete enum bins plus capability-resolved legal-form bins; unresolved forms block closure rather than disappear.",
+          "sampling_note": "Sample only after the independent generator-side audit classifies its result; accepted and rejected outcomes retain distinct decision-stage counters. This is not a DUT result event."
+        },
+        {
+          "id": "CV-SMEM-003",
+          "description": "对象与进度",
+          "scope": "DUT_SCENARIO",
+          "sample_stage": "CHECKED",
+          "bins": [
+            "no_owner_alias",
+            "atomicity",
+            "invalidation_effective",
+            "barrier_progress",
+            "late_return_isolation"
+          ],
+          "mandatory": true,
+          "bin_resolution": "Concrete enum bins plus capability-resolved legal-form bins; unresolved forms block closure rather than disappear."
+        }
+      ],
+      "pass_criteria": [
+        "All mandatory cases and resolved legal-form bins have matching nonempty checked evidence at their required phase.",
+        "No unexpected accept/reject, illegal positive program, missing side effect, duplicate completion or orphan resource.",
+        "PLANNED/NOT_RUN stays unchanged until an actual generator or DUT campaign records a replayable result."
+      ],
+      "phases": [
+        "P1_GENERATOR_UNIT",
+        "P2_REFERENCE_PROGRAM",
+        "P3_SM_RTL"
+      ],
+      "priority": "CRITICAL",
+      "status": "PLANNED",
+      "execution": "NOT_RUN",
+      "test_ids": [
+        "SIG-SMEM-001",
+        "SIG-SMEM-002",
+        "SIG-SMEM-003",
+        "SIG-SMEM-004"
+      ],
+      "source_refs": [
+        "docs/sm/SM_ARCHITECTURE.md#12"
+      ]
+    },
+    {
+      "id": "GEN-SYNC-01",
+      "title": "Barrier、mbarrier布局/phase与内存顺序",
+      "requirement": "线程会合、fence、proxy和各async完成分开；mbarrier作为真实SMEM b64对象维护。",
+      "stimulus": [
+        "init/use/wait/inval，分别覆盖v0/v1、到达边界、expect/complete和arrive_drop。",
+        "生成primary前进但conditional不前进、parity轮换及try_wait false。",
+        "分别构造generic→async、tensormap与fabric方向，组合相应线程同步。",
+        "让event队列接收早于SMEM对象更新，并延迟barrier RMW。",
+        "通过DSM注入合法arrive/expect/complete，remote wait/init/inval作为preflight负例。"
+      ],
+      "checks": [
+        "独立layout计数/生命周期模型，v1上限511；禁止已init对象普通写。",
+        "检查conditional.parity约束，false时report不作有效值比较。",
+        "独立memory/proxy模型核对方向/范围/scope，不将所有fence合并为drain。",
+        "monitor以实际对象commit/ack和True acquire观察建立完成。",
+        "SoC/barrier模型及远端owner引用；控制与数据返回分离。"
+      ],
+      "coverage_points": [
+        {
+          "id": "CV-SYNC-001",
+          "description": "同步形式",
+          "scope": "GENERATOR",
+          "sample_stage": "GENERATED",
+          "bins": [
+            "warp",
+            "CTA",
+            "cluster",
+            "mbarrier_v0",
+            "mbarrier_v1",
+            "acquire_release_sc",
+            "proxy_direction"
+          ],
+          "mandatory": true,
+          "bin_resolution": "Concrete enum bins plus capability-resolved legal-form bins; unresolved forms block closure rather than disappear."
+        },
+        {
+          "id": "CV-SYNC-002",
+          "description": "计数与phase",
+          "scope": "GENERATOR",
+          "sample_stage": "CHECKED",
+          "bins": [
+            "v0_arrival_boundary",
+            "v1_511",
+            "tx_signed_boundary",
+            "primary_conditional",
+            "parity_token",
+            "local_remote_rules"
+          ],
+          "mandatory": true,
+          "bin_resolution": "Concrete enum bins plus capability-resolved legal-form bins; unresolved forms block closure rather than disappear.",
+          "sampling_note": "Sample only after the independent generator-side audit classifies its result; accepted and rejected outcomes retain distinct decision-stage counters. This is not a DUT result event."
+        },
+        {
+          "id": "CV-SYNC-003",
+          "description": "可见性与完成",
+          "scope": "DUT_SCENARIO",
+          "sample_stage": "CHECKED",
+          "bins": [
+            "true_wait_acquire",
+            "false_report_undefined",
+            "exactly_once_update",
+            "object_commit_before_ack",
+            "phase_reuse"
+          ],
+          "mandatory": true,
+          "bin_resolution": "Concrete enum bins plus capability-resolved legal-form bins; unresolved forms block closure rather than disappear."
+        }
+      ],
+      "pass_criteria": [
+        "All mandatory cases and resolved legal-form bins have matching nonempty checked evidence at their required phase.",
+        "No unexpected accept/reject, illegal positive program, missing side effect, duplicate completion or orphan resource.",
+        "PLANNED/NOT_RUN stays unchanged until an actual generator or DUT campaign records a replayable result."
+      ],
+      "phases": [
+        "P1_GENERATOR_UNIT",
+        "P2_REFERENCE_PROGRAM",
+        "P3_SM_RTL",
+        "P4_SOC"
+      ],
+      "priority": "CRITICAL",
+      "status": "PLANNED",
+      "execution": "NOT_RUN",
+      "test_ids": [
+        "SIG-SYNC-001",
+        "SIG-SYNC-002",
+        "SIG-SYNC-003",
+        "SIG-SYNC-004",
+        "SIG-SYNC-005"
+      ],
+      "source_refs": [
+        "docs/sm/SM_ARCHITECTURE.md#14"
+      ]
+    },
+    {
+      "id": "GEN-ASYNC-01",
+      "title": "cp.async、TMA与bulk/priority完成",
+      "requirement": "每类流保留独立commit/wait与源可重用/最终完成；completion units和report语义显式化。",
+      "stimulus": [
+        "遍历启用copy/reduce/store/priority形式和合法source/destination，含空group。",
+        "变异tensor rank/layout/override、report_mechanism、ignore_oob与multicast mask。",
+        "多片copy乱序，read完成早于目的提交；priority也带bulk completion。",
+        "随机L2/SMEM延迟，变换tile/im2col数据并注入规定pattern。",
+        "跨SM multicast/DSM/multimem，观察其中一目的早完成和远端长尾。"
+      ],
+      "checks": [
+        "独立方向/target/完成机制表；st.bulk只shared置零、size为8B倍数。",
+        "独立tensor-map校验；enabled report需v1，ignore_oob只在规定形式且report disabled。",
+        "独立obligation/HB模型，每片只结算一次规定count。",
+        "TMA/SMEM/barrier monitor与独立布局/报告oracle。",
+        "系统多目的事务ledger与completion units检查。"
+      ],
+      "coverage_points": [
+        {
+          "id": "CV-ASYNC-001",
+          "description": "入口与方向",
+          "scope": "GENERATOR",
+          "sample_stage": "GENERATED",
+          "bins": [
+            "classic_cp_async",
+            "bulk_copy_reduce",
+            "tensor_tile_im2col",
+            "prefetch_priority",
+            "st_bulk",
+            "st_red_async",
+            "multicast"
+          ],
+          "mandatory": true,
+          "bin_resolution": "Concrete enum bins plus capability-resolved legal-form bins; unresolved forms block closure rather than disappear."
+        },
+        {
+          "id": "CV-ASYNC-002",
+          "description": "完成与descriptor",
+          "scope": "GENERATOR",
+          "sample_stage": "CHECKED",
+          "bins": [
+            "classic_group",
+            "bulk_group",
+            "mbarrier_bytes",
+            "read_partial",
+            "override",
+            "report_disabled_enabled",
+            "ignore_oob"
+          ],
+          "mandatory": true,
+          "bin_resolution": "Concrete enum bins plus capability-resolved legal-form bins; unresolved forms block closure rather than disappear.",
+          "sampling_note": "Sample only after the independent generator-side audit classifies its result; accepted and rejected outcomes retain distinct decision-stage counters. This is not a DUT result event."
+        },
+        {
+          "id": "CV-ASYNC-003",
+          "description": "异步事件",
+          "scope": "DUT_SCENARIO",
+          "sample_stage": "CHECKED",
+          "bins": [
+            "all_fragments",
+            "source_reusable_only",
+            "destination_visible",
+            "correct_report",
+            "no_cross_family_wait"
+          ],
+          "mandatory": true,
+          "bin_resolution": "Concrete enum bins plus capability-resolved legal-form bins; unresolved forms block closure rather than disappear."
+        }
+      ],
+      "pass_criteria": [
+        "All mandatory cases and resolved legal-form bins have matching nonempty checked evidence at their required phase.",
+        "No unexpected accept/reject, illegal positive program, missing side effect, duplicate completion or orphan resource.",
+        "PLANNED/NOT_RUN stays unchanged until an actual generator or DUT campaign records a replayable result."
+      ],
+      "phases": [
+        "P1_GENERATOR_UNIT",
+        "P2_REFERENCE_PROGRAM",
+        "P3_SM_RTL",
+        "P4_SOC"
+      ],
+      "priority": "CRITICAL",
+      "status": "PLANNED",
+      "execution": "NOT_RUN",
+      "test_ids": [
+        "SIG-ASYNC-001",
+        "SIG-ASYNC-002",
+        "SIG-ASYNC-003",
+        "SIG-ASYNC-004",
+        "SIG-ASYNC-005"
+      ],
+      "source_refs": [
+        "docs/sm/SM_ARCHITECTURE.md#15"
+      ]
+    },
+    {
+      "id": "GEN-TMEM-01",
+      "title": "TMEM分配、访问、搬移和释放全生命周期",
+      "requirement": "TMEM独立地址/owner/permit；发生器生成完整alloc→publish→use→wait→dealloc→exit闭合程序。",
+      "stimulus": [
+        "生成合法递减连续allocation、exclusive列数、容量边界、relinquish后禁止alloc。",
+        "ld/st warpgroup quarter视图、相同base与aligned；CTA2两warp join；错误TMEM→byte cast。",
+        "构造ld/st pack/unpack、ld.red、ld{.red}.spcompress的source与期望片段。",
+        "并发SMEM→TMEM cp、TMEM shift、ld/st，独立wait::ld/st和normal commit。",
+        "主动制造已发起但未full完成的操作，再由合法程序显式wait后dealloc。",
+        "even/odd映射到两个不同可互通SM/endpoint，交错双端alloc、访问、dealloc。"
+      ],
+      "checks": [
+        "独立allocator/target表、owner和permit状态机；不把permit放弃当释放。",
+        "独立participation/layout类型审计，不从tile shape推物理lane。",
+        "独立lane/column→寄存器映射、允许NaN/selection规则。",
+        "真实move/RF/TMEM monitor分别观察source capture、writeack、fragment ready。",
+        "owner引用monitor与端到端completion ledger；提前释放仅项目robustness测试。",
+        "系统parent/child obligation与双边资源/生命周期checker。"
+      ],
+      "coverage_points": [
+        {
+          "id": "CV-TMEM-001",
+          "description": "TMEM指令",
+          "scope": "GENERATOR",
+          "sample_stage": "GENERATED",
+          "bins": [
+            "alloc_dealloc_permit",
+            "ld_st_wait",
+            "cp_shift",
+            "ld_red",
+            "ld_spcompress",
+            "pack_unpack"
+          ],
+          "mandatory": true,
+          "bin_resolution": "Concrete enum bins plus capability-resolved legal-form bins; unresolved forms block closure rather than disappear."
+        },
+        {
+          "id": "CV-TMEM-002",
+          "description": "资源与参与",
+          "scope": "GENERATOR",
+          "sample_stage": "CHECKED",
+          "bins": [
+            "nonexclusive_power2",
+            "exclusive_multiple32",
+            "allocation_order",
+            "permit_alive",
+            "warp_collective",
+            "quarter_lane",
+            "group_pair"
+          ],
+          "mandatory": true,
+          "bin_resolution": "Concrete enum bins plus capability-resolved legal-form bins; unresolved forms block closure rather than disappear.",
+          "sampling_note": "Sample only after the independent generator-side audit classifies its result; accepted and rejected outcomes retain distinct decision-stage counters. This is not a DUT result event."
+        },
+        {
+          "id": "CV-TMEM-003",
+          "description": "TMEM可见结果",
+          "scope": "DUT_SCENARIO",
+          "sample_stage": "CHECKED",
+          "bins": [
+            "layout_correct",
+            "RF_fragments_ready",
+            "write_ack",
+            "no_use_after_free",
+            "full_before_dealloc"
+          ],
+          "mandatory": true,
+          "bin_resolution": "Concrete enum bins plus capability-resolved legal-form bins; unresolved forms block closure rather than disappear."
+        }
+      ],
+      "pass_criteria": [
+        "All mandatory cases and resolved legal-form bins have matching nonempty checked evidence at their required phase.",
+        "No unexpected accept/reject, illegal positive program, missing side effect, duplicate completion or orphan resource.",
+        "PLANNED/NOT_RUN stays unchanged until an actual generator or DUT campaign records a replayable result."
+      ],
+      "phases": [
+        "P1_GENERATOR_UNIT",
+        "P2_REFERENCE_PROGRAM",
+        "P3_SM_RTL",
+        "P4_SOC"
+      ],
+      "priority": "CRITICAL",
+      "status": "PLANNED",
+      "execution": "NOT_RUN",
+      "test_ids": [
+        "SIG-TMEM-001",
+        "SIG-TMEM-002",
+        "SIG-TMEM-003",
+        "SIG-TMEM-004",
+        "SIG-TMEM-005",
+        "SIG-TMEM-006"
+      ],
+      "source_refs": [
+        "docs/sm/SM_ARCHITECTURE.md#16"
+      ]
+    },
+    {
+      "id": "GEN-MATRIX-01",
+      "title": "各代矩阵、scale/BLOCK与dot接口",
+      "requirement": "wmma/mma/wgmma/tcgen05前端分开；MALU仅dot，AB格式、scale格式、block与Cshift独立。",
+      "stimulus": [
+        "跨A/B fmt、scale fmt、BLOCK16/32、offset与shape只取合法组合。",
+        "enable-input-d=false旧D设NaN，true用Cshift0/15；区分logical K、packed K与compressed K。",
+        "生成scale边界、相消、Inf/NaN/±0、稀疏被省略项与metadata/LUT布局。",
+        "启用的matrix frontends交错，验证参与者、fragment与完成机制。",
+        "同thread先MMA再restricted/normal commit，Aread后只覆写获准的原A，保留B和D责任。",
+        "独立AB offset，以最早到达scale边界切beat，施加input/output随机stall。"
+      ],
+      "checks": [
+        "独立native tuple表和项目interface合法性；禁止全笛卡尔积。",
+        "独立精确/target profile oracle及source义务检查。",
+        "project exact用独立整数/Fraction模型；native精度单列，不复用DUT decode。",
+        "独立每代前端monitor+数值relation；关闭WGMMA兼容时只preflight拒绝。",
+        "真实Aread/full事件与future collector版本检查。",
+        "MALU adapter monitor检查scale稳定、长度/last、Cseed只一次和最终结果。"
+      ],
+      "coverage_points": [
+        {
+          "id": "CV-MATRIX-001",
+          "description": "矩阵形式",
+          "scope": "GENERATOR",
+          "sample_stage": "GENERATED",
+          "bins": [
+            "wmma",
+            "mma_sparse",
+            "wgmma",
+            "tcgen05_dense_sparse_ws",
+            "Ti16_decoded_raw_gate",
+            "enable_input_d"
+          ],
+          "mandatory": true,
+          "bin_resolution": "Concrete enum bins plus capability-resolved legal-form bins; unresolved forms block closure rather than disappear."
+        },
+        {
+          "id": "CV-MATRIX-002",
+          "description": "格式与缩放",
+          "scope": "GENERATOR",
+          "sample_stage": "CHECKED",
+          "bins": [
+            "AB_fmt",
+            "scale_fmt",
+            "BLOCK16",
+            "BLOCK32",
+            "independent_offsets",
+            "C_shift_0_15",
+            "sparse_metadata",
+            "collector_LUT"
+          ],
+          "mandatory": true,
+          "bin_resolution": "Concrete enum bins plus capability-resolved legal-form bins; unresolved forms block closure rather than disappear.",
+          "sampling_note": "Sample only after the independent generator-side audit classifies its result; accepted and rejected outcomes retain distinct decision-stage counters. This is not a DUT result event."
+        },
+        {
+          "id": "CV-MATRIX-003",
+          "description": "数值与完成",
+          "scope": "DUT_SCENARIO",
+          "sample_stage": "CHECKED",
+          "bins": [
+            "project_exact",
+            "target_profile",
+            "Aread_not_full",
+            "D_write_ack",
+            "no_partial_sum_per_beat"
+          ],
+          "mandatory": true,
+          "bin_resolution": "Concrete enum bins plus capability-resolved legal-form bins; unresolved forms block closure rather than disappear."
+        }
+      ],
+      "pass_criteria": [
+        "All mandatory cases and resolved legal-form bins have matching nonempty checked evidence at their required phase.",
+        "No unexpected accept/reject, illegal positive program, missing side effect, duplicate completion or orphan resource.",
+        "PLANNED/NOT_RUN stays unchanged until an actual generator or DUT campaign records a replayable result."
+      ],
+      "phases": [
+        "P1_GENERATOR_UNIT",
+        "P2_REFERENCE_PROGRAM",
+        "P3_SM_RTL"
+      ],
+      "priority": "CRITICAL",
+      "status": "PLANNED",
+      "execution": "NOT_RUN",
+      "test_ids": [
+        "SIG-MATRIX-001",
+        "SIG-MATRIX-002",
+        "SIG-MATRIX-003",
+        "SIG-MATRIX-004",
+        "SIG-MATRIX-005",
+        "SIG-MATRIX-006"
+      ],
+      "source_refs": [
+        "docs/sm/SM_ARCHITECTURE.md#16"
+      ]
+    },
+    {
+      "id": "GEN-CLUSTER-01",
+      "title": "Cluster/DSM/CTA-pair与grid控制",
+      "requirement": "生成器保留真实同驻留/peer生命周期与系统工作合同，不以任意CTA自旋代替合法cluster。",
+      "stimulus": [
+        "变化cluster维度/rank、owner/shared片段与S0不同endpoint pair约束。",
+        "生成取消未启动工作、解析16B opaque response；失败被观察后不再次try_cancel。",
+        "生成本地/远端shared通信、明确cluster barrier与目标退出先后。",
+        "多SM延迟/返回扰动、取消成功/失败、dependent grid早启动。"
+      ],
+      "checks": [
+        "独立launch/cluster表，先校验联合admission和peer仍活。",
+        "独立runtime状态模型与source-issued/response-complete分离。",
+        "独立对象/HB模型和远端引用ledger。",
+        "SoC runtime/DSM monitors与可见性checker。"
+      ],
+      "coverage_points": [
+        {
+          "id": "CV-CLUSTER-001",
+          "description": "系统控制",
+          "scope": "GENERATOR",
+          "sample_stage": "GENERATED",
+          "bins": [
+            "cluster_barrier",
+            "mapa_getctarank",
+            "DSM",
+            "pair_even_odd",
+            "griddepcontrol",
+            "try_cancel_query"
+          ],
+          "mandatory": true,
+          "bin_resolution": "Concrete enum bins plus capability-resolved legal-form bins; unresolved forms block closure rather than disappear."
+        },
+        {
+          "id": "CV-CLUSTER-002",
+          "description": "合法性与工作对象",
+          "scope": "GENERATOR",
+          "sample_stage": "CHECKED",
+          "bins": [
+            "cluster_membership",
+            "joint_admission",
+            "peer_alive",
+            "cancel_not_started",
+            "opaque_response",
+            "failed_cancel_no_retry"
+          ],
+          "mandatory": true,
+          "bin_resolution": "Concrete enum bins plus capability-resolved legal-form bins; unresolved forms block closure rather than disappear.",
+          "sampling_note": "Sample only after the independent generator-side audit classifies its result; accepted and rejected outcomes retain distinct decision-stage counters. This is not a DUT result event."
+        },
+        {
+          "id": "CV-CLUSTER-003",
+          "description": "系统结果",
+          "scope": "DUT_SCENARIO",
+          "sample_stage": "CHECKED",
+          "bins": [
+            "remote_owner_pinned",
+            "barrier_progress",
+            "unique_cancel_id",
+            "prerequisite_visibility"
+          ],
+          "mandatory": true,
+          "bin_resolution": "Concrete enum bins plus capability-resolved legal-form bins; unresolved forms block closure rather than disappear."
+        }
+      ],
+      "pass_criteria": [
+        "All mandatory cases and resolved legal-form bins have matching nonempty checked evidence at their required phase.",
+        "No unexpected accept/reject, illegal positive program, missing side effect, duplicate completion or orphan resource.",
+        "PLANNED/NOT_RUN stays unchanged until an actual generator or DUT campaign records a replayable result."
+      ],
+      "phases": [
+        "P1_GENERATOR_UNIT",
+        "P2_REFERENCE_PROGRAM",
+        "P4_SOC"
+      ],
+      "priority": "HIGH",
+      "status": "PLANNED",
+      "execution": "NOT_RUN",
+      "test_ids": [
+        "SIG-CLUSTER-001",
+        "SIG-CLUSTER-002",
+        "SIG-CLUSTER-003",
+        "SIG-CLUSTER-004"
+      ],
+      "source_refs": [
+        "docs/sm/SM_ARCHITECTURE.md#17"
+      ]
+    },
+    {
+      "id": "GEN-FABRIC-01",
+      "title": "Fabric/CFT与multimem",
+      "requirement": "CFT handle、multimem VA和普通pointer独立；report、partial/full与counted completion按单位和范围处理。",
+      "stimulus": [
+        "单因素变异CFT类型、endpoint、counter对齐/重叠、barrier布局与tx单位。",
+        "issue→submit→原子arrive.expect_tx（或先expect_tx且保留pending arrival，再arrive）→primary wait→report；覆盖complete早/晚到，另生成fabric.wait局部读完成。",
+        "同phase多成功/失败项、counter分段增长和multimem多个目的。",
+        "注入可报告NVLink/服务错误和远端延迟；观察CFT=fabric/SMEM=async/barrier=generic。"
+      ],
+      "checks": [
+        "独立handle/schema与具体指令约束；普通ld/st不得访问multimem VA。",
+        "独立生命周期和obligation checker，fetching submit只覆盖get/pullred。",
+        "独立report/allowed-error模型与counter最终值判据。",
+        "真实Fabric/barrier/transport monitor与端到端数据/错误checker。"
+      ],
+      "coverage_points": [
+        {
+          "id": "CV-FABRIC-001",
+          "description": "系统通信",
+          "scope": "GENERATOR",
+          "sample_stage": "GENERATED",
+          "bins": [
+            "try_get",
+            "try_put",
+            "try_red",
+            "try_pullred",
+            "submit_wait",
+            "multimem_VA",
+            "counted_completion"
+          ],
+          "mandatory": true,
+          "bin_resolution": "Concrete enum bins plus capability-resolved legal-form bins; unresolved forms block closure rather than disappear."
+        },
+        {
+          "id": "CV-FABRIC-002",
+          "description": "类型与计数",
+          "scope": "GENERATOR",
+          "sample_stage": "CHECKED",
+          "bins": [
+            "handle_leId_offset",
+            "v1_report",
+            "bytes_get_pull",
+            "units16_put_red",
+            "counter_alignment256",
+            "allwarp_pullred"
+          ],
+          "mandatory": true,
+          "bin_resolution": "Concrete enum bins plus capability-resolved legal-form bins; unresolved forms block closure rather than disappear.",
+          "sampling_note": "Sample only after the independent generator-side audit classifies its result; accepted and rejected outcomes retain distinct decision-stage counters. This is not a DUT result event."
+        },
+        {
+          "id": "CV-FABRIC-003",
+          "description": "系统观测",
+          "scope": "DUT_SCENARIO",
+          "sample_stage": "CHECKED",
+          "bins": [
+            "primary_report",
+            "source_read_partial",
+            "remote_full",
+            "counter_final",
+            "error_no_duplicate_side_effect"
+          ],
+          "mandatory": true,
+          "bin_resolution": "Concrete enum bins plus capability-resolved legal-form bins; unresolved forms block closure rather than disappear."
+        }
+      ],
+      "pass_criteria": [
+        "All mandatory cases and resolved legal-form bins have matching nonempty checked evidence at their required phase.",
+        "No unexpected accept/reject, illegal positive program, missing side effect, duplicate completion or orphan resource.",
+        "PLANNED/NOT_RUN stays unchanged until an actual generator or DUT campaign records a replayable result."
+      ],
+      "phases": [
+        "P1_GENERATOR_UNIT",
+        "P2_REFERENCE_PROGRAM",
+        "P4_SOC"
+      ],
+      "priority": "HIGH",
+      "status": "PLANNED",
+      "execution": "NOT_RUN",
+      "test_ids": [
+        "SIG-FABRIC-001",
+        "SIG-FABRIC-002",
+        "SIG-FABRIC-003",
+        "SIG-FABRIC-004"
+      ],
+      "source_refs": [
+        "docs/sm/SM_ARCHITECTURE.md#18"
+      ]
+    },
+    {
+      "id": "GEN-TEX-01",
+      "title": "Texture/surface关闭与可选服务",
+      "requirement": "计算优先profile明确关闭texture/surface；启用时必须有完整对象/取样/边界语义模型。",
+      "stimulus": [
+        "从合法texture/surface形式生成候选但profile保持disabled。",
+        "在隔离未来profile覆盖维数、通道、pixel/byte坐标、LOD/边界组合。",
+        "以可解析图像pattern测试nearest/filter/gather/query与surface读写归约。",
+        "服务实现后并发取样/访存，注入返回stall与允许的边界行为。"
+      ],
+      "checks": [
+        "独立capability checker与reject原因。",
+        "独立对象registry与逐指令target规则。",
+        "独立sampler/format/boundary模型，不用普通global load直接替代。",
+        "SoC sampler/surface monitors及独立结果oracle。"
+      ],
+      "coverage_points": [
+        {
+          "id": "CV-TEX-001",
+          "description": "图形相关语义",
+          "scope": "GENERATOR",
+          "sample_stage": "GENERATED",
+          "bins": [
+            "tex",
+            "tld4",
+            "txq_istypep",
+            "suld_sust_sured_suq"
+          ],
+          "mandatory": true,
+          "bin_resolution": "Concrete enum bins plus capability-resolved legal-form bins; unresolved forms block closure rather than disappear."
+        },
+        {
+          "id": "CV-TEX-002",
+          "description": "能力与对象",
+          "scope": "GENERATOR",
+          "sample_stage": "CHECKED",
+          "bins": [
+            "disabled_reject",
+            "valid_handle",
+            "coordinate_units",
+            "filter_LOD",
+            "channel_conversion",
+            "boundary_mode"
+          ],
+          "mandatory": true,
+          "bin_resolution": "Concrete enum bins plus capability-resolved legal-form bins; unresolved forms block closure rather than disappear.",
+          "sampling_note": "Sample only after the independent generator-side audit classifies its result; accepted and rejected outcomes retain distinct decision-stage counters. This is not a DUT result event."
+        },
+        {
+          "id": "CV-TEX-003",
+          "description": "服务结果",
+          "scope": "DUT_SCENARIO",
+          "sample_stage": "CHECKED",
+          "bins": [
+            "sample_value",
+            "gather_layout",
+            "query_metadata",
+            "boundary_effect",
+            "surface_reduction"
+          ],
+          "mandatory": true,
+          "bin_resolution": "Concrete enum bins plus capability-resolved legal-form bins; unresolved forms block closure rather than disappear."
+        }
+      ],
+      "pass_criteria": [
+        "All mandatory cases and resolved legal-form bins have matching nonempty checked evidence at their required phase.",
+        "No unexpected accept/reject, illegal positive program, missing side effect, duplicate completion or orphan resource.",
+        "PLANNED/NOT_RUN stays unchanged until an actual generator or DUT campaign records a replayable result."
+      ],
+      "phases": [
+        "P1_GENERATOR_UNIT",
+        "P2_REFERENCE_PROGRAM",
+        "P4_SOC"
+      ],
+      "priority": "NORMAL",
+      "status": "PLANNED",
+      "execution": "NOT_RUN",
+      "test_ids": [
+        "SIG-TEX-001",
+        "SIG-TEX-002",
+        "SIG-TEX-003",
+        "SIG-TEX-004"
+      ],
+      "source_refs": [
+        "docs/sm/SM_ARCHITECTURE.md#19"
+      ]
+    },
+    {
+      "id": "GEN-SYS-01",
+      "title": "Stack/ABI、特殊寄存器与系统指令",
+      "requirement": "35节sreg与directive不计opcode，按稳定性/只读/ABI/target条件检查；不发明FP全局CSR。",
+      "stimulus": [
+        "逐节生成合法mov/cvt读取；处理version/target/entry/cluster/ABI/debug directives。",
+        "alloca/save/restore、分歧call/return、setmaxnreg inc/dec和warpgroup同步。",
+        "perctamemorysize为0/合法1024B倍数，smid/warpid重调度变化，PM undefined。",
+        "真实debug/trap/nanosleep/RF配额服务，观察特殊寄存器与driver环境。"
+      ],
+      "checks": [
+        "对35源节与34第11章directive清单比对，按定义稳定性分类。",
+        "独立栈对象/ABI及CTA RF池模型，inc可阻塞但要合法供给策略。",
+        "环境模型做关系/范围比对，未定义值不逐bit预言。",
+        "事件分类monitor与ABI/relation checker。"
+      ],
+      "coverage_points": [
+        {
+          "id": "CV-SYS-001",
+          "description": "系统对象",
+          "scope": "GENERATOR",
+          "sample_stage": "GENERATED",
+          "bins": [
+            "35_sreg_topics",
+            "stack_call",
+            "setmaxnreg",
+            "nanosleep",
+            "trap_brkpt",
+            "pmevent",
+            "directives"
+          ],
+          "mandatory": true,
+          "bin_resolution": "Concrete enum bins plus capability-resolved legal-form bins; unresolved forms block closure rather than disappear."
+        },
+        {
+          "id": "CV-SYS-002",
+          "description": "环境与限制",
+          "scope": "GENERATOR",
+          "sample_stage": "CHECKED",
+          "bins": [
+            "per_thread_frame",
+            "sreg_readonly",
+            "warpid_smid_may_change",
+            "pm_undefined",
+            "perctaglobal_driver",
+            "RF_quota"
+          ],
+          "mandatory": true,
+          "bin_resolution": "Concrete enum bins plus capability-resolved legal-form bins; unresolved forms block closure rather than disappear.",
+          "sampling_note": "Sample only after the independent generator-side audit classifies its result; accepted and rejected outcomes retain distinct decision-stage counters. This is not a DUT result event."
+        },
+        {
+          "id": "CV-SYS-003",
+          "description": "系统观测",
+          "scope": "DUT_SCENARIO",
+          "sample_stage": "CHECKED",
+          "bins": [
+            "ABI_values",
+            "stack_lifetime",
+            "quota_progress",
+            "trap_classification",
+            "time_allowed_range"
+          ],
+          "mandatory": true,
+          "bin_resolution": "Concrete enum bins plus capability-resolved legal-form bins; unresolved forms block closure rather than disappear."
+        }
+      ],
+      "pass_criteria": [
+        "All mandatory cases and resolved legal-form bins have matching nonempty checked evidence at their required phase.",
+        "No unexpected accept/reject, illegal positive program, missing side effect, duplicate completion or orphan resource.",
+        "PLANNED/NOT_RUN stays unchanged until an actual generator or DUT campaign records a replayable result."
+      ],
+      "phases": [
+        "P1_GENERATOR_UNIT",
+        "P2_REFERENCE_PROGRAM",
+        "P3_SM_RTL"
+      ],
+      "priority": "HIGH",
+      "status": "PLANNED",
+      "execution": "NOT_RUN",
+      "test_ids": [
+        "SIG-SYS-001",
+        "SIG-SYS-002",
+        "SIG-SYS-003",
+        "SIG-SYS-004"
+      ],
+      "source_refs": [
+        "docs/sm/SM_ARCHITECTURE.md#20"
+      ]
+    },
+    {
+      "id": "GEN-NEG-01",
+      "title": "负例、UB与错误分类隔离",
+      "requirement": "合法正向、静态非法、项目协议robustness和ISA UB分开，禁止拿UB规定硬件结果。",
+      "stimulus": [
+        "每次只改合法tuple一个字段/参与关系/生命周期点并保留原case。",
+        "故意构造out-of-range/不一致collective/过期owner等UB候选。",
+        "对preflight reject、编译不可用、backend不支持、项目协议错误构造不同结果。",
+        "只在项目合同定义的adapter非法命令/valid协议/错误响应路径注入。"
+      ],
+      "checks": [
+        "独立规则判定破坏项和预期拒绝层，禁止多个无关约束同时失败掩盖。",
+        "检查quarantine标记和functional stream拒入；不期望硬件trap。",
+        "独立错误taxonomy与artifact比对，不把所有非零exit当预期pass。",
+        "真实protocol/error monitor，严格标记NONISA_ROBUSTNESS。"
+      ],
+      "coverage_points": [
+        {
+          "id": "CV-NEG-001",
+          "description": "负例来源",
+          "scope": "GENERATOR",
+          "sample_stage": "GENERATED",
+          "bins": [
+            "static_target_type",
+            "resource_participation",
+            "project_bad_encoding",
+            "protocol_fault",
+            "ISA_UB_quarantine"
+          ],
+          "mandatory": true,
+          "bin_resolution": "Concrete enum bins plus capability-resolved legal-form bins; unresolved forms block closure rather than disappear."
+        },
+        {
+          "id": "CV-NEG-002",
+          "description": "拒绝分类",
+          "scope": "GENERATOR",
+          "sample_stage": "CHECKED",
+          "bins": [
+            "preflight",
+            "assembler_if_available",
+            "adapter_defined_error",
+            "nonISA_robustness",
+            "unsupported_vs_invalid"
+          ],
+          "mandatory": true,
+          "bin_resolution": "Concrete enum bins plus capability-resolved legal-form bins; unresolved forms block closure rather than disappear.",
+          "sampling_note": "Sample only after the independent generator-side audit classifies its result; accepted and rejected outcomes retain distinct decision-stage counters. This is not a DUT result event."
+        },
+        {
+          "id": "CV-NEG-003",
+          "description": "错误证据",
+          "scope": "GENERATOR",
+          "sample_stage": "CHECKED",
+          "bins": [
+            "specific_rule",
+            "no_silent_repair",
+            "baseline_preserved",
+            "no_UB_numeric_oracle"
+          ],
+          "mandatory": true,
+          "bin_resolution": "Concrete enum bins plus capability-resolved legal-form bins; unresolved forms block closure rather than disappear."
+        }
+      ],
+      "pass_criteria": [
+        "All mandatory cases and resolved legal-form bins have matching nonempty checked evidence at their required phase.",
+        "No unexpected accept/reject, illegal positive program, missing side effect, duplicate completion or orphan resource.",
+        "PLANNED/NOT_RUN stays unchanged until an actual generator or DUT campaign records a replayable result."
+      ],
+      "phases": [
+        "P1_GENERATOR_UNIT",
+        "P2_REFERENCE_PROGRAM",
+        "P3_SM_RTL"
+      ],
+      "priority": "CRITICAL",
+      "status": "PLANNED",
+      "execution": "NOT_RUN",
+      "test_ids": [
+        "SIG-NEG-001",
+        "SIG-NEG-002",
+        "SIG-NEG-003",
+        "SIG-NEG-004"
+      ],
+      "source_refs": [
+        "docs/sm/SM_ARCHITECTURE.md#23"
+      ]
+    },
+    {
+      "id": "GEN-ENV-01",
+      "title": "Launch环境、服务延迟与fault控制",
+      "requirement": "代码、数据、launch、capability、服务/调度schedule共同定义一次可复现实验。",
+      "stimulus": [
+        "生成1/多warp、多CTA、尾warp和资源恰好/超限；R_SM显式参数。",
+        "对每条独立随机流生成延迟/backpressure/乱序/fault schedule并固定stream ID。",
+        "选择公平/受控长期stall/真正环等待三种场景。",
+        "运行中reset/abort/safe-drain切换，故意延迟旧响应到新epoch。"
+      ],
+      "checks": [
+        "独立launch预算和地址初始化检查。",
+        "配置与schedule validator，不靠wall clock或并行worker顺序播种。",
+        "独立wait-for graph与timeout分类，不以固定N周期判断所有指令。",
+        "真实epoch/owner/return monitor与SoC取消/副作用账本。"
+      ],
+      "coverage_points": [
+        {
+          "id": "CV-ENV-001",
+          "description": "环境组合",
+          "scope": "GENERATOR",
+          "sample_stage": "GENERATED",
+          "bins": [
+            "single_multiwarp",
+            "multiple_CTA",
+            "partial_warp",
+            "resource_boundary",
+            "service_backpressure",
+            "fault_schedule"
+          ],
+          "mandatory": true,
+          "bin_resolution": "Concrete enum bins plus capability-resolved legal-form bins; unresolved forms block closure rather than disappear."
+        },
+        {
+          "id": "CV-ENV-002",
+          "description": "环境审计",
+          "scope": "GENERATOR",
+          "sample_stage": "CHECKED",
+          "bins": [
+            "joint_admission",
+            "initialized_memory",
+            "schedule_consistency",
+            "explicit_fairness",
+            "fixed_versions"
+          ],
+          "mandatory": true,
+          "bin_resolution": "Concrete enum bins plus capability-resolved legal-form bins; unresolved forms block closure rather than disappear.",
+          "sampling_note": "Sample only after the independent generator-side audit classifies its result; accepted and rejected outcomes retain distinct decision-stage counters. This is not a DUT result event."
+        },
+        {
+          "id": "CV-ENV-003",
+          "description": "时序与隔离",
+          "scope": "DUT_SCENARIO",
+          "sample_stage": "CHECKED",
+          "bins": [
+            "no_missing_return",
+            "correct_fault_class",
+            "no_old_epoch_write",
+            "progress_under_assumptions"
+          ],
+          "mandatory": true,
+          "bin_resolution": "Concrete enum bins plus capability-resolved legal-form bins; unresolved forms block closure rather than disappear."
+        }
+      ],
+      "pass_criteria": [
+        "All mandatory cases and resolved legal-form bins have matching nonempty checked evidence at their required phase.",
+        "No unexpected accept/reject, illegal positive program, missing side effect, duplicate completion or orphan resource.",
+        "PLANNED/NOT_RUN stays unchanged until an actual generator or DUT campaign records a replayable result."
+      ],
+      "phases": [
+        "P1_GENERATOR_UNIT",
+        "P2_REFERENCE_PROGRAM",
+        "P3_SM_RTL"
+      ],
+      "priority": "HIGH",
+      "status": "PLANNED",
+      "execution": "NOT_RUN",
+      "test_ids": [
+        "SIG-ENV-001",
+        "SIG-ENV-002",
+        "SIG-ENV-003",
+        "SIG-ENV-004"
+      ],
+      "source_refs": [
+        "docs/sm/SM_ARCHITECTURE.md#22"
+      ]
+    },
+    {
+      "id": "GEN-LIFE-01",
+      "title": "有状态资源、cleanup与活性",
+      "requirement": "程序在所有允许异步顺序下合法；planned/issued/observed-complete分账，尾部闭合所有义务。",
+      "stimulus": [
+        "按dependency DAG选择recipe，预留cleanup指令和必要资源/执行者。",
+        "在预算接近耗尽、随机拒绝重试、block切换处终止body生成。",
+        "同一合法程序探索多个允许completion顺序，覆盖partial先于full。",
+        "饱和Tensor/SMEM返回后停止新外部body，保留已接受工作的wait/commit/load/free。"
+      ],
+      "checks": [
+        "独立prefix-state与all-schedules合法性审计；不在生成时预测完成周期。",
+        "独立cleanup构造核验；回滚候选不得残留资源reservation或改变已提交trace。",
+        "独立obligation模型与HB关系，而非generator内部shadow直接自证。",
+        "真实wait-for/return/owner ledger并检查escape进度假设。"
+      ],
+      "coverage_points": [
+        {
+          "id": "CV-LIFE-001",
+          "description": "责任种类",
+          "scope": "GENERATOR",
+          "sample_stage": "GENERATED",
+          "bins": [
+            "RF_result",
+            "SMEM_owner",
+            "TMEM_alloc_permit",
+            "barrier_phase",
+            "async_group",
+            "Aread_full",
+            "peer_reference"
+          ],
+          "mandatory": true,
+          "bin_resolution": "Concrete enum bins plus capability-resolved legal-form bins; unresolved forms block closure rather than disappear."
+        },
+        {
+          "id": "CV-LIFE-002",
+          "description": "静态闭合",
+          "scope": "GENERATOR",
+          "sample_stage": "CHECKED",
+          "bins": [
+            "dominates_use",
+            "HB_before_reuse",
+            "cleanup_reservation",
+            "matched_wait_free",
+            "no_dependency_cycle"
+          ],
+          "mandatory": true,
+          "bin_resolution": "Concrete enum bins plus capability-resolved legal-form bins; unresolved forms block closure rather than disappear.",
+          "sampling_note": "Sample only after the independent generator-side audit classifies its result; accepted and rejected outcomes retain distinct decision-stage counters. This is not a DUT result event."
+        },
+        {
+          "id": "CV-LIFE-003",
+          "description": "实际结清",
+          "scope": "DUT_SCENARIO",
+          "sample_stage": "CHECKED",
+          "bins": [
+            "no_orphan_obligation",
+            "drain_progress",
+            "exactly_once",
+            "cancel_confirmed",
+            "owner_generation_safe"
+          ],
+          "mandatory": true,
+          "bin_resolution": "Concrete enum bins plus capability-resolved legal-form bins; unresolved forms block closure rather than disappear."
+        }
+      ],
+      "pass_criteria": [
+        "All mandatory cases and resolved legal-form bins have matching nonempty checked evidence at their required phase.",
+        "No unexpected accept/reject, illegal positive program, missing side effect, duplicate completion or orphan resource.",
+        "PLANNED/NOT_RUN stays unchanged until an actual generator or DUT campaign records a replayable result."
+      ],
+      "phases": [
+        "P1_GENERATOR_UNIT",
+        "P2_REFERENCE_PROGRAM",
+        "P3_SM_RTL"
+      ],
+      "priority": "CRITICAL",
+      "status": "PLANNED",
+      "execution": "NOT_RUN",
+      "test_ids": [
+        "SIG-LIFE-001",
+        "SIG-LIFE-002",
+        "SIG-LIFE-003",
+        "SIG-LIFE-004"
+      ],
+      "source_refs": [
+        "docs/sm/SM_ARCHITECTURE.md#22"
+      ]
+    },
+    {
+      "id": "GEN-COV-01",
+      "title": "覆盖模型、采样点与分母治理",
+      "requirement": "候选覆盖与合法生成、DUT接收/完成/检查覆盖分账，去除或屏蔽bin必须有证据而非静默缩分母。",
+      "stimulus": [
+        "在标记SYNTHETIC的unit-harness日志中制造候选被拒、合法未发送、admit未complete、complete未checked四类。",
+        "冻结合法tuple及定向cross，执行disabled/unsupported/unreachable与waiver变更。",
+        "合并相同/不同schema、profile、source hash的run并注入重复事件或空日志。",
+        "对同一真实run比对driver/admit/complete/check日志和coverage。"
+      ],
+      "checks": [
+        "独立event-log重算unit counters；SYNTHETIC日志只测聚合器，不写真实DUT覆盖或真实run执行计数。",
+        "独立bin registry及rule/capability hash比对，UNRESOLVED不能自动排除。",
+        "独立聚合器检查兼容键和唯一实例；拒绝非兼容合并。",
+        "独立log correlator与typed completion规则。"
+      ],
+      "coverage_points": [
+        {
+          "id": "CV-COV-001",
+          "description": "采样来源",
+          "scope": "GENERATOR",
+          "sample_stage": "GENERATED",
+          "bins": [
+            "generated",
+            "legalized",
+            "rejected",
+            "admitted",
+            "completed",
+            "checked",
+            "report_classified"
+          ],
+          "mandatory": true,
+          "bin_resolution": "Concrete enum bins plus capability-resolved legal-form bins; unresolved forms block closure rather than disappear."
+        },
+        {
+          "id": "CV-COV-002",
+          "description": "覆盖账本",
+          "scope": "GENERATOR",
+          "sample_stage": "CHECKED",
+          "bins": [
+            "unique_dynamic_instance",
+            "lane_fragment_policy",
+            "capability_denominator",
+            "unreachable_waiver",
+            "merge_compatible"
+          ],
+          "mandatory": true,
+          "bin_resolution": "Concrete enum bins plus capability-resolved legal-form bins; unresolved forms block closure rather than disappear.",
+          "sampling_note": "Sample only after the independent generator-side audit classifies its result; accepted and rejected outcomes retain distinct decision-stage counters. This is not a DUT result event."
+        },
+        {
+          "id": "CV-COV-003",
+          "description": "闭合与反作弊",
+          "scope": "GENERATOR",
+          "sample_stage": "CHECKED",
+          "bins": [
+            "no_preflight_as_DUT",
+            "no_empty_pass",
+            "no_duplicate_inflation",
+            "bin_identity_stable"
+          ],
+          "mandatory": true,
+          "bin_resolution": "Concrete enum bins plus capability-resolved legal-form bins; unresolved forms block closure rather than disappear."
+        }
+      ],
+      "pass_criteria": [
+        "All mandatory cases and resolved legal-form bins have matching nonempty checked evidence at their required phase.",
+        "No unexpected accept/reject, illegal positive program, missing side effect, duplicate completion or orphan resource.",
+        "PLANNED/NOT_RUN stays unchanged until an actual generator or DUT campaign records a replayable result."
+      ],
+      "phases": [
+        "P1_GENERATOR_UNIT",
+        "P2_REFERENCE_PROGRAM",
+        "P3_SM_RTL"
+      ],
+      "priority": "CRITICAL",
+      "status": "PLANNED",
+      "execution": "NOT_RUN",
+      "test_ids": [
+        "SIG-COV-001",
+        "SIG-COV-002",
+        "SIG-COV-003",
+        "SIG-COV-004"
+      ],
+      "source_refs": [
+        "docs/sm/SM_ARCHITECTURE.md#23"
+      ]
+    },
+    {
+      "id": "GEN-REPLAY-01",
+      "title": "Seed、manifest与确定性回放",
+      "requirement": "seed不是全部输入；代码/data/config/版本/服务schedule及每阶段hash共同锁定run。",
+      "stimulus": [
+        "同manifest两次生成并比较semantic IR/data/layout/launch/schedule字节hash。",
+        "改变worker数、随机case分配与opcode权重，保留指定子流。",
+        "删manifest配置、修改binary/data/target/工具hash或rbits。",
+        "在固定backend/model下重放指定签名，多次确认事件及判据。"
+      ],
+      "checks": [
+        "独立artifact digest，不要求DOCX等无关工具二进制确定。",
+        "检查子流派生规范、拒绝重试次数日志与不相关stream独立性。",
+        "独立replay preflight逐项hash/版本/seed schedule检查。",
+        "独立failure signature归一化，不将新错误、timeout或UB当原故障。"
+      ],
+      "coverage_points": [
+        {
+          "id": "CV-REPLAY-001",
+          "description": "复现对象",
+          "scope": "GENERATOR",
+          "sample_stage": "GENERATED",
+          "bins": [
+            "program",
+            "memory_init",
+            "launch",
+            "capability",
+            "RNG_substreams",
+            "environment_schedule",
+            "tool_versions"
+          ],
+          "mandatory": true,
+          "bin_resolution": "Concrete enum bins plus capability-resolved legal-form bins; unresolved forms block closure rather than disappear."
+        },
+        {
+          "id": "CV-REPLAY-002",
+          "description": "复现校验",
+          "scope": "GENERATOR",
+          "sample_stage": "CHECKED",
+          "bins": [
+            "same_manifest_same_artifact",
+            "worker_order_independent",
+            "hash_mismatch_reject",
+            "rbits_preserved"
+          ],
+          "mandatory": true,
+          "bin_resolution": "Concrete enum bins plus capability-resolved legal-form bins; unresolved forms block closure rather than disappear.",
+          "sampling_note": "Sample only after the independent generator-side audit classifies its result; accepted and rejected outcomes retain distinct decision-stage counters. This is not a DUT result event."
+        },
+        {
+          "id": "CV-REPLAY-003",
+          "description": "回放判据",
+          "scope": "GENERATOR",
+          "sample_stage": "CHECKED",
+          "bins": [
+            "same_signature",
+            "stable_semantic_trace",
+            "blocked_missing_backend",
+            "no_hidden_input"
+          ],
+          "mandatory": true,
+          "bin_resolution": "Concrete enum bins plus capability-resolved legal-form bins; unresolved forms block closure rather than disappear."
+        }
+      ],
+      "pass_criteria": [
+        "All mandatory cases and resolved legal-form bins have matching nonempty checked evidence at their required phase.",
+        "No unexpected accept/reject, illegal positive program, missing side effect, duplicate completion or orphan resource.",
+        "PLANNED/NOT_RUN stays unchanged until an actual generator or DUT campaign records a replayable result."
+      ],
+      "phases": [
+        "P1_GENERATOR_UNIT",
+        "P2_REFERENCE_PROGRAM"
+      ],
+      "priority": "HIGH",
+      "status": "PLANNED",
+      "execution": "NOT_RUN",
+      "test_ids": [
+        "SIG-REPLAY-001",
+        "SIG-REPLAY-002",
+        "SIG-REPLAY-003",
+        "SIG-REPLAY-004"
+      ],
+      "source_refs": [
+        "docs/sm/SM_ARCHITECTURE.md#23"
+      ]
+    },
+    {
+      "id": "GEN-REDUCE-01",
+      "title": "保持语义与资源关系的失败缩减",
+      "requirement": "shrinker删除/替换指令必须保持合法性、HB/参与者和原失败判据，不能仅保留同一timeout。",
+      "stimulus": [
+        "删除producer/branch/call候选并测试合法性修复边界。",
+        "尝试删除alloc/expect_tx/commit/wait/dealloc或peer一侧。",
+        "缩小FP/scale/metadata/rbits以及环境schedule，保持profile与报告规则。",
+        "在上限轮次/时间内产出原始/缩减trace、变换日志和全部manifest。"
+      ],
+      "checks": [
+        "独立audit在每次候选后重跑，不能使用仅原始程序合法标记。",
+        "独立resource/HB/typed obligation checker。",
+        "原failure predicate与独立数值/allowed-outcome oracle双验。",
+        "独立重放缩减包，并记录未能缩减的依赖原因。"
+      ],
+      "coverage_points": [
+        {
+          "id": "CV-REDUCE-001",
+          "description": "缩减动作",
+          "scope": "GENERATOR",
+          "sample_stage": "GENERATED",
+          "bins": [
+            "instruction_delete",
+            "CFG_simplify",
+            "operand_shrink",
+            "lane_CTA_reduce",
+            "schedule_reduce"
+          ],
+          "mandatory": true,
+          "bin_resolution": "Concrete enum bins plus capability-resolved legal-form bins; unresolved forms block closure rather than disappear."
+        },
+        {
+          "id": "CV-REDUCE-002",
+          "description": "合法性约束",
+          "scope": "GENERATOR",
+          "sample_stage": "CHECKED",
+          "bins": [
+            "def_use_preserved",
+            "collective_complete",
+            "owner_lifetime",
+            "matching_commit_wait",
+            "same_profile"
+          ],
+          "mandatory": true,
+          "bin_resolution": "Concrete enum bins plus capability-resolved legal-form bins; unresolved forms block closure rather than disappear.",
+          "sampling_note": "Sample only after the independent generator-side audit classifies its result; accepted and rejected outcomes retain distinct decision-stage counters. This is not a DUT result event."
+        },
+        {
+          "id": "CV-REDUCE-003",
+          "description": "故障保持",
+          "scope": "GENERATOR",
+          "sample_stage": "CHECKED",
+          "bins": [
+            "same_failure_signature",
+            "reproducible",
+            "not_new_UB",
+            "bounded_shrink_time"
+          ],
+          "mandatory": true,
+          "bin_resolution": "Concrete enum bins plus capability-resolved legal-form bins; unresolved forms block closure rather than disappear."
+        }
+      ],
+      "pass_criteria": [
+        "All mandatory cases and resolved legal-form bins have matching nonempty checked evidence at their required phase.",
+        "No unexpected accept/reject, illegal positive program, missing side effect, duplicate completion or orphan resource.",
+        "PLANNED/NOT_RUN stays unchanged until an actual generator or DUT campaign records a replayable result."
+      ],
+      "phases": [
+        "P1_GENERATOR_UNIT",
+        "P2_REFERENCE_PROGRAM"
+      ],
+      "priority": "HIGH",
+      "status": "PLANNED",
+      "execution": "NOT_RUN",
+      "test_ids": [
+        "SIG-REDUCE-001",
+        "SIG-REDUCE-002",
+        "SIG-REDUCE-003",
+        "SIG-REDUCE-004"
+      ],
+      "source_refs": [
+        "docs/sm/SM_ARCHITECTURE.md#23"
+      ]
+    },
+    {
+      "id": "GEN-REGRESS-01",
+      "title": "分层回归、分布质量与退出标准",
+      "requirement": "按门槛逐层启用验证，不把计划静态完整、MALU旧回归或分布命中当全SM功能通过。",
+      "stimulus": [
+        "检查25feature、实际catalogue全部test及217+35trace关联和source hash。",
+        "固定seed集合测试权重归一化、零权重、配额和不可达组合；记录尝试/拒绝/输出。",
+        "故意缺工具、缺model、零case、覆盖未收敛、未经审查waiver及历史证据混入。",
+        "实际backend实现后运行smoke→directed→random→stress，并输出完整证据包。"
+      ],
+      "checks": [
+        "独立check_vplan.py静态审计，结果与动态测试报告分文件。",
+        "按条件可行集合比较分布；对启用稀有功能用定向配额，不以单次histogram断言精确比例。",
+        "独立campaign state machine与evidence manifest检查。",
+        "真实checker/coverage与缺陷triage，按冻结能力/分母判定。"
+      ],
+      "coverage_points": [
+        {
+          "id": "CV-REGRESS-001",
+          "description": "回归层次",
+          "scope": "GENERATOR",
+          "sample_stage": "GENERATED",
+          "bins": [
+            "plan_static",
+            "generator_unit",
+            "reference_program",
+            "SM_RTL",
+            "SoC_integration",
+            "directed_random"
+          ],
+          "mandatory": true,
+          "bin_resolution": "Concrete enum bins plus capability-resolved legal-form bins; unresolved forms block closure rather than disappear."
+        },
+        {
+          "id": "CV-REGRESS-002",
+          "description": "分布与状态",
+          "scope": "GENERATOR",
+          "sample_stage": "CHECKED",
+          "bins": [
+            "weighted_choice",
+            "rare_form_quota",
+            "UNSAT_budget",
+            "blocked_vs_pass",
+            "waiver_version"
+          ],
+          "mandatory": true,
+          "bin_resolution": "Concrete enum bins plus capability-resolved legal-form bins; unresolved forms block closure rather than disappear.",
+          "sampling_note": "Sample only after the independent generator-side audit classifies its result; accepted and rejected outcomes retain distinct decision-stage counters. This is not a DUT result event."
+        },
+        {
+          "id": "CV-REGRESS-003",
+          "description": "交付检查",
+          "scope": "GENERATOR",
+          "sample_stage": "CHECKED",
+          "bins": [
+            "nonempty_checked_tests",
+            "mandatory_bins_closed",
+            "replay_bundle",
+            "no_untriaged_failure",
+            "honest_status"
+          ],
+          "mandatory": true,
+          "bin_resolution": "Concrete enum bins plus capability-resolved legal-form bins; unresolved forms block closure rather than disappear."
+        }
+      ],
+      "pass_criteria": [
+        "All mandatory cases and resolved legal-form bins have matching nonempty checked evidence at their required phase.",
+        "No unexpected accept/reject, illegal positive program, missing side effect, duplicate completion or orphan resource.",
+        "PLANNED/NOT_RUN stays unchanged until an actual generator or DUT campaign records a replayable result."
+      ],
+      "phases": [
+        "P1_GENERATOR_UNIT",
+        "P2_REFERENCE_PROGRAM",
+        "P3_SM_RTL"
+      ],
+      "priority": "CRITICAL",
+      "status": "PLANNED",
+      "execution": "NOT_RUN",
+      "test_ids": [
+        "SIG-REGRESS-001",
+        "SIG-REGRESS-002",
+        "SIG-REGRESS-003",
+        "SIG-REGRESS-004"
+      ],
+      "source_refs": [
+        "docs/sm/SM_ARCHITECTURE.md#23"
+      ]
+    }
+  ]
+}

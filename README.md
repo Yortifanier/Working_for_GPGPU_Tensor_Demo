@@ -1,6 +1,10 @@
 # Working_for_GPGPU_Tensor_Demo
 Tensor
 
+## SM 指令发生器验证计划
+
+[vPlan位于verif/core/vplan/sm_instr_gen](verif/core/vplan/sm_instr_gen/README.md)，包含25个验证特性、106个计划测试点、75个覆盖点，以及217条指令／语法和35节特殊寄存器追踪。覆盖发生器自身合法性、依赖/控制流、存储同步、完整TMEM生命周期、矩阵格式/scale/BLOCK、系统服务、覆盖、回放及缩减。当前功能测试均为PLANNED / NOT_RUN，静态计划检查单独记录。
+
 ## SM 架构与 PTX 9.4 全指令审查
 
 覆盖全部21个指令大类、215个实际指令说明节及2个控制语法节，附217行架构映射和35节特殊寄存器索引。正文包括SIMT/ITS、SALU/VALU/FPU/SFU、寄存器、LSU/L1、完整SMEM、同步/原子/proxy、TMA、各代Tensor/TMEM/MALU、cluster/DSM、Fabric、texture/surface和系统服务。

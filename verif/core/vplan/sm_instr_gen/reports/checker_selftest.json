@@ -1,0 +1,61 @@
+{
+  "passed": true,
+  "check_kind": "VALIDATOR_SELFTEST",
+  "scope": "Synthetic metadata mutations of the P0 static validator only; none of the 106 planned generator/DUT cases was executed. Baseline uses final frozen plan inputs.",
+  "dynamic_testpoints_executed": 0,
+  "dynamic_execution": "NOT_RUN",
+  "checker_sha256": "21aed2d9eca33bb3ab9e2588702be953325fc0af39237121cc7e445d08e4aae1",
+  "baseline_input_sha256": {
+    "vplan_features.json": "8ee62fb376abac123d8704fad8d12c03b681e5736890373436b29a585f67a17d",
+    "testpoints.json": "9a230465115ed9e01b8edf64da32aba41af7a2da80b12275e28a8894792018c3",
+    "instruction_traceability.json": "ea38633754fa45931cfa11e79dd980957f8f7fb10cc563c81c5833b166be25b6",
+    "instruction_traceability.csv": "4826f9a1474657d02ee06939bf2a4aabbadf7219dc6f64c41ebfa2d1e8f4018e",
+    "special_register_traceability.json": "25752e2c68668e5f66ba270ffe2339729bcd0e1a37726e70a6a1de611069b40e",
+    "special_register_traceability.csv": "1b15dacbb56448405bde0e691fbd271129a64f2b39907c8bbeb5e84cecc8a02b",
+    "SM_INSTR_GEN_VPLAN.md": "29e08a0a10acd72267bfcad59a362746dc34a9d6d40252519c0a9de51027fafd"
+  },
+  "baseline_passed": true,
+  "mutations_rejected": 8,
+  "cases": [
+    {
+      "mutation": "claim_execution",
+      "rejected": true,
+      "expected_diagnostic": "NOT_RUN"
+    },
+    {
+      "mutation": "missing_reverse_link",
+      "rejected": true,
+      "expected_diagnostic": "reverse feature.test_ids"
+    },
+    {
+      "mutation": "duplicate_coverage_id",
+      "rejected": true,
+      "expected_diagnostic": "duplicate coverage ID"
+    },
+    {
+      "mutation": "unit_claims_dut_coverage",
+      "rejected": true,
+      "expected_diagnostic": "DUT_SCENARIO coverage requires P3/P4"
+    },
+    {
+      "mutation": "source_hash_drift",
+      "rejected": true,
+      "expected_diagnostic": "source SHA256 mismatch"
+    },
+    {
+      "mutation": "csv_json_mismatch",
+      "rejected": true,
+      "expected_diagnostic": "CSV/JSON cell differs: names"
+    },
+    {
+      "mutation": "unknown_markdown_id",
+      "rejected": true,
+      "expected_diagnostic": "unknown="
+    },
+    {
+      "mutation": "missing_required_stimulus",
+      "rejected": true,
+      "expected_diagnostic": "stimulus"
+    }
+  ]
+}

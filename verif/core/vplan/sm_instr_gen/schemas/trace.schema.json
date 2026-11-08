@@ -1,0 +1,202 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "SM instruction generator vplan trace",
+  "type": "object",
+  "properties": {
+    "schema_version": {
+      "const": "1.0"
+    },
+    "source_inventories": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "path": {
+            "type": "string",
+            "minLength": 1
+          },
+          "sha256": {
+            "type": "string",
+            "pattern": "^[a-f0-9]{64}$"
+          }
+        },
+        "required": [
+          "path",
+          "sha256"
+        ]
+      },
+      "minItems": 1,
+      "uniqueItems": true
+    },
+    "source_pdf": {
+      "type": "object",
+      "properties": {
+        "file_name": {
+          "type": "string",
+          "minLength": 1
+        },
+        "sha256": {
+          "type": "string",
+          "pattern": "^[a-f0-9]{64}$"
+        },
+        "release": {
+          "type": "string",
+          "minLength": 1
+        }
+      },
+      "required": [
+        "file_name",
+        "sha256",
+        "release"
+      ]
+    },
+    "entries": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "trace_id": {
+            "type": "string",
+            "minLength": 1
+          },
+          "section": {
+            "type": "string",
+            "minLength": 1
+          },
+          "names": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "minLength": 1
+            },
+            "minItems": 1,
+            "uniqueItems": true
+          },
+          "pdf_page_start": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "printed_page_start": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "entry_kind": {
+            "type": "string",
+            "minLength": 1
+          },
+          "source_refs": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "pattern": "^[^#]+#[^#]+$"
+            },
+            "minItems": 1,
+            "uniqueItems": true
+          },
+          "primary_feature_id": {
+            "type": "string",
+            "pattern": "^GEN-[A-Z0-9][A-Z0-9_-]*$"
+          },
+          "related_feature_ids": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "pattern": "^GEN-[A-Z0-9][A-Z0-9_-]*$"
+            },
+            "minItems": 0,
+            "uniqueItems": true
+          },
+          "test_family": {
+            "type": "string",
+            "minLength": 1
+          },
+          "planned_stimulus": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "minLength": 1
+            },
+            "minItems": 1,
+            "uniqueItems": true
+          },
+          "planned_checks": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "minLength": 1
+            },
+            "minItems": 1,
+            "uniqueItems": true
+          },
+          "coverage_dimensions": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "minLength": 1
+            },
+            "minItems": 1,
+            "uniqueItems": true
+          },
+          "capability_policy": {
+            "oneOf": [
+              {
+                "type": "string",
+                "minLength": 1
+              },
+              {
+                "type": "object",
+                "minProperties": 1
+              }
+            ]
+          },
+          "blocked_form_conditions": {
+            "type": "array"
+          },
+          "status": {
+            "const": "PLANNED"
+          },
+          "execution": {
+            "const": "NOT_RUN"
+          },
+          "domain": {
+            "type": "string",
+            "minLength": 1
+          },
+          "domain_description": {
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        "required": [
+          "trace_id",
+          "section",
+          "names",
+          "pdf_page_start",
+          "printed_page_start",
+          "entry_kind",
+          "source_refs",
+          "primary_feature_id",
+          "related_feature_ids",
+          "test_family",
+          "planned_stimulus",
+          "planned_checks",
+          "coverage_dimensions",
+          "capability_policy",
+          "blocked_form_conditions",
+          "status",
+          "execution",
+          "domain",
+          "domain_description"
+        ]
+      },
+      "minItems": 1,
+      "uniqueItems": true
+    }
+  },
+  "required": [
+    "schema_version",
+    "source_inventories",
+    "source_pdf",
+    "entries"
+  ]
+}

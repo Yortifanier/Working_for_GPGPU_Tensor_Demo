@@ -1,0 +1,440 @@
+{
+  "passed": true,
+  "status": "complete",
+  "check_kind": "DOCUMENT_BUILD_QA",
+  "scope": "Document structure and rendering, not generator or DUT test execution.",
+  "dynamic_testpoints_executed": 0,
+  "dynamic_execution": "NOT_RUN",
+  "title": "SM 指令发生器验证计划",
+  "build_date": "2026-11-08",
+  "version": "1.0",
+  "source": "verif/core/vplan/sm_instr_gen/SM_INSTR_GEN_VPLAN.md",
+  "source_sha256": "71cd695ebdfbba906d17233c975762cec863187d2e4e96afc723a5d4e40915c9",
+  "docx": "verif/core/vplan/sm_instr_gen/SM_Instruction_Generator_Vplan_v1.0.docx",
+  "docx_sha256": "73a195874e8e3708fbdda52f5b4f068a354d0996171ed58e17668e62adb69a24",
+  "pdf": "verif/core/vplan/sm_instr_gen/SM_Instruction_Generator_Vplan_v1.0.pdf",
+  "pdf_sha256": "bdf61648e7216565a0b68455acfa9c1cf3bcf1a4fd542b4b8a1ba497dbf445b0",
+  "layout_dependency": {
+    "path": "docs/sm/build_doc.py",
+    "sha256": "41133b4f851703a23ddb875dca289b170d0ca79744b21fa4f2000ed756e1b5cd"
+  },
+  "native_tables": 38,
+  "native_math": 1,
+  "embedded_images": 2,
+  "chapter_navigation_links": 24,
+  "html_breaks_converted_to_native": 106,
+  "pdf_pages": 43,
+  "pdf_text_characters": 84498,
+  "all_heading_text_found": true,
+  "pdf_structural_check": {
+    "internal_links": 24,
+    "unique_images": 2,
+    "text_outside_page_bounds": []
+  },
+  "figure_sha256": {
+    "figures/01_generation_and_checking.png": "5b27baec9dc2b98e38e9d1d6d26edaa1bf822373741dc565726c4bed0d0d9859",
+    "figures/02_state_and_replay.png": "ba9a879a866e1d8eefb51b87b9ddb8ac62e3ece425cfa381abda5aa09779ea04"
+  },
+  "source_and_figures_unchanged_during_build": true,
+  "rendered_pages": [
+    "build/sm_instr_gen_vplan/v1.0/page_01.png",
+    "build/sm_instr_gen_vplan/v1.0/page_05.png",
+    "build/sm_instr_gen_vplan/v1.0/page_08.png",
+    "build/sm_instr_gen_vplan/v1.0/page_43.png"
+  ],
+  "eof_only_normalization": {
+    "previous_source_sha256": "29e08a0a10acd72267bfcad59a362746dc34a9d6d40252519c0a9de51027fafd",
+    "previous_pdf_sha256": "eb296561a79ad9f8793b57fceaa3919dc29838741be5521b1a70f8e7e2525968",
+    "current_source_sha256": "71cd695ebdfbba906d17233c975762cec863187d2e4e96afc723a5d4e40915c9",
+    "render_dpi": 72,
+    "all_pages_pixel_identical": true,
+    "pages_compared": 43,
+    "page_pixel_sha256": [
+      {
+        "page": 1,
+        "sha256": "fa935ed6c30d638836d008f4ad3d6da5d97778ee322cc3e726a080b817acc36b"
+      },
+      {
+        "page": 2,
+        "sha256": "f83062e1047a47cca1201ddc9e5b7bd04995d84e31f53ec16734b0b9e5eed40b"
+      },
+      {
+        "page": 3,
+        "sha256": "e54c7eeff48266889fefb02089d133ec13bc77720104c8477cb0458965da3d34"
+      },
+      {
+        "page": 4,
+        "sha256": "06dc188e281a1a8184481dea1ef63b2efeaf55a3fda7f42b2f0a593749bff21e"
+      },
+      {
+        "page": 5,
+        "sha256": "530633f5717ae13f59758548b72d386059d2b8769c86c65bc6e7ab9020507e31"
+      },
+      {
+        "page": 6,
+        "sha256": "9e335e10ea99713cf85b7be15bc6b3ac77658abc71287bcc78d340a5af40d5c1"
+      },
+      {
+        "page": 7,
+        "sha256": "117b152857176416a5d0272fd7b61d1bc2e388a70781d99459e9fc8e71ec4b2c"
+      },
+      {
+        "page": 8,
+        "sha256": "e473f57104e73b115a4410766675fdf8bd2bcc0a8a5b917f623696a58288fb1f"
+      },
+      {
+        "page": 9,
+        "sha256": "b7d19cde4d49cd76e0cce6d5b4230d5c501e341da3dc4a0cfa96dfae4e6a4a6e"
+      },
+      {
+        "page": 10,
+        "sha256": "6c1c6fefcb23f7ea39df57fd1a495c15b801160c440b2398ad849c06f7ed32a4"
+      },
+      {
+        "page": 11,
+        "sha256": "4db176dba1a1a6b40ecb4080c8f2c14f5f51766f85532a90f1529036ef95a9da"
+      },
+      {
+        "page": 12,
+        "sha256": "3cc703438b61b8fbc3d8f6e58109d9c4f989f0e3daa7fadeca16644767afcb0a"
+      },
+      {
+        "page": 13,
+        "sha256": "b03949803d105edd794a08b10712c0240a57d6515f931d42d1617096c5261543"
+      },
+      {
+        "page": 14,
+        "sha256": "227d7f5dad1befc717444cf568809701592291b281ff8eca99ccb1ddb2465af6"
+      },
+      {
+        "page": 15,
+        "sha256": "721b6bac00b44904761f7253b396394b7bf4cec3ad44c1615a288dfc1a3d7f56"
+      },
+      {
+        "page": 16,
+        "sha256": "64c4b3e0c78078dbd9342c2d5be73ff02b34c17fe0a78e2ac4c06693f18db6e9"
+      },
+      {
+        "page": 17,
+        "sha256": "0c076cdda798413e7e31eca6904053b7f500292a8b8aa2576ef0e9219758b52a"
+      },
+      {
+        "page": 18,
+        "sha256": "b01def5449cff0c81f205f68d182a2ad3c2a675cd8f816b5852d858ce91665f3"
+      },
+      {
+        "page": 19,
+        "sha256": "0aef185257baa15c9edce4775f62df16d01a004fa62522cd59ac498a5ae5992b"
+      },
+      {
+        "page": 20,
+        "sha256": "0a3fd9d364b71fd825882177bc87e4b5a23f69b2d57b8497967621bee5a089be"
+      },
+      {
+        "page": 21,
+        "sha256": "253c4a9710c40d5446d55e1bd76e1520ad5417ca02e3d75ff39bbfe838bce204"
+      },
+      {
+        "page": 22,
+        "sha256": "b90cec30422881fccdf1a2549d1e9c6124ef8e83026e9a35ca7c0ee049a1c796"
+      },
+      {
+        "page": 23,
+        "sha256": "c85c1f70a53e22294d25db435af917af8805fe821683f0f73979ea243c947b41"
+      },
+      {
+        "page": 24,
+        "sha256": "2650c70c6ac601b832eccb8c04a844c342acb4e783e6b34b72f09d4c551e782b"
+      },
+      {
+        "page": 25,
+        "sha256": "8eabc0d15b0626c023d1f59d84ad2eb3ab8924f37a5d19f454d5ac5bffbd4da0"
+      },
+      {
+        "page": 26,
+        "sha256": "e9d57e6908a0caf56647ff0faf4101e08c115898ee0304a5ee17e8b794317629"
+      },
+      {
+        "page": 27,
+        "sha256": "110a2abe8495fa05ca730745c4839ec329e9282dbfcbf45c3f056b6ef4a33215"
+      },
+      {
+        "page": 28,
+        "sha256": "5e291aff283306f0d7094dfbebeade9fb560e8155d468616731589d8e760ba17"
+      },
+      {
+        "page": 29,
+        "sha256": "5bf31ed7dbf40ee6b8ac4cfb48c77fb5d6115d4cf089477908118b67710c071e"
+      },
+      {
+        "page": 30,
+        "sha256": "f1dd4e5cbb323cdf8291ec5648c8424424ef7f2b1d50912efeab97494861ff3d"
+      },
+      {
+        "page": 31,
+        "sha256": "ee187c48ca14e589be690d9b5957ea7bf3374178050902652b384735ec8c3341"
+      },
+      {
+        "page": 32,
+        "sha256": "21372a21bcaa6652ec870d53f880ab7baa6af1b48319f46142ddafbdf47770a5"
+      },
+      {
+        "page": 33,
+        "sha256": "24a8dc27f1144396f765743c45fa647fb91958a8affde5892d6eed0c06239b1e"
+      },
+      {
+        "page": 34,
+        "sha256": "de379dab6d286f1d1a961e27fcda74c89e41aa1e7da894a8faf6be72ac7574ec"
+      },
+      {
+        "page": 35,
+        "sha256": "986b09ef3a6d37262320113a219b8511b4659cd6a8eaba815bba967ce33ced8a"
+      },
+      {
+        "page": 36,
+        "sha256": "1893bfc7c27caa55d0cafb383dd36f2177f22d7ad087a0fdeb26d1e2af53d382"
+      },
+      {
+        "page": 37,
+        "sha256": "849faa8ea6e46fbb248e2c1c761261d70cd5271bf11fcdcf43ea2452aefcd8cb"
+      },
+      {
+        "page": 38,
+        "sha256": "84ab0bbf18b15cf4bb5b95283c9f8a5db7445bbbe58a8dce7131963c24126d19"
+      },
+      {
+        "page": 39,
+        "sha256": "98c51c5f6a80516f7485b82f653995763ffb2237185bd5d1bdb9ca23552d8c59"
+      },
+      {
+        "page": 40,
+        "sha256": "717b0fa7de11ece3e56f38c37917762c76fe1587a0016569ffa92c71ee784215"
+      },
+      {
+        "page": 41,
+        "sha256": "0b961d43240bbddcc819286d9712fd4584265dac3de9a11fd813447f11c841db"
+      },
+      {
+        "page": 42,
+        "sha256": "a4af6bd704c5d9b9fe0a4dc18cdf6054ee7b64e047accca3e3c360e19814c936"
+      },
+      {
+        "page": 43,
+        "sha256": "a101e90d862aa9f37f3d0c5bfaa2b2f797f7e6a40d59aeac943996a05dfa6f13"
+      }
+    ]
+  },
+  "additional_structural_checks": {
+    "tables": 38,
+    "table_rows": 232,
+    "repeat_header_tables": 38,
+    "cant_split_rows": 232,
+    "table_paragraphs": 823,
+    "table_paragraph_alignment_counts": {
+      "left": 823
+    },
+    "run_ascii_fonts": {
+      "Noto Sans CJK SC": 1322,
+      "DejaVu Sans Mono": 202
+    },
+    "unexpected_code_fonts": [],
+    "embedded_pdf_fonts": [
+      {
+        "xref": 6783,
+        "name": "FAAAAA+NotoSansCJKsc-Regular",
+        "extension": "pfa",
+        "embedded_bytes": 72102
+      },
+      {
+        "xref": 6788,
+        "name": "KAAAAA+NotoSansCJKsc-Regular",
+        "extension": "pfa",
+        "embedded_bytes": 78321
+      },
+      {
+        "xref": 6793,
+        "name": "QAAAAA+NotoSansCJKsc-Regular",
+        "extension": "pfa",
+        "embedded_bytes": 80433
+      },
+      {
+        "xref": 6798,
+        "name": "GAAAAA+NotoSansCJKsc-Regular",
+        "extension": "pfa",
+        "embedded_bytes": 4709
+      },
+      {
+        "xref": 6803,
+        "name": "EAAAAA+NotoSansCJKsc-Regular",
+        "extension": "pfa",
+        "embedded_bytes": 3808
+      },
+      {
+        "xref": 6808,
+        "name": "DAAAAA+NotoSansCJKsc-Regular",
+        "extension": "pfa",
+        "embedded_bytes": 4968
+      },
+      {
+        "xref": 6813,
+        "name": "NAAAAA+NotoSansCJKsc-Regular",
+        "extension": "pfa",
+        "embedded_bytes": 72814
+      },
+      {
+        "xref": 6818,
+        "name": "PAAAAA+NotoSansCJKsc-Regular",
+        "extension": "pfa",
+        "embedded_bytes": 77093
+      },
+      {
+        "xref": 6823,
+        "name": "UAAAAA+NotoSansCJKsc-Regular",
+        "extension": "pfa",
+        "embedded_bytes": 77704
+      },
+      {
+        "xref": 6828,
+        "name": "IAAAAA+NotoSansCJKsc-Bold",
+        "extension": "pfa",
+        "embedded_bytes": 24496
+      },
+      {
+        "xref": 6833,
+        "name": "LAAAAA+NotoSansCJKsc-Bold",
+        "extension": "pfa",
+        "embedded_bytes": 65748
+      },
+      {
+        "xref": 6838,
+        "name": "CAAAAA+NotoSansCJKsc-Bold",
+        "extension": "pfa",
+        "embedded_bytes": 5488
+      },
+      {
+        "xref": 6843,
+        "name": "JAAAAA+NotoSansCJKsc-Bold",
+        "extension": "pfa",
+        "embedded_bytes": 56299
+      },
+      {
+        "xref": 6848,
+        "name": "HAAAAA+NotoSansCJKsc-Bold",
+        "extension": "pfa",
+        "embedded_bytes": 3877
+      },
+      {
+        "xref": 6853,
+        "name": "BAAAAA+NotoSansCJKsc-Bold",
+        "extension": "pfa",
+        "embedded_bytes": 10648
+      },
+      {
+        "xref": 6858,
+        "name": "MAAAAA+NotoSansCJKsc-Bold",
+        "extension": "pfa",
+        "embedded_bytes": 38601
+      },
+      {
+        "xref": 6863,
+        "name": "SAAAAA+LiberationSerif",
+        "extension": "ttf",
+        "embedded_bytes": 5468
+      },
+      {
+        "xref": 6868,
+        "name": "RAAAAA+LiberationSerif-Italic",
+        "extension": "ttf",
+        "embedded_bytes": 6864
+      },
+      {
+        "xref": 6873,
+        "name": "OAAAAA+DejaVuSansMono",
+        "extension": "ttf",
+        "embedded_bytes": 13644
+      },
+      {
+        "xref": 6878,
+        "name": "TAAAAA+OpenSymbol",
+        "extension": "ttf",
+        "embedded_bytes": 2952
+      }
+    ],
+    "pdf_identifier_presence": {
+      "testpoints": {
+        "expected": 106,
+        "missing": []
+      },
+      "features": {
+        "expected": 25,
+        "missing": []
+      },
+      "coverage": {
+        "expected": 75,
+        "missing": []
+      }
+    },
+    "all_pdf_font_programs_embedded": true
+  },
+  "manual_visual_check": {
+    "performed": true,
+    "pdf_pages_inspected": [
+      1,
+      2,
+      5,
+      8,
+      14,
+      16,
+      21,
+      27,
+      31,
+      40,
+      43
+    ],
+    "scope": "Sampled cover/navigation; both embedded diagrams; Matrix/Fabric and coverage text; long case tables, repeated headers, code identifiers, TMEM and final regression section. Not an all-page visual inspection.",
+    "result": "PASS",
+    "observations": [
+      "Chinese and Latin text readable; code identifiers retain monospaced glyphs without stretched justification.",
+      "Both diagrams and long tables readable; sampled pages have no observed clipping, overlap or isolated headings.",
+      "Plan and coverage statements distinguish planned NOT_RUN cases from static checks and actual future DUT events."
+    ],
+    "not_checked": "No generator, independent semantic model, adapter or DUT was executed; no dynamic coverage was collected.",
+    "basis": "The listed pages were visually inspected in the previous PDF; all 43 pages of this final EOF-normalized rebuild are pixel-identical at 72 DPI, with per-page hashes recorded here."
+  },
+  "static_plan_validation": {
+    "report": "reports/vplan_static_check.json",
+    "sha256": "8de6c085b7ce039ce3badb138bfbfcbbaec4b61ad1e104ad468a229eaccfc66e",
+    "result": "PASS",
+    "counts": {
+      "instruction_traceability": 217,
+      "special_register_traceability": 35,
+      "features": 25,
+      "testpoints": 106,
+      "coverage_points": 75,
+      "source_sections": 252
+    },
+    "input_sha256": {
+      "vplan_features.json": "8ee62fb376abac123d8704fad8d12c03b681e5736890373436b29a585f67a17d",
+      "testpoints.json": "9a230465115ed9e01b8edf64da32aba41af7a2da80b12275e28a8894792018c3",
+      "instruction_traceability.json": "ea38633754fa45931cfa11e79dd980957f8f7fb10cc563c81c5833b166be25b6",
+      "special_register_traceability.json": "25752e2c68668e5f66ba270ffe2339729bcd0e1a37726e70a6a1de611069b40e",
+      "instruction_traceability.csv": "4826f9a1474657d02ee06939bf2a4aabbadf7219dc6f64c41ebfa2d1e8f4018e",
+      "special_register_traceability.csv": "1b15dacbb56448405bde0e691fbd271129a64f2b39907c8bbeb5e84cecc8a02b",
+      "SM_INSTR_GEN_VPLAN.md": "71cd695ebdfbba906d17233c975762cec863187d2e4e96afc723a5d4e40915c9"
+    },
+    "dynamic_testpoints_executed": 0
+  },
+  "validator_selftest": {
+    "report": "reports/checker_selftest.json",
+    "sha256": "2d349fa9bb59a6e8aab69389c2dd8fe9ca70b6b01b74fa1887147711bc6a86e1",
+    "scope": "Eight synthetic metadata corruptions rejected by the static validator; not execution of planned generator/DUT cases.",
+    "mutations_rejected": 8
+  },
+  "tool_source_sha256": {
+    "build_doc.py": "c195f13cc244f5a0a842e463fe9f67665c6fc823ec5491b2492878f510a673d0",
+    "check_vplan.py": "21aed2d9eca33bb3ab9e2588702be953325fc0af39237121cc7e445d08e4aae1",
+    "figures/generate_figures.py": "1c73b2560407ec24fd3197be08afb23307b85952f932891b8a9a75caa6a5fbff",
+    "BUILDING.md": "15f6403cba97d77061ed18ec055469e399174a3b3c67f15bfa1ba5aeee6c5ca7"
+  },
+  "svg_xml_parse": "PASS (2 SVG files)"
+}

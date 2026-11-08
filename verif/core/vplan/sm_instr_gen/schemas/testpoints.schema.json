@@ -1,0 +1,238 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "SM instruction generator vplan testpoints",
+  "type": "object",
+  "properties": {
+    "schema_version": {
+      "const": "1.0"
+    },
+    "plan_id": {
+      "const": "SM-INSTR-GEN-VPLAN"
+    },
+    "testpoints": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "pattern": "^SIG-[A-Z0-9_-]+-[0-9]{3}$"
+          },
+          "feature_ids": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "pattern": "^GEN-[A-Z0-9][A-Z0-9_-]*$"
+            },
+            "minItems": 1,
+            "uniqueItems": true
+          },
+          "title": {
+            "type": "string",
+            "minLength": 1
+          },
+          "setup": {
+            "oneOf": [
+              {
+                "type": "string",
+                "minLength": 1
+              },
+              {
+                "type": "array",
+                "items": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "minItems": 1,
+                "uniqueItems": true
+              }
+            ]
+          },
+          "stimulus": {
+            "oneOf": [
+              {
+                "type": "string",
+                "minLength": 1
+              },
+              {
+                "type": "array",
+                "items": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "minItems": 1,
+                "uniqueItems": true
+              }
+            ]
+          },
+          "checker": {
+            "oneOf": [
+              {
+                "type": "string",
+                "minLength": 1
+              },
+              {
+                "type": "array",
+                "items": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "minItems": 1,
+                "uniqueItems": true
+              }
+            ]
+          },
+          "expected_result": {
+            "oneOf": [
+              {
+                "type": "string",
+                "minLength": 1
+              },
+              {
+                "type": "array",
+                "items": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "minItems": 1,
+                "uniqueItems": true
+              }
+            ]
+          },
+          "coverage_ids": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "pattern": "^CV-[A-Z0-9_-]+-[0-9]{3}$"
+            },
+            "minItems": 0,
+            "uniqueItems": true
+          },
+          "phase": {
+            "enum": [
+              "P0_PLAN_STATIC",
+              "P1_GENERATOR_UNIT",
+              "P2_REFERENCE_PROGRAM",
+              "P3_SM_RTL",
+              "P4_SOC"
+            ]
+          },
+          "status": {
+            "const": "PLANNED"
+          },
+          "execution": {
+            "const": "NOT_RUN"
+          },
+          "dependency_gate": {
+            "oneOf": [
+              {
+                "type": "string",
+                "minLength": 1
+              },
+              {
+                "type": "array",
+                "items": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "minItems": 1,
+                "uniqueItems": true
+              }
+            ]
+          },
+          "source_refs": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "pattern": "^[^#]+#[^#]+$"
+            },
+            "minItems": 1,
+            "uniqueItems": true
+          }
+        },
+        "required": [
+          "id",
+          "feature_ids",
+          "title",
+          "setup",
+          "stimulus",
+          "checker",
+          "expected_result",
+          "coverage_ids",
+          "phase",
+          "status",
+          "execution"
+        ]
+      },
+      "minItems": 1,
+      "uniqueItems": true
+    },
+    "source_inventory": {
+      "type": "object",
+      "properties": {
+        "instructions": {
+          "type": "object",
+          "properties": {
+            "path": {
+              "type": "string",
+              "minLength": 1
+            },
+            "sha256": {
+              "type": "string",
+              "pattern": "^[a-f0-9]{64}$"
+            }
+          },
+          "required": [
+            "path",
+            "sha256"
+          ]
+        },
+        "special_registers": {
+          "type": "object",
+          "properties": {
+            "path": {
+              "type": "string",
+              "minLength": 1
+            },
+            "sha256": {
+              "type": "string",
+              "pattern": "^[a-f0-9]{64}$"
+            }
+          },
+          "required": [
+            "path",
+            "sha256"
+          ]
+        },
+        "sm_architecture": {
+          "type": "object",
+          "properties": {
+            "path": {
+              "type": "string",
+              "minLength": 1
+            },
+            "sha256": {
+              "type": "string",
+              "pattern": "^[a-f0-9]{64}$"
+            }
+          },
+          "required": [
+            "path",
+            "sha256"
+          ]
+        }
+      },
+      "required": [
+        "instructions",
+        "special_registers",
+        "sm_architecture"
+      ]
+    }
+  },
+  "required": [
+    "schema_version",
+    "plan_id",
+    "testpoints",
+    "source_inventory"
+  ]
+}

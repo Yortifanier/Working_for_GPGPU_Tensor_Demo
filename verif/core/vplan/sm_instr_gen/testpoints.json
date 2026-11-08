@@ -1,0 +1,2355 @@
+{
+  "schema_version": "1.0",
+  "plan_id": "SM-INSTR-GEN-VPLAN",
+  "version": "1.0",
+  "date": "2026-11-08",
+  "scope": "Verification-side constrained SM instruction/program generator; plan only, not a generator or SM implementation.",
+  "source_inventory": {
+    "instructions": {
+      "path": "docs/sm/research/ptx94_instruction_inventory.json",
+      "sha256": "77f932724a2ab3c91f7d3ab8b60269b6e274afcf43db2c82bed3056f542c126a"
+    },
+    "special_registers": {
+      "path": "docs/sm/research/ptx94_special_register_inventory.json",
+      "sha256": "7dfe04b4778c9490864ce705318d353ad17241596ef8d632ea0cf3fc8ac43465"
+    },
+    "sm_architecture": {
+      "path": "docs/sm/SM_ARCHITECTURE.md",
+      "sha256": "b28eaee5bf381c7dbcc8387687c62bc8030eb722935e11774cf3eaecb20fb0ba"
+    }
+  },
+  "testpoints": [
+    {
+      "id": "SIG-ISA-001",
+      "feature_ids": [
+        "GEN-ISA-01"
+      ],
+      "title": "全部目录及别名身份",
+      "setup": "固定PTX9.4源hash；构建至少两个互不继承的target capability快照；当前SM实现能力关闭。",
+      "stimulus": "遍历217说明节，保留同名不同类型与同节多名称；另读35特殊寄存器。",
+      "checker": "对独立源索引比对section集合/名称/页号，语法和directive不计opcode。",
+      "expected_result": "217唯一说明身份、215实际指令节和2语法项；不称217个opcode。",
+      "coverage_ids": [
+        "CV-ISA-001"
+      ],
+      "phase": "P1_GENERATOR_UNIT",
+      "priority": "CRITICAL",
+      "status": "PLANNED",
+      "execution": "NOT_RUN",
+      "dependency_gate": "Generator/independent checker not implemented; reference or unit harness required.",
+      "source_refs": [
+        "docs/sm/SM_ARCHITECTURE.md#3"
+      ]
+    },
+    {
+      "id": "SIG-ISA-002",
+      "feature_ids": [
+        "GEN-ISA-01"
+      ],
+      "title": "target与capability单因素变异",
+      "setup": "固定PTX9.4源hash；构建至少两个互不继承的target capability快照；当前SM实现能力关闭。",
+      "stimulus": "从已知合法tuple每次只改target、family、类型或一个modifier；覆盖sm90a WGMMA与sm107相关门限。",
+      "checker": "独立规则表判断与拒绝理由；规则缺失fail-closed，禁止调用generator legality函数。",
+      "expected_result": "仅被变异约束相关的拒绝原因出现，未改变的基线仍可接受。",
+      "coverage_ids": [
+        "CV-ISA-002"
+      ],
+      "phase": "P1_GENERATOR_UNIT",
+      "priority": "CRITICAL",
+      "status": "PLANNED",
+      "execution": "NOT_RUN",
+      "dependency_gate": "Generator/independent checker not implemented; reference or unit harness required.",
+      "source_refs": [
+        "docs/sm/SM_ARCHITECTURE.md#3"
+      ]
+    },
+    {
+      "id": "SIG-ISA-003",
+      "feature_ids": [
+        "GEN-ISA-01"
+      ],
+      "title": "关闭能力与lowering证据",
+      "setup": "固定PTX9.4源hash；构建至少两个互不继承的target capability快照；当前SM实现能力关闭。",
+      "stimulus": "在规范合法但project关闭的形式上尝试native、lowering与service路线。",
+      "checker": "检查lowering证书/规则版本，禁止无证据fallback或静默no-op。",
+      "expected_result": "未实现路线明确拒绝；有证明的路线只在另启用profile下产生。",
+      "coverage_ids": [
+        "CV-ISA-001"
+      ],
+      "phase": "P2_REFERENCE_PROGRAM",
+      "priority": "CRITICAL",
+      "status": "PLANNED",
+      "execution": "NOT_RUN",
+      "dependency_gate": "Generator/independent checker not implemented; reference or unit harness required.",
+      "source_refs": [
+        "docs/sm/SM_ARCHITECTURE.md#3"
+      ]
+    },
+    {
+      "id": "SIG-ISA-004",
+      "feature_ids": [
+        "GEN-ISA-01"
+      ],
+      "title": "入口一致性",
+      "setup": "固定PTX9.4源hash；构建至少两个互不继承的target capability快照；当前SM实现能力关闭。",
+      "stimulus": "把合法化通过与明确项目非法命令分别送真实SM adapter；非法不属于普通PTX UB测试。",
+      "checker": "独立入口monitor比对动态实例/route及项目定义错误合同。",
+      "expected_result": "正确接收与项目合同拒绝均有真实事件；preflight拒绝不算DUT执行。",
+      "coverage_ids": [
+        "CV-ISA-003"
+      ],
+      "phase": "P3_SM_RTL",
+      "priority": "CRITICAL",
+      "status": "PLANNED",
+      "execution": "NOT_RUN",
+      "dependency_gate": "Generator/independent checker not implemented; SM RTL and corresponding service/adapter required.",
+      "source_refs": [
+        "docs/sm/SM_ARCHITECTURE.md#3"
+      ]
+    },
+    {
+      "id": "SIG-IR-001",
+      "feature_ids": [
+        "GEN-IR-01"
+      ],
+      "title": "IR完整往返",
+      "setup": "IR记录opcode身份、typed operand、mask、symbolic owner、数值profile、source与completion obligation。",
+      "stimulus": "序列化/反序列化寄存器、立即数、packed载体、symbolic地址、descriptor与metadata。",
+      "checker": "使用独立schema解码器比较语义AST，不比较无意义JSON字段顺序。",
+      "expected_result": "位宽/符号/字节序/mask/owner及语义不丢失。",
+      "coverage_ids": [
+        "CV-IR-001"
+      ],
+      "phase": "P1_GENERATOR_UNIT",
+      "priority": "HIGH",
+      "status": "PLANNED",
+      "execution": "NOT_RUN",
+      "dependency_gate": "Generator/independent checker not implemented; reference or unit harness required.",
+      "source_refs": [
+        "docs/sm/SM_ARCHITECTURE.md#3"
+      ]
+    },
+    {
+      "id": "SIG-IR-002",
+      "feature_ids": [
+        "GEN-IR-01"
+      ],
+      "title": "编码后端门禁",
+      "setup": "IR记录opcode身份、typed operand、mask、symbolic owner、数值profile、source与completion obligation。",
+      "stimulus": "native编码未冻结时请求native输出，并尝试unknown schema/保留位。",
+      "checker": "检查拒绝记录与backend version，不使用PTX字节作为fetch指令。",
+      "expected_result": "可输出semantic IR；native请求明确blocked，不能生成伪二进制。",
+      "coverage_ids": [
+        "CV-IR-002"
+      ],
+      "phase": "P1_GENERATOR_UNIT",
+      "priority": "HIGH",
+      "status": "PLANNED",
+      "execution": "NOT_RUN",
+      "dependency_gate": "Generator/independent checker not implemented; reference or unit harness required.",
+      "source_refs": [
+        "docs/sm/SM_ARCHITECTURE.md#3"
+      ]
+    },
+    {
+      "id": "SIG-IR-003",
+      "feature_ids": [
+        "GEN-IR-01"
+      ],
+      "title": "降低保持",
+      "setup": "IR记录opcode身份、typed operand、mask、symbolic owner、数值profile、source与completion obligation。",
+      "stimulus": "对选定可证明序列比较原语义和lowered trace，含helper临时寄存器及CC。",
+      "checker": "独立解释器做relation检查，保留predication/rounding/side effects。",
+      "expected_result": "观测等价或明确报告缺少该lowering证明。",
+      "coverage_ids": [
+        "CV-IR-001"
+      ],
+      "phase": "P2_REFERENCE_PROGRAM",
+      "priority": "HIGH",
+      "status": "PLANNED",
+      "execution": "NOT_RUN",
+      "dependency_gate": "Generator/independent checker not implemented; reference or unit harness required.",
+      "source_refs": [
+        "docs/sm/SM_ARCHITECTURE.md#3"
+      ]
+    },
+    {
+      "id": "SIG-IR-004",
+      "feature_ids": [
+        "GEN-IR-01"
+      ],
+      "title": "总线stall与采样",
+      "setup": "IR记录opcode身份、typed operand、mask、symbolic owner、数值profile、source与completion obligation。",
+      "stimulus": "同一IR实例在随机ready下提交所有分片，覆盖同tag不同generation。",
+      "checker": "driver monitor逐拍检查valid阻塞稳定、唯一accept及payload hash。",
+      "expected_result": "无提前变值、重发副作用或错route；适配成功不等于指令完成。",
+      "coverage_ids": [
+        "CV-IR-003"
+      ],
+      "phase": "P3_SM_RTL",
+      "priority": "HIGH",
+      "status": "PLANNED",
+      "execution": "NOT_RUN",
+      "dependency_gate": "Generator/independent checker not implemented; SM RTL and corresponding service/adapter required.",
+      "source_refs": [
+        "docs/sm/SM_ARCHITECTURE.md#3"
+      ]
+    },
+    {
+      "id": "SIG-DEP-001",
+      "feature_ids": [
+        "GEN-DEP-01"
+      ],
+      "title": "依赖链与无关流混合",
+      "setup": "不同thread/warp RF命名空间；含宽寄存器片段、谓词、CC及共享别名。",
+      "stimulus": "构造短/长RAW链，交错WAR/WAW与独立算术，包含packed和64/128bit载体。",
+      "checker": "独立SSA/def-use分析器核对源定义、live范围和副作用。",
+      "expected_result": "全部普通读有确定定义；期望相关性真实存在而非被修复器消掉。",
+      "coverage_ids": [
+        "CV-DEP-001"
+      ],
+      "phase": "P1_GENERATOR_UNIT",
+      "priority": "CRITICAL",
+      "status": "PLANNED",
+      "execution": "NOT_RUN",
+      "dependency_gate": "Generator/independent checker not implemented; reference or unit harness required.",
+      "source_refs": [
+        "docs/sm/SM_ARCHITECTURE.md#6"
+      ]
+    },
+    {
+      "id": "SIG-DEP-002",
+      "feature_ids": [
+        "GEN-DEP-01"
+      ],
+      "title": "隐式状态与分歧定义",
+      "setup": "不同thread/warp RF命名空间；含宽寄存器片段、谓词、CC及共享别名。",
+      "stimulus": "CC链/双谓词/masked定义后跨分支使用；helper故意申请冲突临时寄存器。",
+      "checker": "检查per-thread path-sensitive definition及CC clobber规则。",
+      "expected_result": "合法链保留；未定义读/不合法路径明确拒绝或补支配定义并记录。",
+      "coverage_ids": [
+        "CV-DEP-002"
+      ],
+      "phase": "P1_GENERATOR_UNIT",
+      "priority": "CRITICAL",
+      "status": "PLANNED",
+      "execution": "NOT_RUN",
+      "dependency_gate": "Generator/independent checker not implemented; reference or unit harness required.",
+      "source_refs": [
+        "docs/sm/SM_ARCHITECTURE.md#6"
+      ]
+    },
+    {
+      "id": "SIG-DEP-003",
+      "feature_ids": [
+        "GEN-DEP-01"
+      ],
+      "title": "别名相关性",
+      "setup": "不同thread/warp RF命名空间；含宽寄存器片段、谓词、CC及共享别名。",
+      "stimulus": "为global/shared/local别名与narrow/wide重叠建立必须顺序，另生成合法无冲突对。",
+      "checker": "独立byte-range与happens-before分析，不仅比较寄存器索引。",
+      "expected_result": "相关边与真实字节对象一致；不依赖偶然cache行为。",
+      "coverage_ids": [
+        "CV-DEP-001"
+      ],
+      "phase": "P2_REFERENCE_PROGRAM",
+      "priority": "CRITICAL",
+      "status": "PLANNED",
+      "execution": "NOT_RUN",
+      "dependency_gate": "Generator/independent checker not implemented; reference or unit harness required.",
+      "source_refs": [
+        "docs/sm/SM_ARCHITECTURE.md#6"
+      ]
+    },
+    {
+      "id": "SIG-DEP-004",
+      "feature_ids": [
+        "GEN-DEP-01"
+      ],
+      "title": "乱序/分片结果",
+      "setup": "不同thread/warp RF命名空间；含宽寄存器片段、谓词、CC及共享别名。",
+      "stimulus": "对依赖流注入长延迟和多片返回，与短算术及CC链并发。",
+      "checker": "scoreboard按动态实例/lane/fragment检查值与ready点。",
+      "expected_result": "第一片不得发布整体ready，迟到旧generation不得唤醒新producer。",
+      "coverage_ids": [
+        "CV-DEP-003"
+      ],
+      "phase": "P3_SM_RTL",
+      "priority": "CRITICAL",
+      "status": "PLANNED",
+      "execution": "NOT_RUN",
+      "dependency_gate": "Generator/independent checker not implemented; SM RTL and corresponding service/adapter required.",
+      "source_refs": [
+        "docs/sm/SM_ARCHITECTURE.md#6"
+      ]
+    },
+    {
+      "id": "SIG-ALU-001",
+      "feature_ids": [
+        "GEN-ALU-01"
+      ],
+      "title": "乘加与进位边界",
+      "setup": "冻结整数边界profile；每thread独立输入和CC；为machine-specific行为声明允许集合。",
+      "stimulus": "生成0/±1/min/max、跨32/64边界carry/borrow、mul.hi/wide及mad链。",
+      "checker": "独立任意精度整数oracle截取/扩展并单独检查CC。",
+      "expected_result": "结果与规定宽度/符号一致；不从截断低积伪造高积。",
+      "coverage_ids": [
+        "CV-ALU-001"
+      ],
+      "phase": "P1_GENERATOR_UNIT",
+      "priority": "HIGH",
+      "status": "PLANNED",
+      "execution": "NOT_RUN",
+      "dependency_gate": "Generator/independent checker not implemented; reference or unit harness required.",
+      "source_refs": [
+        "docs/sm/SM_ARCHITECTURE.md#8"
+      ]
+    },
+    {
+      "id": "SIG-ALU-002",
+      "feature_ids": [
+        "GEN-ALU-01"
+      ],
+      "title": "位处理与carryless",
+      "setup": "冻结整数边界profile；每thread独立输入和CC；为machine-specific行为声明允许集合。",
+      "stimulus": "覆盖shift 0/width−1/width/>width、bitfield边界和clmad高低多项式。",
+      "checker": "XOR/shift多项式oracle独立于普通乘法；逐条mask/shift规则。",
+      "expected_result": "已定义及机器相关项按逐形式profile或允许集合检查；明示UB只在preflight隔离，不套host C唯一答案。",
+      "coverage_ids": [
+        "CV-ALU-002"
+      ],
+      "phase": "P1_GENERATOR_UNIT",
+      "priority": "HIGH",
+      "status": "PLANNED",
+      "execution": "NOT_RUN",
+      "dependency_gate": "Generator/independent checker not implemented; reference or unit harness required.",
+      "source_refs": [
+        "docs/sm/SM_ARCHITECTURE.md#8"
+      ]
+    },
+    {
+      "id": "SIG-ALU-003",
+      "feature_ids": [
+        "GEN-ALU-01"
+      ],
+      "title": "packed与video语义",
+      "setup": "冻结整数边界profile；每thread独立输入和CC；为machine-specific行为声明允许集合。",
+      "stimulus": "按element抽取、扩展、clamp、secondary op、merge生成video及dp2a/dp4a。",
+      "checker": "标量化的独立逐元素模型，不调用DUT decoder或MALU oracle作全部ALU模型。",
+      "expected_result": "元素位置、饱和、merge与S32累加语义保持。",
+      "coverage_ids": [
+        "CV-ALU-001"
+      ],
+      "phase": "P2_REFERENCE_PROGRAM",
+      "priority": "HIGH",
+      "status": "PLANNED",
+      "execution": "NOT_RUN",
+      "dependency_gate": "Generator/independent checker not implemented; reference or unit harness required.",
+      "source_refs": [
+        "docs/sm/SM_ARCHITECTURE.md#8"
+      ]
+    },
+    {
+      "id": "SIG-ALU-004",
+      "feature_ids": [
+        "GEN-ALU-01"
+      ],
+      "title": "算术与CC压力",
+      "setup": "冻结整数边界profile；每thread独立输入和CC；为machine-specific行为声明允许集合。",
+      "stimulus": "在多warp中交错整数/乘法/CC/packed流并注入返回stall。",
+      "checker": "独立值scoreboard+隐式CC monitor。",
+      "expected_result": "各thread结果无串扰，资源复用不改变结果或丢指令。",
+      "coverage_ids": [
+        "CV-ALU-003"
+      ],
+      "phase": "P3_SM_RTL",
+      "priority": "HIGH",
+      "status": "PLANNED",
+      "execution": "NOT_RUN",
+      "dependency_gate": "Generator/independent checker not implemented; SM RTL and corresponding service/adapter required.",
+      "source_refs": [
+        "docs/sm/SM_ARCHITECTURE.md#8"
+      ]
+    },
+    {
+      "id": "SIG-FP-001",
+      "feature_ids": [
+        "GEN-FP-01"
+      ],
+      "title": "舍入与特殊值分桶",
+      "setup": "数值profile声明NaN允许结果、FTZ、rounding和approx误差公式；没有规则则关闭形式。",
+      "stimulus": "生成半ULP、相消、subnormal、±0、Inf/NaN及溢出/下溢组合。",
+      "checker": "独立MPFR/SoftFloat或有理数+逐形式舍入模型；固定工具/version。",
+      "expected_result": "精确形式按规定比对；NaN payload仅在规范/profile要求时逐bit检查。",
+      "coverage_ids": [
+        "CV-FP-001"
+      ],
+      "phase": "P1_GENERATOR_UNIT",
+      "priority": "HIGH",
+      "status": "PLANNED",
+      "execution": "NOT_RUN",
+      "dependency_gate": "Generator/independent checker not implemented; reference or unit harness required.",
+      "source_refs": [
+        "docs/sm/SM_ARCHITECTURE.md#9"
+      ]
+    },
+    {
+      "id": "SIG-FP-002",
+      "feature_ids": [
+        "GEN-FP-01"
+      ],
+      "title": "packed/mixed target联合约束",
+      "setup": "数值profile声明NaN允许结果、FTZ、rounding和approx误差公式；没有规则则关闭形式。",
+      "stimulus": "覆盖FP8/6/4 x4与F16/BF16/F32x2形式，单独变异carrier/target。",
+      "checker": "独立tuple表与每元素运算模型；验证不是四元素dot。",
+      "expected_result": "合法组合生成，非法target/packing拒绝，各元素结果独立。",
+      "coverage_ids": [
+        "CV-FP-002"
+      ],
+      "phase": "P1_GENERATOR_UNIT",
+      "priority": "HIGH",
+      "status": "PLANNED",
+      "execution": "NOT_RUN",
+      "dependency_gate": "Generator/independent checker not implemented; reference or unit harness required.",
+      "source_refs": [
+        "docs/sm/SM_ARCHITECTURE.md#9"
+      ]
+    },
+    {
+      "id": "SIG-FP-003",
+      "feature_ids": [
+        "GEN-FP-01"
+      ],
+      "title": "SFU误差与FMA对照",
+      "setup": "数值profile声明NaN允许结果、FTZ、rounding和approx误差公式；没有规则则关闭形式。",
+      "stimulus": "构造FMA与先乘后加会不同的值，另测sin/cos/lg2/ex2/div/rcp/rsqrt边界。",
+      "checker": "精确形式与approx采用不同判据；误差/范围和特殊值规则独立记录。",
+      "expected_result": "不能以全局epsilon替代所有指令误差，也不能把dot模型用于普通FMA。",
+      "coverage_ids": [
+        "CV-FP-001"
+      ],
+      "phase": "P2_REFERENCE_PROGRAM",
+      "priority": "HIGH",
+      "status": "PLANNED",
+      "execution": "NOT_RUN",
+      "dependency_gate": "Generator/independent checker not implemented; reference or unit harness required.",
+      "source_refs": [
+        "docs/sm/SM_ARCHITECTURE.md#9"
+      ]
+    },
+    {
+      "id": "SIG-FP-004",
+      "feature_ids": [
+        "GEN-FP-01"
+      ],
+      "title": "混合执行域",
+      "setup": "数值profile声明NaN允许结果、FTZ、rounding和approx误差公式；没有规则则关闭形式。",
+      "stimulus": "多warp交错FP32/FP64/packed/SFU及dependent consumers。",
+      "checker": "值/误差scoreboard与per-op profile检查。",
+      "expected_result": "共享资源、stall和模式切换不混profile，不以吞吐峰值判断功能通过。",
+      "coverage_ids": [
+        "CV-FP-003"
+      ],
+      "phase": "P3_SM_RTL",
+      "priority": "HIGH",
+      "status": "PLANNED",
+      "execution": "NOT_RUN",
+      "dependency_gate": "Generator/independent checker not implemented; SM RTL and corresponding service/adapter required.",
+      "source_refs": [
+        "docs/sm/SM_ARCHITECTURE.md#9"
+      ]
+    },
+    {
+      "id": "SIG-CVT-001",
+      "feature_ids": [
+        "GEN-CVT-01"
+      ],
+      "title": "数值转换边界",
+      "setup": "使用合法format/packing/descriptor表；明确implementation-specific选择的允许集合。",
+      "stimulus": "为整数↔FP、FP↔FP、pzo/rz/sat与随机舍入构造边界并固定rbits。",
+      "checker": "独立转换模型与序列化检查，rbits写入manifest不使用隐藏RNG状态。",
+      "expected_result": "bitcast不代替cvt；同rbits可复现随机舍入结果。",
+      "coverage_ids": [
+        "CV-CVT-001"
+      ],
+      "phase": "P1_GENERATOR_UNIT",
+      "priority": "HIGH",
+      "status": "PLANNED",
+      "execution": "NOT_RUN",
+      "dependency_gate": "Generator/independent checker not implemented; reference or unit harness required.",
+      "source_refs": [
+        "docs/sm/SM_ARCHITECTURE.md#10"
+      ]
+    },
+    {
+      "id": "SIG-CVT-002",
+      "feature_ids": [
+        "GEN-CVT-01"
+      ],
+      "title": "稀疏载体约束",
+      "setup": "使用合法format/packing/descriptor表；明确implementation-specific选择的允许集合。",
+      "stimulus": "spcompress/spdecompress覆盖所有启用spfactor/idxsize/num，触及253寄存器总量与重叠边界。",
+      "checker": "独立源/目的集合及descriptor/shape判定，非法仅送legalizer。",
+      "expected_result": "约束通过后不含禁止重叠；padding及长度符合规范。",
+      "coverage_ids": [
+        "CV-CVT-002"
+      ],
+      "phase": "P1_GENERATOR_UNIT",
+      "priority": "HIGH",
+      "status": "PLANNED",
+      "execution": "NOT_RUN",
+      "dependency_gate": "Generator/independent checker not implemented; reference or unit harness required.",
+      "source_refs": [
+        "docs/sm/SM_ARCHITECTURE.md#10"
+      ]
+    },
+    {
+      "id": "SIG-CVT-003",
+      "feature_ids": [
+        "GEN-CVT-01"
+      ],
+      "title": "选择与补零允许集合",
+      "setup": "使用合法format/packing/descriptor表；明确implementation-specific选择的允许集合。",
+      "stimulus": "含NaN、±0、重复最大值/最小值及metadata边界。",
+      "checker": "独立集合判据验证允许的tie-break，逐位置检查解压补零。",
+      "expected_result": "不把实现相关tie-break或out-of-range索引猜为唯一设备值。",
+      "coverage_ids": [
+        "CV-CVT-001"
+      ],
+      "phase": "P2_REFERENCE_PROGRAM",
+      "priority": "HIGH",
+      "status": "PLANNED",
+      "execution": "NOT_RUN",
+      "dependency_gate": "Generator/independent checker not implemented; reference or unit harness required.",
+      "source_refs": [
+        "docs/sm/SM_ARCHITECTURE.md#10"
+      ]
+    },
+    {
+      "id": "SIG-CVT-004",
+      "feature_ids": [
+        "GEN-CVT-01"
+      ],
+      "title": "多寄存器返回",
+      "setup": "使用合法format/packing/descriptor表；明确implementation-specific选择的允许集合。",
+      "stimulus": "对大.num变换和宽转换施加RF返回反压。",
+      "checker": "按全部目的片段检查结果、就绪和源保持。",
+      "expected_result": "不因首片返回提前ready，不破坏未捕获源。",
+      "coverage_ids": [
+        "CV-CVT-003"
+      ],
+      "phase": "P3_SM_RTL",
+      "priority": "HIGH",
+      "status": "PLANNED",
+      "execution": "NOT_RUN",
+      "dependency_gate": "Generator/independent checker not implemented; SM RTL and corresponding service/adapter required.",
+      "source_refs": [
+        "docs/sm/SM_ARCHITECTURE.md#10"
+      ]
+    },
+    {
+      "id": "SIG-CTRL-001",
+      "feature_ids": [
+        "GEN-CTRL-01"
+      ],
+      "title": "有界控制图",
+      "setup": "有界loop/call深度；每thread PC/return与live集合；尾warp和分歧mask。",
+      "stimulus": "生成diamond/嵌套分歧/循环和间接目标集合，覆盖0/1/边界迭代。",
+      "checker": "独立CFG分析检查目标、可达性、终止ranking与path-sensitive def-use。",
+      "expected_result": "正向随机程序可终止且不出现无定义路径；循环预算不靠超时当正确。",
+      "coverage_ids": [
+        "CV-CTRL-001"
+      ],
+      "phase": "P1_GENERATOR_UNIT",
+      "priority": "HIGH",
+      "status": "PLANNED",
+      "execution": "NOT_RUN",
+      "dependency_gate": "Generator/independent checker not implemented; reference or unit harness required.",
+      "source_refs": [
+        "docs/sm/SM_ARCHITECTURE.md#5"
+      ]
+    },
+    {
+      "id": "SIG-CTRL-002",
+      "feature_ids": [
+        "GEN-CTRL-01"
+      ],
+      "title": "谓词与uniform证明",
+      "setup": "有界loop/call深度；每thread PC/return与live集合；尾warp和分歧mask。",
+      "stimulus": "生成全true/allfalse/mixed guard，并为.uni给出guard/target一致证明。",
+      "checker": "独立lane symbolic执行；禁止仅检查某次随机值恰好相同。",
+      "expected_result": "predicated-off的store/atomic/async均无副作用；uni证据不外推数据uniform。",
+      "coverage_ids": [
+        "CV-CTRL-002"
+      ],
+      "phase": "P1_GENERATOR_UNIT",
+      "priority": "HIGH",
+      "status": "PLANNED",
+      "execution": "NOT_RUN",
+      "dependency_gate": "Generator/independent checker not implemented; reference or unit harness required.",
+      "source_refs": [
+        "docs/sm/SM_ARCHITECTURE.md#5"
+      ]
+    },
+    {
+      "id": "SIG-CTRL-003",
+      "feature_ids": [
+        "GEN-CTRL-01"
+      ],
+      "title": "call/ret和thread exit",
+      "setup": "有界loop/call深度；每thread PC/return与live集合；尾warp和分歧mask。",
+      "stimulus": "分歧调用/返回、多个return site、部分lane exit与stack lifetime。",
+      "checker": "独立每thread控制解释器与ABI/栈对象生命周期模型。",
+      "expected_result": "return PC隔离，已退出成员按各collective原文处理。",
+      "coverage_ids": [
+        "CV-CTRL-001"
+      ],
+      "phase": "P2_REFERENCE_PROGRAM",
+      "priority": "HIGH",
+      "status": "PLANNED",
+      "execution": "NOT_RUN",
+      "dependency_gate": "Generator/independent checker not implemented; reference or unit harness required.",
+      "source_refs": [
+        "docs/sm/SM_ARCHITECTURE.md#5"
+      ]
+    },
+    {
+      "id": "SIG-CTRL-004",
+      "feature_ids": [
+        "GEN-CTRL-01"
+      ],
+      "title": "ITS解锁场景",
+      "setup": "有界loop/call深度；每thread PC/return与live集合；尾warp和分歧mask。",
+      "stimulus": "同warp部分thread等待，其他thread执行解除依赖；含动态相同PC多轮collective。",
+      "checker": "基于允许调度公平假设的进度monitor，不保证未驻留任意CTA锁前进。",
+      "expected_result": "能解除已接收合法等待者的thread可执行，动态实例不串轮。",
+      "coverage_ids": [
+        "CV-CTRL-003"
+      ],
+      "phase": "P3_SM_RTL",
+      "priority": "HIGH",
+      "status": "PLANNED",
+      "execution": "NOT_RUN",
+      "dependency_gate": "Generator/independent checker not implemented; SM RTL and corresponding service/adapter required.",
+      "source_refs": [
+        "docs/sm/SM_ARCHITECTURE.md#5"
+      ]
+    },
+    {
+      "id": "SIG-COLL-001",
+      "feature_ids": [
+        "GEN-COLL-01"
+      ],
+      "title": "成员与source lane",
+      "setup": "32lane warp及partial warp；按具体target启用legacy shfl/vote；可追踪动态实例。",
+      "stimulus": "组合mask、width、source clamp、非连续subset和partial warp。",
+      "checker": "独立每条参与规则与逐lane交换模型。",
+      "expected_result": "只生成合法参与集合；无效source按具体原文处理。",
+      "coverage_ids": [
+        "CV-COLL-001"
+      ],
+      "phase": "P1_GENERATOR_UNIT",
+      "priority": "HIGH",
+      "status": "PLANNED",
+      "execution": "NOT_RUN",
+      "dependency_gate": "Generator/independent checker not implemented; reference or unit harness required.",
+      "source_refs": [
+        "docs/sm/SM_ARCHITECTURE.md#10"
+      ]
+    },
+    {
+      "id": "SIG-COLL-002",
+      "feature_ids": [
+        "GEN-COLL-01"
+      ],
+      "title": "guard/退出单因素负例",
+      "setup": "32lane warp及partial warp；按具体target启用legacy shfl/vote；可追踪动态实例。",
+      "stimulus": "只破坏一项member/guard/target条件，含legacy指令移除target。",
+      "checker": "preflight合法化拒绝，UB不进入普通DUT值比较。",
+      "expected_result": "拒绝理由对应破坏项，普通正例不被错误过滤。",
+      "coverage_ids": [
+        "CV-COLL-002"
+      ],
+      "phase": "P1_GENERATOR_UNIT",
+      "priority": "HIGH",
+      "status": "PLANNED",
+      "execution": "NOT_RUN",
+      "dependency_gate": "Generator/independent checker not implemented; reference or unit harness required.",
+      "source_refs": [
+        "docs/sm/SM_ARCHITECTURE.md#10"
+      ]
+    },
+    {
+      "id": "SIG-COLL-003",
+      "feature_ids": [
+        "GEN-COLL-01"
+      ],
+      "title": "会合与归约模型",
+      "setup": "32lane warp及partial warp；按具体target启用legacy shfl/vote；可追踪动态实例。",
+      "stimulus": "多轮同PC交错shfl/vote/match/redux/elect/activemask。",
+      "checker": "独立dynamic instance模型及允许结果/NaN/signed-zero规则。",
+      "expected_result": "elect对相同membermask确定性；activemask不是未来成员预测。",
+      "coverage_ids": [
+        "CV-COLL-001"
+      ],
+      "phase": "P2_REFERENCE_PROGRAM",
+      "priority": "HIGH",
+      "status": "PLANNED",
+      "execution": "NOT_RUN",
+      "dependency_gate": "Generator/independent checker not implemented; reference or unit harness required.",
+      "source_refs": [
+        "docs/sm/SM_ARCHITECTURE.md#10"
+      ]
+    },
+    {
+      "id": "SIG-COLL-004",
+      "feature_ids": [
+        "GEN-COLL-01"
+      ],
+      "title": "真实warp会合",
+      "setup": "32lane warp及partial warp；按具体target启用legacy shfl/vote；可追踪动态实例。",
+      "stimulus": "对合法collective交错lane等待与执行域stall。",
+      "checker": "rendezvous monitor按warp+dynamic_instance+generation检查。",
+      "expected_result": "不漏参与者、不跨轮配对、不把sync误当全部async完成。",
+      "coverage_ids": [
+        "CV-COLL-003"
+      ],
+      "phase": "P3_SM_RTL",
+      "priority": "HIGH",
+      "status": "PLANNED",
+      "execution": "NOT_RUN",
+      "dependency_gate": "Generator/independent checker not implemented; SM RTL and corresponding service/adapter required.",
+      "source_refs": [
+        "docs/sm/SM_ARCHITECTURE.md#10"
+      ]
+    },
+    {
+      "id": "SIG-MEM-001",
+      "feature_ids": [
+        "GEN-MEM-01"
+      ],
+      "title": "空间与地址边界",
+      "setup": "声明global/local/param/const/shared地址窗口、guard region、memory domain及SoC能力。",
+      "stimulus": "在各启用空间生成size/align/boundary/stride和合法别名；填充canary区。",
+      "checker": "独立对象/byte-range oracle检查转换、权限、初始化和visible范围。",
+      "expected_result": "正常流无越界/未初始化读；narrow load扩展与store mask正确。",
+      "coverage_ids": [
+        "CV-MEM-001"
+      ],
+      "phase": "P1_GENERATOR_UNIT",
+      "priority": "HIGH",
+      "status": "PLANNED",
+      "execution": "NOT_RUN",
+      "dependency_gate": "Generator/independent checker not implemented; reference or unit harness required.",
+      "source_refs": [
+        "docs/sm/SM_ARCHITECTURE.md#11"
+      ]
+    },
+    {
+      "id": "SIG-MEM-002",
+      "feature_ids": [
+        "GEN-MEM-01"
+      ],
+      "title": "属性与cache指令",
+      "setup": "声明global/local/param/const/shared地址窗口、guard region、memory domain及SoC能力。",
+      "stimulus": "覆盖volatile/MMIO/readonly/nc/prefetch/discard/createpolicy及优先级。",
+      "checker": "独立语义分类：hint、破坏性操作、完成承载指令和强访问分别检查。",
+      "expected_result": "不把volatile当精确MMIO，不给nc/texture虚构generic一致性。",
+      "coverage_ids": [
+        "CV-MEM-002"
+      ],
+      "phase": "P1_GENERATOR_UNIT",
+      "priority": "HIGH",
+      "status": "PLANNED",
+      "execution": "NOT_RUN",
+      "dependency_gate": "Generator/independent checker not implemented; reference or unit harness required.",
+      "source_refs": [
+        "docs/sm/SM_ARCHITECTURE.md#11"
+      ]
+    },
+    {
+      "id": "SIG-MEM-003",
+      "feature_ids": [
+        "GEN-MEM-01"
+      ],
+      "title": "memory litmus",
+      "setup": "声明global/local/param/const/shared地址窗口、guard region、memory domain及SoC能力。",
+      "stimulus": "生成有HB的确定子集、并发atomic返回/最终值次序和专门weak-memory litmus；允许集合独立标注。",
+      "checker": "独立内存模型allowed-outcome或可验证线性化关系；仅允许集合已证明为单例时逐值比对。",
+      "expected_result": "race-free不等于唯一结果；并发atomic和litmus只拒绝模型禁止结果，确定子集严格比对。",
+      "coverage_ids": [
+        "CV-MEM-001"
+      ],
+      "phase": "P2_REFERENCE_PROGRAM",
+      "priority": "HIGH",
+      "status": "PLANNED",
+      "execution": "NOT_RUN",
+      "dependency_gate": "Generator/independent checker not implemented; reference or unit harness required.",
+      "source_refs": [
+        "docs/sm/SM_ARCHITECTURE.md#11"
+      ]
+    },
+    {
+      "id": "SIG-MEM-004",
+      "feature_ids": [
+        "GEN-MEM-01"
+      ],
+      "title": "合并与返回",
+      "setup": "声明global/local/param/const/shared地址窗口、guard region、memory domain及SoC能力。",
+      "stimulus": "随机地址分布、多个fragment和长延迟SoC返回，穿插MMIO。",
+      "checker": "lane/byte响应scoreboard、MMIO访问次数/顺序monitor。",
+      "expected_result": "coalescing不丢lane身份或合并不允许的I/O副作用。",
+      "coverage_ids": [
+        "CV-MEM-003"
+      ],
+      "phase": "P3_SM_RTL",
+      "priority": "HIGH",
+      "status": "PLANNED",
+      "execution": "NOT_RUN",
+      "dependency_gate": "Generator/independent checker not implemented; SM RTL and corresponding service/adapter required.",
+      "source_refs": [
+        "docs/sm/SM_ARCHITECTURE.md#11"
+      ]
+    },
+    {
+      "id": "SIG-SMEM-001",
+      "feature_ids": [
+        "GEN-SMEM-01"
+      ],
+      "title": "多CTA与联合预算",
+      "setup": "S0≤8CTA/≤64warp、单CTA target限与R_SM联合预算；实际bank参数独立配置。",
+      "stimulus": "同offset不同owner、多size和reserved；有8槽但总shared超256KiB的请求。",
+      "checker": "独立interval allocator模型核对target单CTA限/RF/warp/shared预算。",
+      "expected_result": "超预算launch不进入运行；程序shared不覆盖reserved。",
+      "coverage_ids": [
+        "CV-SMEM-001"
+      ],
+      "phase": "P1_GENERATOR_UNIT",
+      "priority": "CRITICAL",
+      "status": "PLANNED",
+      "execution": "NOT_RUN",
+      "dependency_gate": "Generator/independent checker not implemented; reference or unit harness required.",
+      "source_refs": [
+        "docs/sm/SM_ARCHITECTURE.md#12"
+      ]
+    },
+    {
+      "id": "SIG-SMEM-002",
+      "feature_ids": [
+        "GEN-SMEM-01"
+      ],
+      "title": "RMW与原子能力",
+      "setup": "S0≤8CTA/≤64warp、单CTA target限与R_SM联合预算；实际bank参数独立配置。",
+      "stimulus": "narrow write、标量/packed atomic，关闭b128时尝试对应形式。",
+      "checker": "独立原子宽度/逐元素规则；不把b128拆普通store当合法实现。",
+      "expected_result": "关闭形式拒绝，合法RMW生成完整资源/完成义务。",
+      "coverage_ids": [
+        "CV-SMEM-002"
+      ],
+      "phase": "P1_GENERATOR_UNIT",
+      "priority": "CRITICAL",
+      "status": "PLANNED",
+      "execution": "NOT_RUN",
+      "dependency_gate": "Generator/independent checker not implemented; reference or unit harness required.",
+      "source_refs": [
+        "docs/sm/SM_ARCHITECTURE.md#12"
+      ]
+    },
+    {
+      "id": "SIG-SMEM-003",
+      "feature_ids": [
+        "GEN-SMEM-01"
+      ],
+      "title": "可见性与collector版本",
+      "setup": "S0≤8CTA/≤64warp、单CTA target限与R_SM联合预算；实际bank参数独立配置。",
+      "stimulus": "generic store后建立规定proxy发布，保留活动不可变snapshot、使future reuse失效。",
+      "checker": "HB与版本模型分开bankcommit、invalidation生效和publish。",
+      "expected_result": "不以失效入队当生效，不无意修改仍在使用的source。",
+      "coverage_ids": [
+        "CV-SMEM-001"
+      ],
+      "phase": "P2_REFERENCE_PROGRAM",
+      "priority": "CRITICAL",
+      "status": "PLANNED",
+      "execution": "NOT_RUN",
+      "dependency_gate": "Generator/independent checker not implemented; reference or unit harness required.",
+      "source_refs": [
+        "docs/sm/SM_ARCHITECTURE.md#12"
+      ]
+    },
+    {
+      "id": "SIG-SMEM-004",
+      "feature_ids": [
+        "GEN-SMEM-01"
+      ],
+      "title": "共享竞争及scrub",
+      "setup": "S0≤8CTA/≤64warp、单CTA target限与R_SM联合预算；实际bank参数独立配置。",
+      "stimulus": "LSU/TMA/Tensor/peer/barrier饱和竞争；启用ECC模型时注入迟到scrub与新store。",
+      "checker": "真实owner/RMW/响应monitor；scrub锁后重读当前字；控制公平假设明确。",
+      "expected_result": "无旧correction覆盖新值、owner别名或完成事件环等。",
+      "coverage_ids": [
+        "CV-SMEM-003"
+      ],
+      "phase": "P3_SM_RTL",
+      "priority": "CRITICAL",
+      "status": "PLANNED",
+      "execution": "NOT_RUN",
+      "dependency_gate": "Generator/independent checker not implemented; SM RTL and corresponding service/adapter required.",
+      "source_refs": [
+        "docs/sm/SM_ARCHITECTURE.md#12"
+      ]
+    },
+    {
+      "id": "SIG-SYNC-001",
+      "feature_ids": [
+        "GEN-SYNC-01"
+      ],
+      "title": "mbarrier生命周期",
+      "setup": "按target声明CTA/cluster barrier和mbarrier v0/v1；初始对象及phase账本。",
+      "stimulus": "init/use/wait/inval，分别覆盖v0/v1、到达边界、expect/complete和arrive_drop。",
+      "checker": "独立layout计数/生命周期模型，v1上限511；禁止已init对象普通写。",
+      "expected_result": "合法对象按phase使用；越界/重复init仅在对应负例层拒绝。",
+      "coverage_ids": [
+        "CV-SYNC-001"
+      ],
+      "phase": "P1_GENERATOR_UNIT",
+      "priority": "CRITICAL",
+      "status": "PLANNED",
+      "execution": "NOT_RUN",
+      "dependency_gate": "Generator/independent checker not implemented; reference or unit harness required.",
+      "source_refs": [
+        "docs/sm/SM_ARCHITECTURE.md#14"
+      ]
+    },
+    {
+      "id": "SIG-SYNC-002",
+      "feature_ids": [
+        "GEN-SYNC-01"
+      ],
+      "title": "phase与报告",
+      "setup": "按target声明CTA/cluster barrier和mbarrier v0/v1；初始对象及phase账本。",
+      "stimulus": "生成primary前进但conditional不前进、parity轮换及try_wait false。",
+      "checker": "检查conditional.parity约束，false时report不作有效值比较。",
+      "expected_result": "报告不被成功项清除；下一phase复用符合观察和原文条件。",
+      "coverage_ids": [
+        "CV-SYNC-002"
+      ],
+      "phase": "P1_GENERATOR_UNIT",
+      "priority": "CRITICAL",
+      "status": "PLANNED",
+      "execution": "NOT_RUN",
+      "dependency_gate": "Generator/independent checker not implemented; reference or unit harness required.",
+      "source_refs": [
+        "docs/sm/SM_ARCHITECTURE.md#14"
+      ]
+    },
+    {
+      "id": "SIG-SYNC-003",
+      "feature_ids": [
+        "GEN-SYNC-01"
+      ],
+      "title": "fence与HB模板",
+      "setup": "按target声明CTA/cluster barrier和mbarrier v0/v1；初始对象及phase账本。",
+      "stimulus": "分别构造generic→async、tensormap与fabric方向，组合相应线程同步。",
+      "checker": "独立memory/proxy模型核对方向/范围/scope，不将所有fence合并为drain。",
+      "expected_result": "consumer只在取得对应可见性后访问；scope不扩大对象权限。",
+      "coverage_ids": [
+        "CV-SYNC-001"
+      ],
+      "phase": "P2_REFERENCE_PROGRAM",
+      "priority": "CRITICAL",
+      "status": "PLANNED",
+      "execution": "NOT_RUN",
+      "dependency_gate": "Generator/independent checker not implemented; reference or unit harness required.",
+      "source_refs": [
+        "docs/sm/SM_ARCHITECTURE.md#14"
+      ]
+    },
+    {
+      "id": "SIG-SYNC-004",
+      "feature_ids": [
+        "GEN-SYNC-01"
+      ],
+      "title": "对象更新与等待",
+      "setup": "按target声明CTA/cluster barrier和mbarrier v0/v1；初始对象及phase账本。",
+      "stimulus": "让event队列接收早于SMEM对象更新，并延迟barrier RMW。",
+      "checker": "monitor以实际对象commit/ack和True acquire观察建立完成。",
+      "expected_result": "不以FIFO enqueue作为barrier完成，wait false不提前消费数据。",
+      "coverage_ids": [
+        "CV-SYNC-003"
+      ],
+      "phase": "P3_SM_RTL",
+      "priority": "CRITICAL",
+      "status": "PLANNED",
+      "execution": "NOT_RUN",
+      "dependency_gate": "Generator/independent checker not implemented; SM RTL and corresponding service/adapter required.",
+      "source_refs": [
+        "docs/sm/SM_ARCHITECTURE.md#14"
+      ]
+    },
+    {
+      "id": "SIG-SYNC-005",
+      "feature_ids": [
+        "GEN-SYNC-01"
+      ],
+      "title": "remote规则与release进度",
+      "setup": "按target声明CTA/cluster barrier和mbarrier v0/v1；初始对象及phase账本。",
+      "stimulus": "通过DSM注入合法arrive/expect/complete，remote wait/init/inval作为preflight负例。",
+      "checker": "SoC/barrier模型及远端owner引用；控制与数据返回分离。",
+      "expected_result": "正向remote更新与本地wait闭合；禁用远端形式不进入DUT值检查。",
+      "coverage_ids": [
+        "CV-SYNC-003"
+      ],
+      "phase": "P4_SOC",
+      "priority": "CRITICAL",
+      "status": "PLANNED",
+      "execution": "NOT_RUN",
+      "dependency_gate": "Generator/independent checker not implemented; SM RTL and corresponding service/adapter required.",
+      "source_refs": [
+        "docs/sm/SM_ARCHITECTURE.md#14"
+      ]
+    },
+    {
+      "id": "SIG-ASYNC-001",
+      "feature_ids": [
+        "GEN-ASYNC-01"
+      ],
+      "title": "group与方向约束",
+      "setup": "classic/bulk/TMA/descriptor capability分开，tensor map与matrix descriptor不是同对象。",
+      "stimulus": "遍历启用copy/reduce/store/priority形式和合法source/destination，含空group。",
+      "checker": "独立方向/target/完成机制表；st.bulk只shared置零、size为8B倍数。",
+      "expected_result": "不把classic/bulk/WGMMA/tcgen05等待互换，不生成未知方向。",
+      "coverage_ids": [
+        "CV-ASYNC-001"
+      ],
+      "phase": "P1_GENERATOR_UNIT",
+      "priority": "CRITICAL",
+      "status": "PLANNED",
+      "execution": "NOT_RUN",
+      "dependency_gate": "Generator/independent checker not implemented; reference or unit harness required.",
+      "source_refs": [
+        "docs/sm/SM_ARCHITECTURE.md#15"
+      ]
+    },
+    {
+      "id": "SIG-ASYNC-002",
+      "feature_ids": [
+        "GEN-ASYNC-01"
+      ],
+      "title": "TMA descriptor与report",
+      "setup": "classic/bulk/TMA/descriptor capability分开，tensor map与matrix descriptor不是同对象。",
+      "stimulus": "变异tensor rank/layout/override、report_mechanism、ignore_oob与multicast mask。",
+      "checker": "独立tensor-map校验；enabled report需v1，ignore_oob只在规定形式且report disabled。",
+      "expected_result": "合法tensor布局与barrier配置匹配；数据pattern报告不当通用ECC。",
+      "coverage_ids": [
+        "CV-ASYNC-002"
+      ],
+      "phase": "P1_GENERATOR_UNIT",
+      "priority": "CRITICAL",
+      "status": "PLANNED",
+      "execution": "NOT_RUN",
+      "dependency_gate": "Generator/independent checker not implemented; reference or unit harness required.",
+      "source_refs": [
+        "docs/sm/SM_ARCHITECTURE.md#15"
+      ]
+    },
+    {
+      "id": "SIG-ASYNC-003",
+      "feature_ids": [
+        "GEN-ASYNC-01"
+      ],
+      "title": "partial/full边界",
+      "setup": "classic/bulk/TMA/descriptor capability分开，tensor map与matrix descriptor不是同对象。",
+      "stimulus": "多片copy乱序，read完成早于目的提交；priority也带bulk completion。",
+      "checker": "独立obligation/HB模型，每片只结算一次规定count。",
+      "expected_result": "read-only wait只释放source，目的消费仍等待相应full/visibility。",
+      "coverage_ids": [
+        "CV-ASYNC-001"
+      ],
+      "phase": "P2_REFERENCE_PROGRAM",
+      "priority": "CRITICAL",
+      "status": "PLANNED",
+      "execution": "NOT_RUN",
+      "dependency_gate": "Generator/independent checker not implemented; reference or unit harness required.",
+      "source_refs": [
+        "docs/sm/SM_ARCHITECTURE.md#15"
+      ]
+    },
+    {
+      "id": "SIG-ASYNC-004",
+      "feature_ids": [
+        "GEN-ASYNC-01"
+      ],
+      "title": "真实TMA竞争与报告",
+      "setup": "classic/bulk/TMA/descriptor capability分开，tensor map与matrix descriptor不是同对象。",
+      "stimulus": "随机L2/SMEM延迟，变换tile/im2col数据并注入规定pattern。",
+      "checker": "TMA/SMEM/barrier monitor与独立布局/报告oracle。",
+      "expected_result": "所有目的片段与报告正确，partial不误作full，multicast逐目的owner闭合。",
+      "coverage_ids": [
+        "CV-ASYNC-003"
+      ],
+      "phase": "P3_SM_RTL",
+      "priority": "CRITICAL",
+      "status": "PLANNED",
+      "execution": "NOT_RUN",
+      "dependency_gate": "Generator/independent checker not implemented; SM RTL and corresponding service/adapter required.",
+      "source_refs": [
+        "docs/sm/SM_ARCHITECTURE.md#15"
+      ]
+    },
+    {
+      "id": "SIG-ASYNC-005",
+      "feature_ids": [
+        "GEN-ASYNC-01"
+      ],
+      "title": "多目的bulk系统",
+      "setup": "classic/bulk/TMA/descriptor capability分开，tensor map与matrix descriptor不是同对象。",
+      "stimulus": "跨SM multicast/DSM/multimem，观察其中一目的早完成和远端长尾。",
+      "checker": "系统多目的事务ledger与completion units检查。",
+      "expected_result": "单目的完成不释放全事务；远端owner在所有责任结束前有效。",
+      "coverage_ids": [
+        "CV-ASYNC-003"
+      ],
+      "phase": "P4_SOC",
+      "priority": "CRITICAL",
+      "status": "PLANNED",
+      "execution": "NOT_RUN",
+      "dependency_gate": "Generator/independent checker not implemented; SM RTL and corresponding service/adapter required.",
+      "source_refs": [
+        "docs/sm/SM_ARCHITECTURE.md#15"
+      ]
+    },
+    {
+      "id": "SIG-TMEM-001",
+      "feature_ids": [
+        "GEN-TMEM-01"
+      ],
+      "title": "分配规则与permit",
+      "setup": "logical lane/column与byte地址类型区分；target512/576列、group1/2及exclusive分别声明。",
+      "stimulus": "生成合法递减连续allocation、exclusive列数、容量边界、relinquish后禁止alloc。",
+      "checker": "独立allocator/target表、owner和permit状态机；不把permit放弃当释放。",
+      "expected_result": "目标512/576特例分开；无doublefree/越权/未分配访问。",
+      "coverage_ids": [
+        "CV-TMEM-001"
+      ],
+      "phase": "P1_GENERATOR_UNIT",
+      "priority": "CRITICAL",
+      "status": "PLANNED",
+      "execution": "NOT_RUN",
+      "dependency_gate": "Generator/independent checker not implemented; reference or unit harness required.",
+      "source_refs": [
+        "docs/sm/SM_ARCHITECTURE.md#16"
+      ]
+    },
+    {
+      "id": "SIG-TMEM-002",
+      "feature_ids": [
+        "GEN-TMEM-01"
+      ],
+      "title": "参与与地址类型",
+      "setup": "logical lane/column与byte地址类型区分；target512/576列、group1/2及exclusive分别声明。",
+      "stimulus": "ld/st warpgroup quarter视图、相同base与aligned；CTA2两warp join；错误TMEM→byte cast。",
+      "checker": "独立participation/layout类型审计，不从tile shape推物理lane。",
+      "expected_result": "每操作参与粒度准确，非法地址/同参形式仅legalizer拒绝。",
+      "coverage_ids": [
+        "CV-TMEM-002"
+      ],
+      "phase": "P1_GENERATOR_UNIT",
+      "priority": "CRITICAL",
+      "status": "PLANNED",
+      "execution": "NOT_RUN",
+      "dependency_gate": "Generator/independent checker not implemented; reference or unit harness required.",
+      "source_refs": [
+        "docs/sm/SM_ARCHITECTURE.md#16"
+      ]
+    },
+    {
+      "id": "SIG-TMEM-003",
+      "feature_ids": [
+        "GEN-TMEM-01"
+      ],
+      "title": "LD/ST布局与扩展",
+      "setup": "logical lane/column与byte地址类型区分；target512/576列、group1/2及exclusive分别声明。",
+      "stimulus": "构造ld/st pack/unpack、ld.red、ld{.red}.spcompress的source与期望片段。",
+      "checker": "独立lane/column→寄存器映射、允许NaN/selection规则。",
+      "expected_result": "归约/压缩归读路径；不把spcompress当所有sparse metadata通用编码。",
+      "coverage_ids": [
+        "CV-TMEM-001"
+      ],
+      "phase": "P2_REFERENCE_PROGRAM",
+      "priority": "CRITICAL",
+      "status": "PLANNED",
+      "execution": "NOT_RUN",
+      "dependency_gate": "Generator/independent checker not implemented; reference or unit harness required.",
+      "source_refs": [
+        "docs/sm/SM_ARCHITECTURE.md#16"
+      ]
+    },
+    {
+      "id": "SIG-TMEM-004",
+      "feature_ids": [
+        "GEN-TMEM-01"
+      ],
+      "title": "CP/shift与多片wait",
+      "setup": "logical lane/column与byte地址类型区分；target512/576列、group1/2及exclusive分别声明。",
+      "stimulus": "并发SMEM→TMEM cp、TMEM shift、ld/st，独立wait::ld/st和normal commit。",
+      "checker": "真实move/RF/TMEM monitor分别观察source capture、writeack、fragment ready。",
+      "expected_result": "wait不跨family，首片不整体ready；D/数据写到真实TMEM后完成。",
+      "coverage_ids": [
+        "CV-TMEM-003"
+      ],
+      "phase": "P3_SM_RTL",
+      "priority": "CRITICAL",
+      "status": "PLANNED",
+      "execution": "NOT_RUN",
+      "dependency_gate": "Generator/independent checker not implemented; SM RTL and corresponding service/adapter required.",
+      "source_refs": [
+        "docs/sm/SM_ARCHITECTURE.md#16"
+      ]
+    },
+    {
+      "id": "SIG-TMEM-005",
+      "feature_ids": [
+        "GEN-TMEM-01"
+      ],
+      "title": "释放与退出竞争",
+      "setup": "logical lane/column与byte地址类型区分；target512/576列、group1/2及exclusive分别声明。",
+      "stimulus": "主动制造已发起但未full完成的操作，再由合法程序显式wait后dealloc。",
+      "checker": "owner引用monitor与端到端completion ledger；提前释放仅项目robustness测试。",
+      "expected_result": "正向释放前排除并发访问，旧generation返回不写新allocation。",
+      "coverage_ids": [
+        "CV-TMEM-003"
+      ],
+      "phase": "P3_SM_RTL",
+      "priority": "CRITICAL",
+      "status": "PLANNED",
+      "execution": "NOT_RUN",
+      "dependency_gate": "Generator/independent checker not implemented; SM RTL and corresponding service/adapter required.",
+      "source_refs": [
+        "docs/sm/SM_ARCHITECTURE.md#16"
+      ]
+    },
+    {
+      "id": "SIG-TMEM-006",
+      "feature_ids": [
+        "GEN-TMEM-01"
+      ],
+      "title": "CTA-pair双端资源",
+      "setup": "logical lane/column与byte地址类型区分；target512/576列、group1/2及exclusive分别声明。",
+      "stimulus": "even/odd映射到两个不同可互通SM/endpoint，交错双端alloc、访问、dealloc。",
+      "checker": "系统parent/child obligation与双边资源/生命周期checker。",
+      "expected_result": "不得半边发布/释放，peer延迟不丢事件或把CTA1 exclusive扩大成全pair锁。",
+      "coverage_ids": [
+        "CV-TMEM-003"
+      ],
+      "phase": "P4_SOC",
+      "priority": "CRITICAL",
+      "status": "PLANNED",
+      "execution": "NOT_RUN",
+      "dependency_gate": "Generator/independent checker not implemented; SM RTL and corresponding service/adapter required.",
+      "source_refs": [
+        "docs/sm/SM_ARCHITECTURE.md#16"
+      ]
+    },
+    {
+      "id": "SIG-MATRIX-001",
+      "feature_ids": [
+        "GEN-MATRIX-01"
+      ],
+      "title": "格式/scale/block独立约束",
+      "setup": "按native合法tuple和项目numerical profile建矩阵对象；raw Ti16关闭、decoded传输另列。",
+      "stimulus": "跨A/B fmt、scale fmt、BLOCK16/32、offset与shape只取合法组合。",
+      "checker": "独立native tuple表和项目interface合法性；禁止全笛卡尔积。",
+      "expected_result": "scale字段不和AB fmt或Cshift合并；raw Ti16拒绝，decoded明确项目扩展。",
+      "coverage_ids": [
+        "CV-MATRIX-001"
+      ],
+      "phase": "P1_GENERATOR_UNIT",
+      "priority": "CRITICAL",
+      "status": "PLANNED",
+      "execution": "NOT_RUN",
+      "dependency_gate": "Generator/independent checker not implemented; reference or unit harness required.",
+      "source_refs": [
+        "docs/sm/SM_ARCHITECTURE.md#16"
+      ]
+    },
+    {
+      "id": "SIG-MATRIX-002",
+      "feature_ids": [
+        "GEN-MATRIX-01"
+      ],
+      "title": "Cseed和数学K",
+      "setup": "按native合法tuple和项目numerical profile建矩阵对象；raw Ti16关闭、decoded传输另列。",
+      "stimulus": "enable-input-d=false旧D设NaN，true用Cshift0/15；区分logical K、packed K与compressed K。",
+      "checker": "独立精确/target profile oracle及source义务检查。",
+      "expected_result": "false不读/参与旧D；C指数缩放不预量化，不双缩放；不按beat累加C。",
+      "coverage_ids": [
+        "CV-MATRIX-002"
+      ],
+      "phase": "P1_GENERATOR_UNIT",
+      "priority": "CRITICAL",
+      "status": "PLANNED",
+      "execution": "NOT_RUN",
+      "dependency_gate": "Generator/independent checker not implemented; reference or unit harness required.",
+      "source_refs": [
+        "docs/sm/SM_ARCHITECTURE.md#16"
+      ]
+    },
+    {
+      "id": "SIG-MATRIX-003",
+      "feature_ids": [
+        "GEN-MATRIX-01"
+      ],
+      "title": "数值与稀疏变换",
+      "setup": "按native合法tuple和项目numerical profile建矩阵对象；raw Ti16关闭、decoded传输另列。",
+      "stimulus": "生成scale边界、相消、Inf/NaN/±0、稀疏被省略项与metadata/LUT布局。",
+      "checker": "project exact用独立整数/Fraction模型；native精度单列，不复用DUT decode。",
+      "expected_result": "结构零仍处理规定0×Inf/NaN语义；metadata按kind目标解释。",
+      "coverage_ids": [
+        "CV-MATRIX-001"
+      ],
+      "phase": "P2_REFERENCE_PROGRAM",
+      "priority": "CRITICAL",
+      "status": "PLANNED",
+      "execution": "NOT_RUN",
+      "dependency_gate": "Generator/independent checker not implemented; reference or unit harness required.",
+      "source_refs": [
+        "docs/sm/SM_ARCHITECTURE.md#16"
+      ]
+    },
+    {
+      "id": "SIG-MATRIX-004",
+      "feature_ids": [
+        "GEN-MATRIX-01"
+      ],
+      "title": "同MALU后端多前端",
+      "setup": "按native合法tuple和项目numerical profile建矩阵对象；raw Ti16关闭、decoded传输另列。",
+      "stimulus": "启用的matrix frontends交错，验证参与者、fragment与完成机制。",
+      "checker": "独立每代前端monitor+数值relation；关闭WGMMA兼容时只preflight拒绝。",
+      "expected_result": "wgmma group、warp mma和tcgen05 commit不互换，MALU不承担scalarFMA。",
+      "coverage_ids": [
+        "CV-MATRIX-003"
+      ],
+      "phase": "P3_SM_RTL",
+      "priority": "CRITICAL",
+      "status": "PLANNED",
+      "execution": "NOT_RUN",
+      "dependency_gate": "Generator/independent checker not implemented; SM RTL and corresponding service/adapter required.",
+      "source_refs": [
+        "docs/sm/SM_ARCHITECTURE.md#16"
+      ]
+    },
+    {
+      "id": "SIG-MATRIX-005",
+      "feature_ids": [
+        "GEN-MATRIX-01"
+      ],
+      "title": "Aread/full和collector",
+      "setup": "按native合法tuple和项目numerical profile建矩阵对象；raw Ti16关闭、decoded传输另列。",
+      "stimulus": "同thread先MMA再restricted/normal commit，Aread后只覆写获准的原A，保留B和D责任。",
+      "checker": "真实Aread/full事件与future collector版本检查。",
+      "expected_result": "Aread不证明B/D/whole op完成，opportunistic reuse miss仍合法。",
+      "coverage_ids": [
+        "CV-MATRIX-003"
+      ],
+      "phase": "P3_SM_RTL",
+      "priority": "CRITICAL",
+      "status": "PLANNED",
+      "execution": "NOT_RUN",
+      "dependency_gate": "Generator/independent checker not implemented; SM RTL and corresponding service/adapter required.",
+      "source_refs": [
+        "docs/sm/SM_ARCHITECTURE.md#16"
+      ]
+    },
+    {
+      "id": "SIG-MATRIX-006",
+      "feature_ids": [
+        "GEN-MATRIX-01"
+      ],
+      "title": "BLOCK边界与dot beat压力",
+      "setup": "按native合法tuple和项目numerical profile建矩阵对象；raw Ti16关闭、decoded传输另列。",
+      "stimulus": "独立AB offset，以最早到达scale边界切beat，施加input/output随机stall。",
+      "checker": "MALU adapter monitor检查scale稳定、长度/last、Cseed只一次和最终结果。",
+      "expected_result": "beat不跨任一scale边界，K不随stall重起，资源复用不丢精度。",
+      "coverage_ids": [
+        "CV-MATRIX-003"
+      ],
+      "phase": "P3_SM_RTL",
+      "priority": "CRITICAL",
+      "status": "PLANNED",
+      "execution": "NOT_RUN",
+      "dependency_gate": "Generator/independent checker not implemented; SM RTL and corresponding service/adapter required.",
+      "source_refs": [
+        "docs/sm/SM_ARCHITECTURE.md#16"
+      ]
+    },
+    {
+      "id": "SIG-CLUSTER-001",
+      "feature_ids": [
+        "GEN-CLUSTER-01"
+      ],
+      "title": "cluster资源映射",
+      "setup": "设备调度profile声明cluster维度、rank映射、资源保证及grid依赖服务。",
+      "stimulus": "变化cluster维度/rank、owner/shared片段与S0不同endpoint pair约束。",
+      "checker": "独立launch/cluster表，先校验联合admission和peer仍活。",
+      "expected_result": "非法放置或不足资源不启动部分cluster，DSM只访问目标有效范围。",
+      "coverage_ids": [
+        "CV-CLUSTER-001"
+      ],
+      "phase": "P1_GENERATOR_UNIT",
+      "priority": "HIGH",
+      "status": "PLANNED",
+      "execution": "NOT_RUN",
+      "dependency_gate": "Generator/independent checker not implemented; reference or unit harness required.",
+      "source_refs": [
+        "docs/sm/SM_ARCHITECTURE.md#17"
+      ]
+    },
+    {
+      "id": "SIG-CLUSTER-002",
+      "feature_ids": [
+        "GEN-CLUSTER-01"
+      ],
+      "title": "cancel与grid模板",
+      "setup": "设备调度profile声明cluster维度、rank映射、资源保证及grid依赖服务。",
+      "stimulus": "生成取消未启动工作、解析16B opaque response；失败被观察后不再次try_cancel。",
+      "checker": "独立runtime状态模型与source-issued/response-complete分离。",
+      "expected_result": "不把try_cancel当kill正在运行CTA；grid launch_dependents不是完成。",
+      "coverage_ids": [
+        "CV-CLUSTER-002"
+      ],
+      "phase": "P1_GENERATOR_UNIT",
+      "priority": "HIGH",
+      "status": "PLANNED",
+      "execution": "NOT_RUN",
+      "dependency_gate": "Generator/independent checker not implemented; reference or unit harness required.",
+      "source_refs": [
+        "docs/sm/SM_ARCHITECTURE.md#17"
+      ]
+    },
+    {
+      "id": "SIG-CLUSTER-003",
+      "feature_ids": [
+        "GEN-CLUSTER-01"
+      ],
+      "title": "DSM与可见性",
+      "setup": "设备调度profile声明cluster维度、rank映射、资源保证及grid依赖服务。",
+      "stimulus": "生成本地/远端shared通信、明确cluster barrier与目标退出先后。",
+      "checker": "独立对象/HB模型和远端引用ledger。",
+      "expected_result": "remote只在owner存活且同步完成后消费，不能裸异或SM号猜地址。",
+      "coverage_ids": [
+        "CV-CLUSTER-001"
+      ],
+      "phase": "P2_REFERENCE_PROGRAM",
+      "priority": "HIGH",
+      "status": "PLANNED",
+      "execution": "NOT_RUN",
+      "dependency_gate": "Generator/independent checker not implemented; reference or unit harness required.",
+      "source_refs": [
+        "docs/sm/SM_ARCHITECTURE.md#17"
+      ]
+    },
+    {
+      "id": "SIG-CLUSTER-004",
+      "feature_ids": [
+        "GEN-CLUSTER-01"
+      ],
+      "title": "真实cluster与工作服务",
+      "setup": "设备调度profile声明cluster维度、rank映射、资源保证及grid依赖服务。",
+      "stimulus": "多SM延迟/返回扰动、取消成功/失败、dependent grid早启动。",
+      "checker": "SoC runtime/DSM monitors与可见性checker。",
+      "expected_result": "取消ID唯一、ack完整；wait满足前置grid完成，退出等远端责任关闭。",
+      "coverage_ids": [
+        "CV-CLUSTER-003"
+      ],
+      "phase": "P4_SOC",
+      "priority": "HIGH",
+      "status": "PLANNED",
+      "execution": "NOT_RUN",
+      "dependency_gate": "Generator/independent checker not implemented; SM RTL and corresponding service/adapter required.",
+      "source_refs": [
+        "docs/sm/SM_ARCHITECTURE.md#17"
+      ]
+    },
+    {
+      "id": "SIG-FABRIC-001",
+      "feature_ids": [
+        "GEN-FABRIC-01"
+      ],
+      "title": "句柄和单位约束",
+      "setup": "SoC服务能力关闭默认；CFT endpoint metadata、layoutv1 barrier、fault/retry合同显式声明。",
+      "stimulus": "单因素变异CFT类型、endpoint、counter对齐/重叠、barrier布局与tx单位。",
+      "checker": "独立handle/schema与具体指令约束；普通ld/st不得访问multimem VA。",
+      "expected_result": "关闭cap形式拒绝；get/pullred bytes和put/red16B units不混。",
+      "coverage_ids": [
+        "CV-FABRIC-001"
+      ],
+      "phase": "P1_GENERATOR_UNIT",
+      "priority": "HIGH",
+      "status": "PLANNED",
+      "execution": "NOT_RUN",
+      "dependency_gate": "Generator/independent checker not implemented; reference or unit harness required.",
+      "source_refs": [
+        "docs/sm/SM_ARCHITECTURE.md#18"
+      ]
+    },
+    {
+      "id": "SIG-FABRIC-002",
+      "feature_ids": [
+        "GEN-FABRIC-01"
+      ],
+      "title": "提交/等待程序模板",
+      "setup": "SoC服务能力关闭默认；CFT endpoint metadata、layoutv1 barrier、fault/retry合同显式声明。",
+      "stimulus": "issue→submit→原子arrive.expect_tx（或先expect_tx且保留pending arrival，再arrive）→primary wait→report；覆盖complete早/晚到，另生成fabric.wait局部读完成。",
+      "checker": "独立生命周期和obligation checker，fetching submit只覆盖get/pullred。",
+      "expected_result": "submit先于barrier phase完成；fabric.wait不证明try_get目的或remote full。",
+      "coverage_ids": [
+        "CV-FABRIC-002"
+      ],
+      "phase": "P1_GENERATOR_UNIT",
+      "priority": "HIGH",
+      "status": "PLANNED",
+      "execution": "NOT_RUN",
+      "dependency_gate": "Generator/independent checker not implemented; reference or unit harness required.",
+      "source_refs": [
+        "docs/sm/SM_ARCHITECTURE.md#18"
+      ]
+    },
+    {
+      "id": "SIG-FABRIC-003",
+      "feature_ids": [
+        "GEN-FABRIC-01"
+      ],
+      "title": "报告和counter模型",
+      "setup": "SoC服务能力关闭默认；CFT endpoint metadata、layoutv1 barrier、fault/retry合同显式声明。",
+      "stimulus": "同phase多成功/失败项、counter分段增长和multimem多个目的。",
+      "checker": "独立report/allowed-error模型与counter最终值判据。",
+      "expected_result": "成功不清已有错误，partial counter不当最终完成；无盲重试副作用。",
+      "coverage_ids": [
+        "CV-FABRIC-001"
+      ],
+      "phase": "P2_REFERENCE_PROGRAM",
+      "priority": "HIGH",
+      "status": "PLANNED",
+      "execution": "NOT_RUN",
+      "dependency_gate": "Generator/independent checker not implemented; reference or unit harness required.",
+      "source_refs": [
+        "docs/sm/SM_ARCHITECTURE.md#18"
+      ]
+    },
+    {
+      "id": "SIG-FABRIC-004",
+      "feature_ids": [
+        "GEN-FABRIC-01"
+      ],
+      "title": "系统传输失败与退出",
+      "setup": "SoC服务能力关闭默认；CFT endpoint metadata、layoutv1 barrier、fault/retry合同显式声明。",
+      "stimulus": "注入可报告NVLink/服务错误和远端延迟；观察CFT=fabric/SMEM=async/barrier=generic。",
+      "checker": "真实Fabric/barrier/transport monitor与端到端数据/错误checker。",
+      "expected_result": "失败也结算完成责任、grid退出前按合同drain，不伪造正常零数据。",
+      "coverage_ids": [
+        "CV-FABRIC-003"
+      ],
+      "phase": "P4_SOC",
+      "priority": "HIGH",
+      "status": "PLANNED",
+      "execution": "NOT_RUN",
+      "dependency_gate": "Generator/independent checker not implemented; SM RTL and corresponding service/adapter required.",
+      "source_refs": [
+        "docs/sm/SM_ARCHITECTURE.md#18"
+      ]
+    },
+    {
+      "id": "SIG-TEX-001",
+      "feature_ids": [
+        "GEN-TEX-01"
+      ],
+      "title": "默认关闭门禁",
+      "setup": "opaque sampler/texture/surface对象，维度/通道/address/filter/LOD/boundary模型；默认disabled。",
+      "stimulus": "从合法texture/surface形式生成候选但profile保持disabled。",
+      "checker": "独立capability checker与reject原因。",
+      "expected_result": "拒绝在生成/合法化边界记录，不伪造DUT支持或no-op。",
+      "coverage_ids": [
+        "CV-TEX-001"
+      ],
+      "phase": "P1_GENERATOR_UNIT",
+      "priority": "NORMAL",
+      "status": "PLANNED",
+      "execution": "NOT_RUN",
+      "dependency_gate": "Generator/independent checker not implemented; reference or unit harness required.",
+      "source_refs": [
+        "docs/sm/SM_ARCHITECTURE.md#19"
+      ]
+    },
+    {
+      "id": "SIG-TEX-002",
+      "feature_ids": [
+        "GEN-TEX-01"
+      ],
+      "title": "可选对象合法化",
+      "setup": "opaque sampler/texture/surface对象，维度/通道/address/filter/LOD/boundary模型；默认disabled。",
+      "stimulus": "在隔离未来profile覆盖维数、通道、pixel/byte坐标、LOD/边界组合。",
+      "checker": "独立对象registry与逐指令target规则。",
+      "expected_result": "句柄不当pointer，surface boundary和texture address mode不混。",
+      "coverage_ids": [
+        "CV-TEX-002"
+      ],
+      "phase": "P1_GENERATOR_UNIT",
+      "priority": "NORMAL",
+      "status": "PLANNED",
+      "execution": "NOT_RUN",
+      "dependency_gate": "Generator/independent checker not implemented; reference or unit harness required.",
+      "source_refs": [
+        "docs/sm/SM_ARCHITECTURE.md#19"
+      ]
+    },
+    {
+      "id": "SIG-TEX-003",
+      "feature_ids": [
+        "GEN-TEX-01"
+      ],
+      "title": "独立采样模型",
+      "setup": "opaque sampler/texture/surface对象，维度/通道/address/filter/LOD/boundary模型；默认disabled。",
+      "stimulus": "以可解析图像pattern测试nearest/filter/gather/query与surface读写归约。",
+      "checker": "独立sampler/format/boundary模型，不用普通global load直接替代。",
+      "expected_result": "仅规范允许的结果，texture/surface不附加generic memory model保证。",
+      "coverage_ids": [
+        "CV-TEX-001"
+      ],
+      "phase": "P2_REFERENCE_PROGRAM",
+      "priority": "NORMAL",
+      "status": "PLANNED",
+      "execution": "NOT_RUN",
+      "dependency_gate": "Generator/independent checker not implemented; reference or unit harness required.",
+      "source_refs": [
+        "docs/sm/SM_ARCHITECTURE.md#19"
+      ]
+    },
+    {
+      "id": "SIG-TEX-004",
+      "feature_ids": [
+        "GEN-TEX-01"
+      ],
+      "title": "实际可选服务",
+      "setup": "opaque sampler/texture/surface对象，维度/通道/address/filter/LOD/boundary模型；默认disabled。",
+      "stimulus": "服务实现后并发取样/访存，注入返回stall与允许的边界行为。",
+      "checker": "SoC sampler/surface monitors及独立结果oracle。",
+      "expected_result": "对象元数据/返回数据/边界副作用完整；关闭profile永不走此测试。",
+      "coverage_ids": [
+        "CV-TEX-003"
+      ],
+      "phase": "P4_SOC",
+      "priority": "NORMAL",
+      "status": "PLANNED",
+      "execution": "NOT_RUN",
+      "dependency_gate": "Generator/independent checker not implemented; SM RTL and corresponding service/adapter required.",
+      "source_refs": [
+        "docs/sm/SM_ARCHITECTURE.md#19"
+      ]
+    },
+    {
+      "id": "SIG-SYS-001",
+      "feature_ids": [
+        "GEN-SYS-01"
+      ],
+      "title": "sreg和元数据清单",
+      "setup": "每thread stack、launch/driver环境、dynamic RF配额与debug能力。",
+      "stimulus": "逐节生成合法mov/cvt读取；处理version/target/entry/cluster/ABI/debug directives。",
+      "checker": "对35源节与34第11章directive清单比对，按定义稳定性分类。",
+      "expected_result": "只读sreg无普通写；源码元数据不当独立硬件指令。",
+      "coverage_ids": [
+        "CV-SYS-001"
+      ],
+      "phase": "P1_GENERATOR_UNIT",
+      "priority": "HIGH",
+      "status": "PLANNED",
+      "execution": "NOT_RUN",
+      "dependency_gate": "Generator/independent checker not implemented; reference or unit harness required.",
+      "source_refs": [
+        "docs/sm/SM_ARCHITECTURE.md#20"
+      ]
+    },
+    {
+      "id": "SIG-SYS-002",
+      "feature_ids": [
+        "GEN-SYS-01"
+      ],
+      "title": "栈与配额约束",
+      "setup": "每thread stack、launch/driver环境、dynamic RF配额与debug能力。",
+      "stimulus": "alloca/save/restore、分歧call/return、setmaxnreg inc/dec和warpgroup同步。",
+      "checker": "独立栈对象/ABI及CTA RF池模型，inc可阻塞但要合法供给策略。",
+      "expected_result": "过期stack地址不再使用，新增寄存器初始化，配额不是hint。",
+      "coverage_ids": [
+        "CV-SYS-002"
+      ],
+      "phase": "P1_GENERATOR_UNIT",
+      "priority": "HIGH",
+      "status": "PLANNED",
+      "execution": "NOT_RUN",
+      "dependency_gate": "Generator/independent checker not implemented; reference or unit harness required.",
+      "source_refs": [
+        "docs/sm/SM_ARCHITECTURE.md#20"
+      ]
+    },
+    {
+      "id": "SIG-SYS-003",
+      "feature_ids": [
+        "GEN-SYS-01"
+      ],
+      "title": "驱动和不确定值",
+      "setup": "每thread stack、launch/driver环境、dynamic RF配额与debug能力。",
+      "stimulus": "perctamemorysize为0/合法1024B倍数，smid/warpid重调度变化，PM undefined。",
+      "checker": "环境模型做关系/范围比对，未定义值不逐bit预言。",
+      "expected_result": "perCTA global不译为shared；nanosleep不假定精确时间或fence。",
+      "coverage_ids": [
+        "CV-SYS-001"
+      ],
+      "phase": "P2_REFERENCE_PROGRAM",
+      "priority": "HIGH",
+      "status": "PLANNED",
+      "execution": "NOT_RUN",
+      "dependency_gate": "Generator/independent checker not implemented; reference or unit harness required.",
+      "source_refs": [
+        "docs/sm/SM_ARCHITECTURE.md#20"
+      ]
+    },
+    {
+      "id": "SIG-SYS-004",
+      "feature_ids": [
+        "GEN-SYS-01"
+      ],
+      "title": "系统事件与调度",
+      "setup": "每thread stack、launch/driver环境、dynamic RF配额与debug能力。",
+      "stimulus": "真实debug/trap/nanosleep/RF配额服务，观察特殊寄存器与driver环境。",
+      "checker": "事件分类monitor与ABI/relation checker。",
+      "expected_result": "trap/debug预期终止单列，不作为普通算术失败或丢失指令。",
+      "coverage_ids": [
+        "CV-SYS-003"
+      ],
+      "phase": "P3_SM_RTL",
+      "priority": "HIGH",
+      "status": "PLANNED",
+      "execution": "NOT_RUN",
+      "dependency_gate": "Generator/independent checker not implemented; SM RTL and corresponding service/adapter required.",
+      "source_refs": [
+        "docs/sm/SM_ARCHITECTURE.md#20"
+      ]
+    },
+    {
+      "id": "SIG-NEG-001",
+      "feature_ids": [
+        "GEN-NEG-01"
+      ],
+      "title": "单因素变异",
+      "setup": "从经过独立审计的合法baseline进行单因素mutation；每例声明expected rejection layer/rule。",
+      "stimulus": "每次只改合法tuple一个字段/参与关系/生命周期点并保留原case。",
+      "checker": "独立规则判定破坏项和预期拒绝层，禁止多个无关约束同时失败掩盖。",
+      "expected_result": "baseline合法，变异失败可解释；无静默修复后声称负例命中。",
+      "coverage_ids": [
+        "CV-NEG-001"
+      ],
+      "phase": "P1_GENERATOR_UNIT",
+      "priority": "CRITICAL",
+      "status": "PLANNED",
+      "execution": "NOT_RUN",
+      "dependency_gate": "Generator/independent checker not implemented; reference or unit harness required.",
+      "source_refs": [
+        "docs/sm/SM_ARCHITECTURE.md#23"
+      ]
+    },
+    {
+      "id": "SIG-NEG-002",
+      "feature_ids": [
+        "GEN-NEG-01"
+      ],
+      "title": "UB隔离",
+      "setup": "从经过独立审计的合法baseline进行单因素mutation；每例声明expected rejection layer/rule。",
+      "stimulus": "故意构造out-of-range/不一致collective/过期owner等UB候选。",
+      "checker": "检查quarantine标记和functional stream拒入；不期望硬件trap。",
+      "expected_result": "UB从正常数值/覆盖分母隔离，除项目明确合同外不执行。",
+      "coverage_ids": [
+        "CV-NEG-002"
+      ],
+      "phase": "P1_GENERATOR_UNIT",
+      "priority": "CRITICAL",
+      "status": "PLANNED",
+      "execution": "NOT_RUN",
+      "dependency_gate": "Generator/independent checker not implemented; reference or unit harness required.",
+      "source_refs": [
+        "docs/sm/SM_ARCHITECTURE.md#23"
+      ]
+    },
+    {
+      "id": "SIG-NEG-003",
+      "feature_ids": [
+        "GEN-NEG-01"
+      ],
+      "title": "错误层relation",
+      "setup": "从经过独立审计的合法baseline进行单因素mutation；每例声明expected rejection layer/rule。",
+      "stimulus": "对preflight reject、编译不可用、backend不支持、项目协议错误构造不同结果。",
+      "checker": "独立错误taxonomy与artifact比对，不把所有非零exit当预期pass。",
+      "expected_result": "实际层/规则匹配期望，缺工具是BLOCKED而不是PASS。",
+      "coverage_ids": [
+        "CV-NEG-003"
+      ],
+      "phase": "P2_REFERENCE_PROGRAM",
+      "priority": "CRITICAL",
+      "status": "PLANNED",
+      "execution": "NOT_RUN",
+      "dependency_gate": "Generator/independent checker not implemented; reference or unit harness required.",
+      "source_refs": [
+        "docs/sm/SM_ARCHITECTURE.md#23"
+      ]
+    },
+    {
+      "id": "SIG-NEG-004",
+      "feature_ids": [
+        "GEN-NEG-01"
+      ],
+      "title": "项目robustness注入",
+      "setup": "从经过独立审计的合法baseline进行单因素mutation；每例声明expected rejection layer/rule。",
+      "stimulus": "只在项目合同定义的adapter非法命令/valid协议/错误响应路径注入。",
+      "checker": "真实protocol/error monitor，严格标记NONISA_ROBUSTNESS。",
+      "expected_result": "项目保护合同被检查；结果不宣传为PTX UB一致性。",
+      "coverage_ids": [
+        "CV-NEG-003"
+      ],
+      "phase": "P3_SM_RTL",
+      "priority": "CRITICAL",
+      "status": "PLANNED",
+      "execution": "NOT_RUN",
+      "dependency_gate": "Generator/independent checker not implemented; SM RTL and corresponding service/adapter required.",
+      "source_refs": [
+        "docs/sm/SM_ARCHITECTURE.md#23"
+      ]
+    },
+    {
+      "id": "SIG-ENV-001",
+      "feature_ids": [
+        "GEN-ENV-01"
+      ],
+      "title": "launch组合边界",
+      "setup": "参数化R_SM、CTA/warp/shared/TMEM资源及外部公平假设；无默认Rubin固定周期。",
+      "stimulus": "生成1/多warp、多CTA、尾warp和资源恰好/超限；R_SM显式参数。",
+      "checker": "独立launch预算和地址初始化检查。",
+      "expected_result": "无部分launch占资源后等待基本配额；未配置参数不猜产品值。",
+      "coverage_ids": [
+        "CV-ENV-001"
+      ],
+      "phase": "P1_GENERATOR_UNIT",
+      "priority": "HIGH",
+      "status": "PLANNED",
+      "execution": "NOT_RUN",
+      "dependency_gate": "Generator/independent checker not implemented; reference or unit harness required.",
+      "source_refs": [
+        "docs/sm/SM_ARCHITECTURE.md#22"
+      ]
+    },
+    {
+      "id": "SIG-ENV-002",
+      "feature_ids": [
+        "GEN-ENV-01"
+      ],
+      "title": "服务schedule记录",
+      "setup": "参数化R_SM、CTA/warp/shared/TMEM资源及外部公平假设；无默认Rubin固定周期。",
+      "stimulus": "对每条独立随机流生成延迟/backpressure/乱序/fault schedule并固定stream ID。",
+      "checker": "配置与schedule validator，不靠wall clock或并行worker顺序播种。",
+      "expected_result": "相同manifest可回放同一输入和允许的服务事件。",
+      "coverage_ids": [
+        "CV-ENV-002"
+      ],
+      "phase": "P1_GENERATOR_UNIT",
+      "priority": "HIGH",
+      "status": "PLANNED",
+      "execution": "NOT_RUN",
+      "dependency_gate": "Generator/independent checker not implemented; reference or unit harness required.",
+      "source_refs": [
+        "docs/sm/SM_ARCHITECTURE.md#22"
+      ]
+    },
+    {
+      "id": "SIG-ENV-003",
+      "feature_ids": [
+        "GEN-ENV-01"
+      ],
+      "title": "公平与deadlock模板",
+      "setup": "参数化R_SM、CTA/warp/shared/TMEM资源及外部公平假设；无默认Rubin固定周期。",
+      "stimulus": "选择公平/受控长期stall/真正环等待三种场景。",
+      "checker": "独立wait-for graph与timeout分类，不以固定N周期判断所有指令。",
+      "expected_result": "外部starvation、DUT无进度和合法长延迟分别诊断。",
+      "coverage_ids": [
+        "CV-ENV-001"
+      ],
+      "phase": "P2_REFERENCE_PROGRAM",
+      "priority": "HIGH",
+      "status": "PLANNED",
+      "execution": "NOT_RUN",
+      "dependency_gate": "Generator/independent checker not implemented; reference or unit harness required.",
+      "source_refs": [
+        "docs/sm/SM_ARCHITECTURE.md#22"
+      ]
+    },
+    {
+      "id": "SIG-ENV-004",
+      "feature_ids": [
+        "GEN-ENV-01"
+      ],
+      "title": "reset与迟到返回",
+      "setup": "参数化R_SM、CTA/warp/shared/TMEM资源及外部公平假设；无默认Rubin固定周期。",
+      "stimulus": "运行中reset/abort/safe-drain切换，故意延迟旧响应到新epoch。",
+      "checker": "真实epoch/owner/return monitor与SoC取消/副作用账本。",
+      "expected_result": "旧包不污染新context，过滤旧包不冒充撤销外部store。",
+      "coverage_ids": [
+        "CV-ENV-003"
+      ],
+      "phase": "P3_SM_RTL",
+      "priority": "HIGH",
+      "status": "PLANNED",
+      "execution": "NOT_RUN",
+      "dependency_gate": "Generator/independent checker not implemented; SM RTL and corresponding service/adapter required.",
+      "source_refs": [
+        "docs/sm/SM_ARCHITECTURE.md#22"
+      ]
+    },
+    {
+      "id": "SIG-LIFE-001",
+      "feature_ids": [
+        "GEN-LIFE-01"
+      ],
+      "title": "符号资源程序合成",
+      "setup": "typed obligation：register fragments、SMEM owner、TMEM alloc/permit、barrier phase、各家族group/full/partial、peer/SoC引用。",
+      "stimulus": "按dependency DAG选择recipe，预留cleanup指令和必要资源/执行者。",
+      "checker": "独立prefix-state与all-schedules合法性审计；不在生成时预测完成周期。",
+      "expected_result": "所有use被合法创建/发布支配，所有free受相应完成/HB保护。",
+      "coverage_ids": [
+        "CV-LIFE-001"
+      ],
+      "phase": "P1_GENERATOR_UNIT",
+      "priority": "CRITICAL",
+      "status": "PLANNED",
+      "execution": "NOT_RUN",
+      "dependency_gate": "Generator/independent checker not implemented; reference or unit harness required.",
+      "source_refs": [
+        "docs/sm/SM_ARCHITECTURE.md#22"
+      ]
+    },
+    {
+      "id": "SIG-LIFE-002",
+      "feature_ids": [
+        "GEN-LIFE-01"
+      ],
+      "title": "尾部预算与失败回滚",
+      "setup": "typed obligation：register fragments、SMEM owner、TMEM alloc/permit、barrier phase、各家族group/full/partial、peer/SoC引用。",
+      "stimulus": "在预算接近耗尽、随机拒绝重试、block切换处终止body生成。",
+      "checker": "独立cleanup构造核验；回滚候选不得残留资源reservation或改变已提交trace。",
+      "expected_result": "总预算有保证的cleanup尾部；UNSAT有解释且不落入死循环。",
+      "coverage_ids": [
+        "CV-LIFE-002"
+      ],
+      "phase": "P1_GENERATOR_UNIT",
+      "priority": "CRITICAL",
+      "status": "PLANNED",
+      "execution": "NOT_RUN",
+      "dependency_gate": "Generator/independent checker not implemented; reference or unit harness required.",
+      "source_refs": [
+        "docs/sm/SM_ARCHITECTURE.md#22"
+      ]
+    },
+    {
+      "id": "SIG-LIFE-003",
+      "feature_ids": [
+        "GEN-LIFE-01"
+      ],
+      "title": "多顺序prefix验证",
+      "setup": "typed obligation：register fragments、SMEM owner、TMEM alloc/permit、barrier phase、各家族group/full/partial、peer/SoC引用。",
+      "stimulus": "同一合法程序探索多个允许completion顺序，覆盖partial先于full。",
+      "checker": "独立obligation模型与HB关系，而非generator内部shadow直接自证。",
+      "expected_result": "所有可达prefix无use-after-free或错误复用，结束所有义务清零。",
+      "coverage_ids": [
+        "CV-LIFE-001"
+      ],
+      "phase": "P2_REFERENCE_PROGRAM",
+      "priority": "CRITICAL",
+      "status": "PLANNED",
+      "execution": "NOT_RUN",
+      "dependency_gate": "Generator/independent checker not implemented; reference or unit harness required.",
+      "source_refs": [
+        "docs/sm/SM_ARCHITECTURE.md#22"
+      ]
+    },
+    {
+      "id": "SIG-LIFE-004",
+      "feature_ids": [
+        "GEN-LIFE-01"
+      ],
+      "title": "真实满载drain",
+      "setup": "typed obligation：register fragments、SMEM owner、TMEM alloc/permit、barrier phase、各家族group/full/partial、peer/SoC引用。",
+      "stimulus": "饱和Tensor/SMEM返回后停止新外部body，保留已接受工作的wait/commit/load/free。",
+      "checker": "真实wait-for/return/owner ledger并检查escape进度假设。",
+      "expected_result": "不一刀切阻断必要收尾，最终资源归还或有正式abort确认。",
+      "coverage_ids": [
+        "CV-LIFE-003"
+      ],
+      "phase": "P3_SM_RTL",
+      "priority": "CRITICAL",
+      "status": "PLANNED",
+      "execution": "NOT_RUN",
+      "dependency_gate": "Generator/independent checker not implemented; SM RTL and corresponding service/adapter required.",
+      "source_refs": [
+        "docs/sm/SM_ARCHITECTURE.md#22"
+      ]
+    },
+    {
+      "id": "SIG-COV-001",
+      "feature_ids": [
+        "GEN-COV-01"
+      ],
+      "title": "采样阶段分账",
+      "setup": "每run冻结eligible tuple/bin集合hash，定义static unreachable与disabled及waiver状态。",
+      "stimulus": "在标记SYNTHETIC的unit-harness日志中制造候选被拒、合法未发送、admit未complete、complete未checked四类。",
+      "checker": "独立event-log重算unit counters；SYNTHETIC日志只测聚合器，不写真实DUT覆盖或真实run执行计数。",
+      "expected_result": "每阶段只由相应实际事件采样，不以程序文本出现即算执行。",
+      "coverage_ids": [
+        "CV-COV-001"
+      ],
+      "phase": "P1_GENERATOR_UNIT",
+      "priority": "CRITICAL",
+      "status": "PLANNED",
+      "execution": "NOT_RUN",
+      "dependency_gate": "Generator/independent checker not implemented; reference or unit harness required.",
+      "source_refs": [
+        "docs/sm/SM_ARCHITECTURE.md#23"
+      ]
+    },
+    {
+      "id": "SIG-COV-002",
+      "feature_ids": [
+        "GEN-COV-01"
+      ],
+      "title": "分母和交叉bin",
+      "setup": "每run冻结eligible tuple/bin集合hash，定义static unreachable与disabled及waiver状态。",
+      "stimulus": "冻结合法tuple及定向cross，执行disabled/unsupported/unreachable与waiver变更。",
+      "checker": "独立bin registry及rule/capability hash比对，UNRESOLVED不能自动排除。",
+      "expected_result": "mandatory可达bin有目标，非法combination不进入正向分母。",
+      "coverage_ids": [
+        "CV-COV-002"
+      ],
+      "phase": "P1_GENERATOR_UNIT",
+      "priority": "CRITICAL",
+      "status": "PLANNED",
+      "execution": "NOT_RUN",
+      "dependency_gate": "Generator/independent checker not implemented; reference or unit harness required.",
+      "source_refs": [
+        "docs/sm/SM_ARCHITECTURE.md#23"
+      ]
+    },
+    {
+      "id": "SIG-COV-003",
+      "feature_ids": [
+        "GEN-COV-01"
+      ],
+      "title": "覆盖合并与零用例",
+      "setup": "每run冻结eligible tuple/bin集合hash，定义static unreachable与disabled及waiver状态。",
+      "stimulus": "合并相同/不同schema、profile、source hash的run并注入重复事件或空日志。",
+      "checker": "独立聚合器检查兼容键和唯一实例；拒绝非兼容合并。",
+      "expected_result": "空实际测试不能PASS，重复回放不把同一证据重复增量计数。",
+      "coverage_ids": [
+        "CV-COV-003"
+      ],
+      "phase": "P2_REFERENCE_PROGRAM",
+      "priority": "CRITICAL",
+      "status": "PLANNED",
+      "execution": "NOT_RUN",
+      "dependency_gate": "Generator/independent checker not implemented; reference or unit harness required.",
+      "source_refs": [
+        "docs/sm/SM_ARCHITECTURE.md#23"
+      ]
+    },
+    {
+      "id": "SIG-COV-004",
+      "feature_ids": [
+        "GEN-COV-01"
+      ],
+      "title": "SM事件采样一致",
+      "setup": "每run冻结eligible tuple/bin集合hash，定义static unreachable与disabled及waiver状态。",
+      "stimulus": "对同一真实run比对driver/admit/complete/check日志和coverage。",
+      "checker": "独立log correlator与typed completion规则。",
+      "expected_result": "coverage checked数不超过匹配且已验证的动态实例，不把Aread当full。",
+      "coverage_ids": [
+        "CV-COV-003"
+      ],
+      "phase": "P3_SM_RTL",
+      "priority": "CRITICAL",
+      "status": "PLANNED",
+      "execution": "NOT_RUN",
+      "dependency_gate": "Generator/independent checker not implemented; SM RTL and corresponding service/adapter required.",
+      "source_refs": [
+        "docs/sm/SM_ARCHITECTURE.md#23"
+      ]
+    },
+    {
+      "id": "SIG-REPLAY-001",
+      "feature_ids": [
+        "GEN-REPLAY-01"
+      ],
+      "title": "相同manifest重放",
+      "setup": "独立RNG子流用于opcode/operand/control/resource/timing/fault；显式记录外部工具及rbits。",
+      "stimulus": "同manifest两次生成并比较semantic IR/data/layout/launch/schedule字节hash。",
+      "checker": "独立artifact digest，不要求DOCX等无关工具二进制确定。",
+      "expected_result": "受声明确定性合同约束的刺激完全一致。",
+      "coverage_ids": [
+        "CV-REPLAY-001"
+      ],
+      "phase": "P1_GENERATOR_UNIT",
+      "priority": "HIGH",
+      "status": "PLANNED",
+      "execution": "NOT_RUN",
+      "dependency_gate": "Generator/independent checker not implemented; reference or unit harness required.",
+      "source_refs": [
+        "docs/sm/SM_ARCHITECTURE.md#23"
+      ]
+    },
+    {
+      "id": "SIG-REPLAY-002",
+      "feature_ids": [
+        "GEN-REPLAY-01"
+      ],
+      "title": "并发顺序扰动",
+      "setup": "独立RNG子流用于opcode/operand/control/resource/timing/fault；显式记录外部工具及rbits。",
+      "stimulus": "改变worker数、随机case分配与opcode权重，保留指定子流。",
+      "checker": "检查子流派生规范、拒绝重试次数日志与不相关stream独立性。",
+      "expected_result": "并行执行顺序不改变同case刺激；权重变化影响范围可解释。",
+      "coverage_ids": [
+        "CV-REPLAY-002"
+      ],
+      "phase": "P1_GENERATOR_UNIT",
+      "priority": "HIGH",
+      "status": "PLANNED",
+      "execution": "NOT_RUN",
+      "dependency_gate": "Generator/independent checker not implemented; reference or unit harness required.",
+      "source_refs": [
+        "docs/sm/SM_ARCHITECTURE.md#23"
+      ]
+    },
+    {
+      "id": "SIG-REPLAY-003",
+      "feature_ids": [
+        "GEN-REPLAY-01"
+      ],
+      "title": "缺项与污染检测",
+      "setup": "独立RNG子流用于opcode/operand/control/resource/timing/fault；显式记录外部工具及rbits。",
+      "stimulus": "删manifest配置、修改binary/data/target/工具hash或rbits。",
+      "checker": "独立replay preflight逐项hash/版本/seed schedule检查。",
+      "expected_result": "不完整或不匹配run拒绝/标blocked，不能仅凭同seed声称复现。",
+      "coverage_ids": [
+        "CV-REPLAY-003"
+      ],
+      "phase": "P2_REFERENCE_PROGRAM",
+      "priority": "HIGH",
+      "status": "PLANNED",
+      "execution": "NOT_RUN",
+      "dependency_gate": "Generator/independent checker not implemented; reference or unit harness required.",
+      "source_refs": [
+        "docs/sm/SM_ARCHITECTURE.md#23"
+      ]
+    },
+    {
+      "id": "SIG-REPLAY-004",
+      "feature_ids": [
+        "GEN-REPLAY-01"
+      ],
+      "title": "失败signature回放",
+      "setup": "独立RNG子流用于opcode/operand/control/resource/timing/fault；显式记录外部工具及rbits。",
+      "stimulus": "在固定backend/model下重放指定签名，多次确认事件及判据。",
+      "checker": "独立failure signature归一化，不将新错误、timeout或UB当原故障。",
+      "expected_result": "原判据稳定复现；不稳定保留schedule及NONDETERMINISTIC状态。",
+      "coverage_ids": [
+        "CV-REPLAY-003"
+      ],
+      "phase": "P2_REFERENCE_PROGRAM",
+      "priority": "HIGH",
+      "status": "PLANNED",
+      "execution": "NOT_RUN",
+      "dependency_gate": "Generator/independent checker not implemented; reference or unit harness required.",
+      "source_refs": [
+        "docs/sm/SM_ARCHITECTURE.md#23"
+      ]
+    },
+    {
+      "id": "SIG-REDUCE-001",
+      "feature_ids": [
+        "GEN-REDUCE-01"
+      ],
+      "title": "定义与CFG缩减",
+      "setup": "从可复现失败run开始；对象/定义/collective/async obligation图作为不可破坏依赖。",
+      "stimulus": "删除producer/branch/call候选并测试合法性修复边界。",
+      "checker": "独立audit在每次候选后重跑，不能使用仅原始程序合法标记。",
+      "expected_result": "无定义源、跳转或participation破坏的候选被拒绝。",
+      "coverage_ids": [
+        "CV-REDUCE-001"
+      ],
+      "phase": "P1_GENERATOR_UNIT",
+      "priority": "HIGH",
+      "status": "PLANNED",
+      "execution": "NOT_RUN",
+      "dependency_gate": "Generator/independent checker not implemented; reference or unit harness required.",
+      "source_refs": [
+        "docs/sm/SM_ARCHITECTURE.md#23"
+      ]
+    },
+    {
+      "id": "SIG-REDUCE-002",
+      "feature_ids": [
+        "GEN-REDUCE-01"
+      ],
+      "title": "异步资源缩减",
+      "setup": "从可复现失败run开始；对象/定义/collective/async obligation图作为不可破坏依赖。",
+      "stimulus": "尝试删除alloc/expect_tx/commit/wait/dealloc或peer一侧。",
+      "checker": "独立resource/HB/typed obligation checker。",
+      "expected_result": "不能以新死锁/UB替换原故障，不跨family修补wait。",
+      "coverage_ids": [
+        "CV-REDUCE-002"
+      ],
+      "phase": "P1_GENERATOR_UNIT",
+      "priority": "HIGH",
+      "status": "PLANNED",
+      "execution": "NOT_RUN",
+      "dependency_gate": "Generator/independent checker not implemented; reference or unit harness required.",
+      "source_refs": [
+        "docs/sm/SM_ARCHITECTURE.md#23"
+      ]
+    },
+    {
+      "id": "SIG-REDUCE-003",
+      "feature_ids": [
+        "GEN-REDUCE-01"
+      ],
+      "title": "数值与调度缩减",
+      "setup": "从可复现失败run开始；对象/定义/collective/async obligation图作为不可破坏依赖。",
+      "stimulus": "缩小FP/scale/metadata/rbits以及环境schedule，保持profile与报告规则。",
+      "checker": "原failure predicate与独立数值/allowed-outcome oracle双验。",
+      "expected_result": "新case仍触发原signature，不把允许NaN差异改成新mismatch。",
+      "coverage_ids": [
+        "CV-REDUCE-003"
+      ],
+      "phase": "P2_REFERENCE_PROGRAM",
+      "priority": "HIGH",
+      "status": "PLANNED",
+      "execution": "NOT_RUN",
+      "dependency_gate": "Generator/independent checker not implemented; reference or unit harness required.",
+      "source_refs": [
+        "docs/sm/SM_ARCHITECTURE.md#23"
+      ]
+    },
+    {
+      "id": "SIG-REDUCE-004",
+      "feature_ids": [
+        "GEN-REDUCE-01"
+      ],
+      "title": "最小化可复现包",
+      "setup": "从可复现失败run开始；对象/定义/collective/async obligation图作为不可破坏依赖。",
+      "stimulus": "在上限轮次/时间内产出原始/缩减trace、变换日志和全部manifest。",
+      "checker": "独立重放缩减包，并记录未能缩减的依赖原因。",
+      "expected_result": "有界终止且可复现；最小不声明数学全局最小。",
+      "coverage_ids": [
+        "CV-REDUCE-003"
+      ],
+      "phase": "P2_REFERENCE_PROGRAM",
+      "priority": "HIGH",
+      "status": "PLANNED",
+      "execution": "NOT_RUN",
+      "dependency_gate": "Generator/independent checker not implemented; reference or unit harness required.",
+      "source_refs": [
+        "docs/sm/SM_ARCHITECTURE.md#23"
+      ]
+    },
+    {
+      "id": "SIG-REGRESS-001",
+      "feature_ids": [
+        "GEN-REGRESS-01"
+      ],
+      "title": "计划/状态完整性",
+      "setup": "CI分P0/P1/P2/P3/P4；固定必测case、seed列表、bin registry和失败预算，所有门槛为计划。",
+      "stimulus": "检查25feature、实际catalogue全部test及217+35trace关联和source hash。",
+      "checker": "独立check_vplan.py静态审计，结果与动态测试报告分文件。",
+      "expected_result": "只允许plan_static_complete；dynamic_tests_executed仍0。",
+      "coverage_ids": [
+        "CV-REGRESS-001"
+      ],
+      "phase": "P1_GENERATOR_UNIT",
+      "priority": "CRITICAL",
+      "status": "PLANNED",
+      "execution": "NOT_RUN",
+      "dependency_gate": "Generator/independent checker not implemented; reference or unit harness required.",
+      "source_refs": [
+        "docs/sm/SM_ARCHITECTURE.md#23"
+      ]
+    },
+    {
+      "id": "SIG-REGRESS-002",
+      "feature_ids": [
+        "GEN-REGRESS-01"
+      ],
+      "title": "随机分布与稀有事件",
+      "setup": "CI分P0/P1/P2/P3/P4；固定必测case、seed列表、bin registry和失败预算，所有门槛为计划。",
+      "stimulus": "固定seed集合测试权重归一化、零权重、配额和不可达组合；记录尝试/拒绝/输出。",
+      "checker": "按条件可行集合比较分布；对启用稀有功能用定向配额，不以单次histogram断言精确比例。",
+      "expected_result": "无稀有合法形式永久饥饿或UNSAT无限重试；Rubin峰值不作为抽样权重。",
+      "coverage_ids": [
+        "CV-REGRESS-002"
+      ],
+      "phase": "P1_GENERATOR_UNIT",
+      "priority": "CRITICAL",
+      "status": "PLANNED",
+      "execution": "NOT_RUN",
+      "dependency_gate": "Generator/independent checker not implemented; reference or unit harness required.",
+      "source_refs": [
+        "docs/sm/SM_ARCHITECTURE.md#23"
+      ]
+    },
+    {
+      "id": "SIG-REGRESS-003",
+      "feature_ids": [
+        "GEN-REGRESS-01"
+      ],
+      "title": "分层失败与退出",
+      "setup": "CI分P0/P1/P2/P3/P4；固定必测case、seed列表、bin registry和失败预算，所有门槛为计划。",
+      "stimulus": "故意缺工具、缺model、零case、覆盖未收敛、未经审查waiver及历史证据混入。",
+      "checker": "独立campaign state machine与evidence manifest检查。",
+      "expected_result": "BLOCKED/NOT_RUN不能改PASS，旧MALU数字不能替代generator/SM执行证据。",
+      "coverage_ids": [
+        "CV-REGRESS-003"
+      ],
+      "phase": "P2_REFERENCE_PROGRAM",
+      "priority": "CRITICAL",
+      "status": "PLANNED",
+      "execution": "NOT_RUN",
+      "dependency_gate": "Generator/independent checker not implemented; reference or unit harness required.",
+      "source_refs": [
+        "docs/sm/SM_ARCHITECTURE.md#23"
+      ]
+    },
+    {
+      "id": "SIG-REGRESS-004",
+      "feature_ids": [
+        "GEN-REGRESS-01"
+      ],
+      "title": "未来SM回归关闭",
+      "setup": "CI分P0/P1/P2/P3/P4；固定必测case、seed列表、bin registry和失败预算，所有门槛为计划。",
+      "stimulus": "实际backend实现后运行smoke→directed→random→stress，并输出完整证据包。",
+      "checker": "真实checker/coverage与缺陷triage，按冻结能力/分母判定。",
+      "expected_result": "所有启用mandatory项有已检查证据；无未归类失败与空用例假通过。",
+      "coverage_ids": [
+        "CV-REGRESS-003"
+      ],
+      "phase": "P3_SM_RTL",
+      "priority": "CRITICAL",
+      "status": "PLANNED",
+      "execution": "NOT_RUN",
+      "dependency_gate": "Generator/independent checker not implemented; SM RTL and corresponding service/adapter required.",
+      "source_refs": [
+        "docs/sm/SM_ARCHITECTURE.md#23"
+      ]
+    }
+  ]
+}
