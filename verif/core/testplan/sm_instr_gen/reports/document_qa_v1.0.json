@@ -1,0 +1,327 @@
+{
+  "passed": true,
+  "status": "complete",
+  "check_kind": "DOCUMENT_BUILD_QA",
+  "scope": "Execution-level testplan document structure and rendering only; no runner, generator, model, adapter or DUT execution.",
+  "dynamic_testpoints_executed": 0,
+  "dynamic_execution": "NOT_RUN",
+  "title": "SM 指令发生器 Testplan",
+  "build_date": "2026-11-09",
+  "version": "1.0",
+  "source": "verif/core/testplan/sm_instr_gen/SM_INSTR_GEN_TESTPLAN.md",
+  "source_sha256": "6933ebbdcd5015b48ea8c8ac84032c824cbf440041690317a0ca9f0fd758c4b4",
+  "docx": "verif/core/testplan/sm_instr_gen/SM_Instruction_Generator_Testplan_v1.0.docx",
+  "docx_sha256": "755c766b89cef16f2e0db8d39fa8958a33858fbf280a87aa18f34d154c0f84ab",
+  "pdf": "verif/core/testplan/sm_instr_gen/SM_Instruction_Generator_Testplan_v1.0.pdf",
+  "pdf_sha256": "cf1f741839ce19f7f608c89bde60eb713149b82600c88501337ec6b7c5c30888",
+  "layout_dependency": {
+    "path": "docs/sm/build_doc.py",
+    "sha256": "41133b4f851703a23ddb875dca289b170d0ca79744b21fa4f2000ed756e1b5cd"
+  },
+  "native_tables": 116,
+  "native_math": 2,
+  "embedded_images": 2,
+  "chapter_navigation_links": 20,
+  "html_breaks_converted_to_native": 1375,
+  "pdf_pages": 171,
+  "pdf_text_characters": 354571,
+  "all_heading_text_found": true,
+  "pdf_structural_check": {
+    "internal_links": 20,
+    "unique_images": 2,
+    "text_outside_page_bounds": []
+  },
+  "figure_sha256": {
+    "figures/01_case_execution_checkpoints.png": "7587b29764f74b2e28e543d44205eb09579983cee5008da19396139a4e2713f1",
+    "figures/02_campaign_gates_and_evidence.png": "f0c3245a04ac011e3afdbc9e5a0766205dcbc768831d59ee3f47e7a21651223d"
+  },
+  "source_and_figures_unchanged_during_build": true,
+  "rendered_pages": [
+    "build/sm_instr_gen_testplan/v1.0/page_01.png",
+    "build/sm_instr_gen_testplan/v1.0/page_06.png",
+    "build/sm_instr_gen_testplan/v1.0/page_11.png",
+    "build/sm_instr_gen_testplan/v1.0/page_171.png"
+  ],
+  "layout_dependencies": {
+    "verif/core/vplan/sm_instr_gen/build_doc.py": "c195f13cc244f5a0a842e463fe9f67665c6fc823ec5491b2492878f510a673d0",
+    "docs/sm/build_doc.py": "41133b4f851703a23ddb875dca289b170d0ca79744b21fa4f2000ed756e1b5cd"
+  },
+  "testplan_builder_sha256": "1ab73ea1365af3a8896854631816e20f574269afa94caf50379f4cf9ce64cb9e",
+  "qa_date": "2026-11-10",
+  "dynamic_testcases_executed": 0,
+  "additional_structural_checks": {
+    "native_tables": 116,
+    "table_rows": 2001,
+    "repeat_header_tables": 116,
+    "cant_split_rows": 2001,
+    "table_paragraph_alignments": {
+      "left": 4102
+    },
+    "table_text_font_half_points": [
+      "18"
+    ],
+    "run_ascii_fonts": {
+      "Noto Sans CJK SC": 7258,
+      "inherited": 2,
+      "DejaVu Sans Mono": 235
+    },
+    "inline_code_runs": 233,
+    "inline_code_mono_verified": true,
+    "case_tables": 106,
+    "case_table_widths_cm": [
+      [
+        3.7,
+        13.3
+      ]
+    ],
+    "case_field_comparison": {
+      "source": "testcases.json",
+      "source_sha256": "e4b98078e72f72e02fea93240f7c229e6a33fc133675076403657ae90dc5e78e",
+      "case_titles_checked": 106,
+      "fields_checked": 1820,
+      "parameter_fields_checked": 760,
+      "normalization": "NFKC and whitespace only; strings and compact JSON serialization preserve parameter values.",
+      "errors": []
+    },
+    "case_row_single_page_check": {
+      "scope": "Each case content cell >=20 normalized characters must occur completely on one PDF page; not an all-page visual inspection.",
+      "content_rows_checked": 1747,
+      "unmatched_rows": []
+    },
+    "pdf_fonts": [
+      {
+        "name": "FAAAAA+NotoSansCJKsc-Regular",
+        "embedded_bytes": 71854
+      },
+      {
+        "name": "LAAAAA+NotoSansCJKsc-Regular",
+        "embedded_bytes": 78010
+      },
+      {
+        "name": "QAAAAA+NotoSansCJKsc-Regular",
+        "embedded_bytes": 53791
+      },
+      {
+        "name": "IAAAAA+NotoSansCJKsc-Regular",
+        "embedded_bytes": 3420
+      },
+      {
+        "name": "HAAAAA+NotoSansCJKsc-Regular",
+        "embedded_bytes": 4400
+      },
+      {
+        "name": "EAAAAA+NotoSansCJKsc-Regular",
+        "embedded_bytes": 3747
+      },
+      {
+        "name": "DAAAAA+NotoSansCJKsc-Regular",
+        "embedded_bytes": 4857
+      },
+      {
+        "name": "OAAAAA+NotoSansCJKsc-Regular",
+        "embedded_bytes": 69697
+      },
+      {
+        "name": "PAAAAA+NotoSansCJKsc-Regular",
+        "embedded_bytes": 79362
+      },
+      {
+        "name": "VAAAAA+NotoSansCJKsc-Regular",
+        "embedded_bytes": 85326
+      },
+      {
+        "name": "WAAAAA+NotoSansCJKsc-Regular",
+        "embedded_bytes": 68505
+      },
+      {
+        "name": "BAAAAA+NotoSansCJKsc-Bold",
+        "embedded_bytes": 22321
+      },
+      {
+        "name": "TAAAAA+NotoSansCJKsc-Bold",
+        "embedded_bytes": 58243
+      },
+      {
+        "name": "CAAAAA+NotoSansCJKsc-Bold",
+        "embedded_bytes": 5543
+      },
+      {
+        "name": "KAAAAA+NotoSansCJKsc-Bold",
+        "embedded_bytes": 50266
+      },
+      {
+        "name": "JAAAAA+NotoSansCJKsc-Bold",
+        "embedded_bytes": 3877
+      },
+      {
+        "name": "GAAAAA+NotoSansCJKsc-Bold",
+        "embedded_bytes": 76490
+      },
+      {
+        "name": "XAAAAA+NotoSansCJKsc-Bold",
+        "embedded_bytes": 29578
+      },
+      {
+        "name": "NAAAAA+NotoSansCJKsc-Bold",
+        "embedded_bytes": 37445
+      },
+      {
+        "name": "SAAAAA+LiberationSerif",
+        "embedded_bytes": 5916
+      },
+      {
+        "name": "RAAAAA+LiberationSerif-Italic",
+        "embedded_bytes": 7760
+      },
+      {
+        "name": "MAAAAA+DejaVuSansMono",
+        "embedded_bytes": 12320
+      },
+      {
+        "name": "UAAAAA+DejaVuSansMono-Bold",
+        "embedded_bytes": 7436
+      }
+    ],
+    "all_pdf_fonts_embedded": true,
+    "pdf_identifier_presence": {
+      "cases": {
+        "expected": 106,
+        "missing": []
+      },
+      "source_SIGs": {
+        "expected": 106,
+        "missing": []
+      },
+      "coverage": {
+        "expected": 75,
+        "missing": []
+      }
+    },
+    "representative_case_pdf_pages": {
+      "TC-ISA-001 项目": [
+        16,
+        17
+      ],
+      "TC-CVT-003 项目": [
+        49,
+        50
+      ],
+      "TC-TMEM-001 项目": [
+        89,
+        90,
+        91
+      ],
+      "TC-MATRIX-001 项目": [
+        98,
+        99,
+        100
+      ],
+      "TC-MATRIX-002 项目": [
+        100,
+        101,
+        102
+      ],
+      "TC-MATRIX-003 项目": [
+        102,
+        103
+      ],
+      "TC-MATRIX-006 项目": [
+        106,
+        107,
+        108,
+        109
+      ],
+      "TC-FABRIC-002 项目": [
+        116,
+        117
+      ],
+      "TC-LIFE-004 项目": [
+        148,
+        149
+      ],
+      "TC-REGRESS-004 项目": [
+        169,
+        170,
+        171
+      ]
+    }
+  },
+  "manual_visual_check": {
+    "performed": true,
+    "pdf_pages_inspected": [
+      1,
+      2,
+      6,
+      11,
+      12,
+      13,
+      16,
+      49,
+      90,
+      99,
+      101,
+      107,
+      108,
+      117,
+      170,
+      171
+    ],
+    "result": "PASS",
+    "scope": "Sampled cover/navigation, both embedded figures, native seed equations, first case, long CVT/TMEM tables, updated Matrix/MALU formats and named Cshift/BLOCK32 witnesses, Fabric audit-only negative trial and final non-reentrant campaign observer. Not an all-page visual inspection.",
+    "observations": [
+      "Chinese/Latin text and 9 pt tables readable; inline code uses monospaced glyphs; long TC headers fit without isolated characters.",
+      "No observed clipping, overlap or isolated headings in sampled pages; case table headers repeat across sampled continuation pages.",
+      "Named witness parameter objects are fully readable across wrapped lines and retain complete values; long content rows remain on one page.",
+      "Native seed equations visible without invalid glyphs; workflow diagrams explicitly retain NOT_RUN and closed implementation gates."
+    ],
+    "not_checked": "No planned Generator/SM case, runner, model, adapter or DUT execution; no dynamic coverage collected."
+  },
+  "static_plan_validation": {
+    "report": "reports/testplan_static_check.json",
+    "sha256": "2f7c41aa4a1aa530f9410d4b49f236e84eb61b87428af999c1e130bc775972e8",
+    "result": "PASS",
+    "counts": {
+      "cases": 106,
+      "source_testpoints": 106,
+      "coverage_points": 75,
+      "profiles": 8,
+      "suites": 6,
+      "planned_runs": 873,
+      "unique_planned_seeds": 873,
+      "planned_runs_by_suite": {
+        "SMOKE": 25,
+        "DIRECTED": 106,
+        "NEGATIVE": 104,
+        "RANDOM": 392,
+        "STRESS": 136,
+        "REPLAY": 110
+      }
+    },
+    "input_sha256": {
+      "testcases.json": "e4b98078e72f72e02fea93240f7c229e6a33fc133675076403657ae90dc5e78e",
+      "campaigns.json": "5a1919bd35eb9419d86bdfc7df018d95f7ac7a026cdad9ae590d4a51730f9bf3",
+      "config_profiles.json": "c1333946347892a52eccffece72606801d2d8bcee4f9c08c5b46733226dbde3e",
+      "planned_runs.json": "0d7cb992f580626f8e0996e7ca34e3999c15e3b1032345750c3b46167e47b90f",
+      "run_matrix.csv": "5391c663b49834c47d927501dc266ce4919bd6659706cb419d92c788f6762c37",
+      "SM_INSTR_GEN_TESTPLAN.md": "6933ebbdcd5015b48ea8c8ac84032c824cbf440041690317a0ca9f0fd758c4b4"
+    },
+    "dynamic_testcases_executed": 0
+  },
+  "validator_selftest": {
+    "report": "reports/checker_selftest.json",
+    "sha256": "410c67864ddf863a34dfcbbfdb2bf93e8f31c80dd5146a6dd35f080964ce5146",
+    "scope": "Fourteen synthetic metadata corruptions in temporary copies only; not execution of any planned generator/DUT case.",
+    "mutations_rejected": 14
+  },
+  "tool_source_sha256": {
+    "build_doc.py": "1ab73ea1365af3a8896854631816e20f574269afa94caf50379f4cf9ce64cb9e",
+    "check_testplan.py": "1b843a60cf996575662feb7db0fe946985875e172058ff92a73b62d11b42c0ba",
+    "selftest_check_testplan.py": "f22436cf5943d977ee65a113ca3b81669ea30e62c604e1eede04f47a3e5253fc",
+    "figures/generate_figures.py": "fbc028609cdd5bd706df380870ae51d116f03ffba51ded781426f10fa25f35c6",
+    "BUILDING.md": "7ec1d85f554367e75198c2943bacede214c87507125e201a63c1eaf007625705"
+  },
+  "svg_xml_parse": "PASS (2 SVG files)",
+  "python_compile_check": "PASS (4 local Python tools)",
+  "task_source_whitespace_and_eof_check": "PASS",
+  "git_diff_check": "PASS"
+}

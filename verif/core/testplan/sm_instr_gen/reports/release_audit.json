@@ -1,0 +1,86 @@
+{
+  "check_kind": "ROOT_TESTPLAN_RELEASE_AUDIT",
+  "passed": true,
+  "review_date": "2026-11-10",
+  "scope": "Published document, canonical metadata, source identity, artifact hashes and local links; no functional test execution.",
+  "dynamic_testcases_executed": 0,
+  "dynamic_execution": "NOT_RUN",
+  "artifact_sha256": {
+    "testcases.json": "e4b98078e72f72e02fea93240f7c229e6a33fc133675076403657ae90dc5e78e",
+    "campaigns.json": "5a1919bd35eb9419d86bdfc7df018d95f7ac7a026cdad9ae590d4a51730f9bf3",
+    "config_profiles.json": "c1333946347892a52eccffece72606801d2d8bcee4f9c08c5b46733226dbde3e",
+    "planned_runs.json": "0d7cb992f580626f8e0996e7ca34e3999c15e3b1032345750c3b46167e47b90f",
+    "run_matrix.csv": "5391c663b49834c47d927501dc266ce4919bd6659706cb419d92c788f6762c37",
+    "SM_INSTR_GEN_TESTPLAN.md": "6933ebbdcd5015b48ea8c8ac84032c824cbf440041690317a0ca9f0fd758c4b4",
+    "SM_Instruction_Generator_Testplan_v1.0.docx": "755c766b89cef16f2e0db8d39fa8958a33858fbf280a87aa18f34d154c0f84ab",
+    "SM_Instruction_Generator_Testplan_v1.0.pdf": "cf1f741839ce19f7f608c89bde60eb713149b82600c88501337ec6b7c5c30888",
+    "reports/document_qa.json": "52a4f1a3ea2fa388674bdc5dd69db82cb305b5faa316c2d966d3fed5a3041a2f",
+    "reports/document_qa_v1.0.json": "52a4f1a3ea2fa388674bdc5dd69db82cb305b5faa316c2d966d3fed5a3041a2f",
+    "reports/checker_selftest.json": "410c67864ddf863a34dfcbbfdb2bf93e8f31c80dd5146a6dd35f080964ce5146",
+    "reports/root_semantic_audit.json": "78450da408e0da2a37f931d1e361a72bab53a6a3eb46bcdd2fae28aeeedd7c76"
+  },
+  "counts": {
+    "cases": 106,
+    "cases_by_phase": {
+      "P1_GENERATOR_UNIT": 50,
+      "P2_REFERENCE_PROGRAM": 27,
+      "P3_SM_RTL": 23,
+      "P4_SOC": 6
+    },
+    "coverage_points": 75,
+    "profiles": 8,
+    "disabled_dynamic_profiles": 7,
+    "suites": 6,
+    "planned_runs": 873,
+    "unique_planned_seeds": 873,
+    "runs_by_suite": {
+      "SMOKE": 25,
+      "DIRECTED": 106,
+      "NEGATIVE": 104,
+      "RANDOM": 392,
+      "STRESS": 136,
+      "REPLAY": 110
+    },
+    "pdf_pages": 171,
+    "local_markdown_links_checked": 47
+  },
+  "native_docx_comparison": {
+    "canonical_source": "testcases.json",
+    "case_tables_checked": 106,
+    "fields_checked": 1820,
+    "parameter_fields_checked": 760,
+    "normalization": "NFKC and whitespace only",
+    "errors": []
+  },
+  "root_visual_sample": {
+    "pdf_pages_actually_viewed": [
+      2,
+      6,
+      9,
+      11,
+      101,
+      108,
+      117,
+      170
+    ],
+    "coverage": [
+      "navigation",
+      "both workflow figures",
+      "TMEM overview",
+      "Cshift witness",
+      "BLOCK32 scale/beat witness",
+      "fabric negative isolation",
+      "nonreentrant closure observer"
+    ],
+    "result": "PASS",
+    "limitation": "Selected page inspection; not a claim of manual inspection of every page."
+  },
+  "independent_review_records": [
+    "research/isa_execution_review.md",
+    "research/method_execution_review.md",
+    "research/resource_execution_review.md",
+    "research/review_resolutions.md"
+  ],
+  "static_validator_selftest_mutations_rejected": 14,
+  "all_functional_cases_and_planned_runs": "NOT_RUN"
+}

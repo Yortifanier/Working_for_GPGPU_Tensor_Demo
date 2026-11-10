@@ -1,0 +1,91 @@
+{
+  "passed": true,
+  "check_kind": "STATIC_VALIDATOR_SELFTEST",
+  "scope": "Synthetic corruptions of temporary metadata copies only. No planned generator, model, adapter or DUT test executed.",
+  "dynamic_execution": "NOT_RUN",
+  "dynamic_testcases_executed": 0,
+  "checker_sha256": "1b843a60cf996575662feb7db0fe946985875e172058ff92a73b62d11b42c0ba",
+  "selftest_sha256": "f22436cf5943d977ee65a113ca3b81669ea30e62c604e1eede04f47a3e5253fc",
+  "baseline_input_sha256": {
+    "testcases.json": "e4b98078e72f72e02fea93240f7c229e6a33fc133675076403657ae90dc5e78e",
+    "campaigns.json": "5a1919bd35eb9419d86bdfc7df018d95f7ac7a026cdad9ae590d4a51730f9bf3",
+    "config_profiles.json": "c1333946347892a52eccffece72606801d2d8bcee4f9c08c5b46733226dbde3e",
+    "planned_runs.json": "0d7cb992f580626f8e0996e7ca34e3999c15e3b1032345750c3b46167e47b90f",
+    "run_matrix.csv": "5391c663b49834c47d927501dc266ce4919bd6659706cb419d92c788f6762c37",
+    "SM_INSTR_GEN_TESTPLAN.md": "6933ebbdcd5015b48ea8c8ac84032c824cbf440041690317a0ca9f0fd758c4b4"
+  },
+  "baseline_passed": true,
+  "mutations_rejected": 14,
+  "cases": [
+    {
+      "mutation": "claim_dynamic_pass",
+      "rejected": true,
+      "expected_diagnostic": "NOT_RUN"
+    },
+    {
+      "mutation": "too_few_steps",
+      "rejected": true,
+      "expected_diagnostic": "steps"
+    },
+    {
+      "mutation": "too_few_checkpoints",
+      "rejected": true,
+      "expected_diagnostic": "checkpoints"
+    },
+    {
+      "mutation": "duplicate_source_sig",
+      "rejected": true,
+      "expected_diagnostic": "duplicate source SIG"
+    },
+    {
+      "mutation": "fixed_seed_drift",
+      "rejected": true,
+      "expected_diagnostic": "fixed seed must use the 0-based source index"
+    },
+    {
+      "mutation": "enabled_dynamic_profile",
+      "rejected": true,
+      "expected_diagnostic": "dynamic profile must remain disabled"
+    },
+    {
+      "mutation": "unit_claims_dut_coverage",
+      "rejected": true,
+      "expected_diagnostic": "DUT coverage requires P3/P4"
+    },
+    {
+      "mutation": "suite_reverse_link",
+      "rejected": true,
+      "expected_diagnostic": "reverse suite.case_ids link missing"
+    },
+    {
+      "mutation": "planned_seed_drift",
+      "rejected": true,
+      "expected_diagnostic": "planned expansion mismatch: seed"
+    },
+    {
+      "mutation": "planned_phase_drift",
+      "rejected": true,
+      "expected_diagnostic": "planned expansion mismatch: phase"
+    },
+    {
+      "mutation": "input_hash_drift",
+      "rejected": true,
+      "expected_diagnostic": "plan_inputs SHA256 mismatch"
+    },
+    {
+      "mutation": "csv_value_drift",
+      "rejected": true,
+      "expected_diagnostic": "JSON/CSV values or row order differ"
+    },
+    {
+      "mutation": "source_hash_drift",
+      "rejected": true,
+      "expected_diagnostic": "source SHA256 mismatch"
+    },
+    {
+      "mutation": "unknown_markdown_case",
+      "rejected": true,
+      "expected_diagnostic": "unknown="
+    }
+  ]
+}

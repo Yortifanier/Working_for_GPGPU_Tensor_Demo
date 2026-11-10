@@ -1,0 +1,224 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "required": [
+    "schema_version",
+    "plan_id",
+    "version",
+    "date",
+    "source_files",
+    "plan_inputs",
+    "runs"
+  ],
+  "properties": {
+    "schema_version": {
+      "const": "1.0"
+    },
+    "plan_id": {
+      "const": "SM-INSTR-GEN-TESTPLAN"
+    },
+    "version": {
+      "const": "1.0"
+    },
+    "date": {
+      "type": "string",
+      "format": "date"
+    },
+    "source_files": {
+      "type": "object",
+      "required": [
+        "vplan_testpoints",
+        "vplan_features",
+        "vplan_document",
+        "sm_architecture"
+      ],
+      "properties": {
+        "vplan_testpoints": {
+          "type": "object",
+          "required": [
+            "path",
+            "sha256"
+          ],
+          "properties": {
+            "path": {
+              "type": "string",
+              "minLength": 1
+            },
+            "sha256": {
+              "type": "string",
+              "pattern": "^[0-9a-f]{64}$"
+            }
+          }
+        },
+        "vplan_features": {
+          "type": "object",
+          "required": [
+            "path",
+            "sha256"
+          ],
+          "properties": {
+            "path": {
+              "type": "string",
+              "minLength": 1
+            },
+            "sha256": {
+              "type": "string",
+              "pattern": "^[0-9a-f]{64}$"
+            }
+          }
+        },
+        "vplan_document": {
+          "type": "object",
+          "required": [
+            "path",
+            "sha256"
+          ],
+          "properties": {
+            "path": {
+              "type": "string",
+              "minLength": 1
+            },
+            "sha256": {
+              "type": "string",
+              "pattern": "^[0-9a-f]{64}$"
+            }
+          }
+        },
+        "sm_architecture": {
+          "type": "object",
+          "required": [
+            "path",
+            "sha256"
+          ],
+          "properties": {
+            "path": {
+              "type": "string",
+              "minLength": 1
+            },
+            "sha256": {
+              "type": "string",
+              "pattern": "^[0-9a-f]{64}$"
+            }
+          }
+        }
+      },
+      "additionalProperties": false
+    },
+    "plan_inputs": {
+      "type": "object",
+      "required": [
+        "testcases.json",
+        "campaigns.json",
+        "config_profiles.json"
+      ],
+      "properties": {
+        "testcases.json": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{64}$"
+        },
+        "campaigns.json": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{64}$"
+        },
+        "config_profiles.json": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{64}$"
+        }
+      },
+      "additionalProperties": false
+    },
+    "runs": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "required": [
+          "run_id",
+          "suite_id",
+          "case_id",
+          "source_testpoint_id",
+          "phase",
+          "config_profile",
+          "repeat_index",
+          "case_fixed_seed",
+          "seed",
+          "timeout_policy",
+          "current_status",
+          "current_gate"
+        ],
+        "properties": {
+          "run_id": {
+            "type": "string",
+            "pattern": "^PLAN-(SMOKE|DIRECTED|NEGATIVE|RANDOM|STRESS|REPLAY)-TC-[A-Z0-9_-]+-[0-9]{3}-R[0-9]{2,}$"
+          },
+          "suite_id": {
+            "enum": [
+              "SMOKE",
+              "DIRECTED",
+              "NEGATIVE",
+              "RANDOM",
+              "STRESS",
+              "REPLAY"
+            ]
+          },
+          "case_id": {
+            "type": "string",
+            "pattern": "^TC-[A-Z0-9_-]+-[0-9]{3}$"
+          },
+          "source_testpoint_id": {
+            "type": "string",
+            "pattern": "^SIG-[A-Z0-9_-]+-[0-9]{3}$"
+          },
+          "phase": {
+            "enum": [
+              "P1_GENERATOR_UNIT",
+              "P2_REFERENCE_PROGRAM",
+              "P3_SM_RTL",
+              "P4_SOC"
+            ]
+          },
+          "config_profile": {
+            "enum": [
+              "TP-GEN-BASE",
+              "TP-GEN-NEGATIVE",
+              "TP-REF-BASE",
+              "TP-SM-BASE",
+              "TP-SM-STRESS",
+              "TP-SOC-BASE",
+              "TP-SOC-FAULT"
+            ]
+          },
+          "repeat_index": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "case_fixed_seed": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 4294967295
+          },
+          "seed": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 4294967295
+          },
+          "timeout_policy": {
+            "enum": [
+              "GEN_BOUNDED",
+              "REFERENCE_BOUNDED",
+              "SM_PROGRESS",
+              "SOC_PROGRESS"
+            ]
+          },
+          "current_status": {
+            "const": "NOT_RUN"
+          },
+          "current_gate": {
+            "const": "BLOCKED_MISSING_IMPLEMENTATION"
+          }
+        },
+        "additionalProperties": false
+      }
+    }
+  }
+}

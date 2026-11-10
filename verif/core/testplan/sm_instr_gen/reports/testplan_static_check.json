@@ -1,0 +1,47 @@
+{
+  "check_kind": "TESTPLAN_STATIC_CHECK",
+  "result": "PASS",
+  "passed": true,
+  "scope": "Execution-plan schema, source identity, links, suite membership and planned seed expansion only; no runner or dynamic tests.",
+  "dynamic_execution": "NOT_RUN",
+  "dynamic_testcases_executed": 0,
+  "counts": {
+    "cases": 106,
+    "source_testpoints": 106,
+    "coverage_points": 75,
+    "profiles": 8,
+    "suites": 6,
+    "planned_runs": 873,
+    "unique_planned_seeds": 873,
+    "planned_runs_by_suite": {
+      "SMOKE": 25,
+      "DIRECTED": 106,
+      "NEGATIVE": 104,
+      "RANDOM": 392,
+      "STRESS": 136,
+      "REPLAY": 110
+    }
+  },
+  "input_sha256": {
+    "testcases.json": "e4b98078e72f72e02fea93240f7c229e6a33fc133675076403657ae90dc5e78e",
+    "campaigns.json": "5a1919bd35eb9419d86bdfc7df018d95f7ac7a026cdad9ae590d4a51730f9bf3",
+    "config_profiles.json": "c1333946347892a52eccffece72606801d2d8bcee4f9c08c5b46733226dbde3e",
+    "planned_runs.json": "0d7cb992f580626f8e0996e7ca34e3999c15e3b1032345750c3b46167e47b90f",
+    "run_matrix.csv": "5391c663b49834c47d927501dc266ce4919bd6659706cb419d92c788f6762c37",
+    "SM_INSTR_GEN_TESTPLAN.md": "6933ebbdcd5015b48ea8c8ac84032c824cbf440041690317a0ca9f0fd758c4b4"
+  },
+  "source_file_sha256": {
+    "verif/core/vplan/sm_instr_gen/testpoints.json": "9a230465115ed9e01b8edf64da32aba41af7a2da80b12275e28a8894792018c3",
+    "verif/core/vplan/sm_instr_gen/vplan_features.json": "8ee62fb376abac123d8704fad8d12c03b681e5736890373436b29a585f67a17d",
+    "verif/core/vplan/sm_instr_gen/SM_INSTR_GEN_VPLAN.md": "71cd695ebdfbba906d17233c975762cec863187d2e4e96afc723a5d4e40915c9",
+    "docs/sm/SM_ARCHITECTURE.md": "b28eaee5bf381c7dbcc8387687c62bc8030eb722935e11774cf3eaecb20fb0ba"
+  },
+  "checker_sha256": "1b843a60cf996575662feb7db0fe946985875e172058ff92a73b62d11b42c0ba",
+  "schema_sha256": {
+    "campaigns.schema.json": "ba84930908ce737f4366970f8872a282dfe778e293287dfef6bafc3d525ab871",
+    "config_profiles.schema.json": "94a40375076d399c263eb2aefe1a84ecf730cf238873a8b9a7bea9cd8e53768b",
+    "planned_runs.schema.json": "22bf4a9314aaf877b25b0cba50a66bdc7097f186720eaf8ae06934cc58f5cd62",
+    "testcases.schema.json": "d6d6611b170b11cfae04bbcd3c4aa67a01a47a195903458e97ec384b1ec35d8f"
+  },
+  "errors": []
+}

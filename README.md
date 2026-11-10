@@ -1,6 +1,10 @@
 # Working_for_GPGPU_Tensor_Demo
 Tensor
 
+## SM 指令发生器 Testplan
+
+[执行计划位于verif/core/testplan/sm_instr_gen](verif/core/testplan/sm_instr_gen/README.md)，将106个vPlan测试点细化为参数、初始化、步骤、检查点、通过/失败条件和证据；附8个profile、6类suite及873条固定seed计划运行矩阵。TMEM与矩阵格式/scale/BLOCK/Cshift单独展开。当前功能用例均NOT_RUN，动态配置关闭，P0静态检查单独记录。
+
 ## SM 指令发生器验证计划
 
 [vPlan位于verif/core/vplan/sm_instr_gen](verif/core/vplan/sm_instr_gen/README.md)，包含25个验证特性、106个计划测试点、75个覆盖点，以及217条指令／语法和35节特殊寄存器追踪。覆盖发生器自身合法性、依赖/控制流、存储同步、完整TMEM生命周期、矩阵格式/scale/BLOCK、系统服务、覆盖、回放及缩减。当前功能测试均为PLANNED / NOT_RUN，静态计划检查单独记录。

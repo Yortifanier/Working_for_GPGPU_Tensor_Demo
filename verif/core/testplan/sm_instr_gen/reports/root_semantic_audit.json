@@ -1,0 +1,46 @@
+{
+  "check_kind": "ROOT_PLAN_SEMANTIC_CONSISTENCY",
+  "scope": "Selected exact arithmetic, beat-boundary and metadata-contract checks only; no Generator/SM testcase or RTL execution.",
+  "dynamic_testcases_executed": 0,
+  "dynamic_execution": "NOT_RUN",
+  "input_sha256": {
+    "SM_INSTR_GEN_TESTPLAN.md": "6933ebbdcd5015b48ea8c8ac84032c824cbf440041690317a0ca9f0fd758c4b4",
+    "testcases.json": "e4b98078e72f72e02fea93240f7c229e6a33fc133675076403657ae90dc5e78e",
+    "campaigns.json": "5a1919bd35eb9419d86bdfc7df018d95f7ac7a026cdad9ae590d4a51730f9bf3",
+    "config_profiles.json": "c1333946347892a52eccffece72606801d2d8bcee4f9c08c5b46733226dbde3e",
+    "planned_runs.json": "0d7cb992f580626f8e0996e7ca34e3999c15e3b1032345750c3b46167e47b90f",
+    "run_matrix.csv": "5391c663b49834c47d927501dc266ce4919bd6659706cb419d92c788f6762c37"
+  },
+  "F16_Cshift_witness_exact_results": [
+    5,
+    4
+  ],
+  "E4M3_UE8M0_witness_exact_result": 64,
+  "beat_counts": [
+    1,
+    4,
+    4,
+    4,
+    4,
+    4,
+    4,
+    4,
+    4,
+    4,
+    4,
+    4,
+    4,
+    4,
+    4,
+    4,
+    3
+  ],
+  "scale_entries_per_side": 3,
+  "F32_FMA_exact_difference": "-1/70368744177664",
+  "nonreentrant_observer_leaf_count": 22,
+  "negative_copies_DUT_execution_allowed": false,
+  "all_106_cases_state": [
+    "NOT_RUN"
+  ],
+  "passed": true
+}

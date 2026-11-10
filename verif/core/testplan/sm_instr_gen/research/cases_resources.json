@@ -1,0 +1,3273 @@
+[
+  {
+    "source_testpoint_id": "SIG-MEM-001",
+    "id": "TC-MEM-001",
+    "title": "空间与地址边界",
+    "phase": "P1_GENERATOR_UNIT",
+    "prerequisites": [
+      "固定PTX9.4清单及SM-ARCH-S0来源hash通过preflight；独立形式/资源审计器与本阶段harness已实现。",
+      "由manifest绑定精确target、capability及合法form allowlist；未解析的target/形式保持UNRESOLVED并阻止对应正向分支，不推定数字更大的target继承能力。"
+    ],
+    "config_profile": "TP-GEN-BASE",
+    "parameters": {
+      "target_binding": "MANIFEST_EXACT_TARGET_AND_FORM_ALLOWLIST_REQUIRED",
+      "unresolved_capability_policy": "BLOCK_POSITIVE_BRANCH_AND_REPORT_UNRESOLVED",
+      "spaces": [
+        "global",
+        "local",
+        "entry_param",
+        "func_param",
+        "const",
+        "shared::cta",
+        "generic"
+      ],
+      "object_bytes": 4096,
+      "canary_bytes_each_side": 32,
+      "access_bytes": [
+        1,
+        2,
+        4,
+        8,
+        16
+      ],
+      "positive_offsets": [
+        "0",
+        "natural_alignment",
+        "4096-access_bytes"
+      ],
+      "negative_offsets": [
+        "4096-access_bytes+1"
+      ],
+      "threads": 32,
+      "alias_variants": [
+        "disjoint",
+        "same_object_overlapping_legal_views"
+      ]
+    },
+    "initial_state": [
+      "各空间对象分配独立typed owner与初始化字节pattern(i)=i mod251，guard填充独立canary。",
+      "param/const对象只生成该空间允许的访问；local按thread分别建对象；generic窗口由fixture定义。"
+    ],
+    "steps": [
+      "先构造每种启用空间/宽度的边界正例，按对应form验证对齐、读扩展、mask与权限。",
+      "生成同一对象的合法别名及不同owner相同offset；独立审计从完整range而非截位后地址判断。",
+      "从已合法baseline单独变异越界/对齐/权限；只送preflight，不将undefined程序送数值DUT。",
+      "序列化并重读IR，确认所有use由初始化支配，关闭引用并生成合法退出尾部。"
+    ],
+    "checkpoints": [
+      "typed对象边界、初始化与generic转换独立检查均成立。",
+      "每个负例恰因预定rule拒绝；canary/对象写mask期望不被地址截断改变。"
+    ],
+    "pass_criteria": [
+      "所有启用正例保留原空间语义及完整byte range；合法别名身份正确。",
+      "负例诊断层/原因可重放；未解析空间标blocked而非pass。"
+    ],
+    "fail_criteria": [
+      "正例存在越权/未初始化读取，或不同CTA/local owner被错误合并。",
+      "把编译器缺失、任意非零退出或其他约束错误当作预定边界负例命中。"
+    ],
+    "expected_artifacts": [
+      "manifest.json：锁定2026-11-09测试计划、源hash、seed/子流、profile、实际target/capability及服务配置。",
+      "program.ir与data_objects.json：保留指令身份、CFG、typed对象、初始化及cleanup。",
+      "resource_audit.json与event_obligations.json：独立账本/HB/phase/单位审计。",
+      "case_result.json与coverage_delta.json：区分生成/审计/接收/完成/检查，本阶段真实执行量及NOT_RUN/BLOCKED原因。"
+    ],
+    "coverage_ids": [
+      "CV-MEM-001"
+    ],
+    "suites": [
+      "SMOKE",
+      "DIRECTED",
+      "NEGATIVE",
+      "RANDOM",
+      "REPLAY"
+    ],
+    "fixed_seed": null,
+    "timeout_policy": "GEN_BOUNDED",
+    "current_status": "NOT_RUN",
+    "current_gate": "BLOCKED_MISSING_IMPLEMENTATION"
+  },
+  {
+    "source_testpoint_id": "SIG-MEM-002",
+    "id": "TC-MEM-002",
+    "title": "属性与cache指令",
+    "phase": "P1_GENERATOR_UNIT",
+    "prerequisites": [
+      "固定PTX9.4清单及SM-ARCH-S0来源hash通过preflight；独立形式/资源审计器与本阶段harness已实现。",
+      "由manifest绑定精确target、capability及合法form allowlist；未解析的target/形式保持UNRESOLVED并阻止对应正向分支，不推定数字更大的target继承能力。"
+    ],
+    "config_profile": "TP-GEN-BASE",
+    "parameters": {
+      "target_binding": "MANIFEST_EXACT_TARGET_AND_FORM_ALLOWLIST_REQUIRED",
+      "unresolved_capability_policy": "BLOCK_POSITIVE_BRANCH_AND_REPORT_UNRESOLVED",
+      "object_bytes": 256,
+      "attributes": [
+        "volatile",
+        "mmio",
+        "readonly",
+        "global_nc",
+        "prefetch",
+        "discard",
+        "cache_policy",
+        "priority"
+      ],
+      "readonly_writes_same_kernel": false,
+      "mmio_access_count_fixture": 4,
+      "discard_after_read_policy": "不对未重新定义内容设唯一值oracle；重新初始化并同步后再检查"
+    },
+    "initial_state": [
+      "建立普通内存、kernel只读对象及平台提供的MMIO寄存器fixture，三者无别名。",
+      "每个属性从独立合法form库选择；MMIO实际地址/权限只由平台fixture提供。"
+    ],
+    "steps": [
+      "分别生成volatile与MMIO读写意图，保留访问次数/合并约束分类，不能推导volatile等于MMIO。",
+      "生成只读/nc/prefetch/policy操作，确认没有给nc/texture添加generic coherence或本kernel写readonly。",
+      "生成discard及有完成义务的priority操作；discard后避免唯一值检查或经合法重新定义后消费。",
+      "独立分类、roundtrip并闭合priority group/对象引用；输出未知属性的拒绝原因。"
+    ],
+    "checkpoints": [
+      "属性分类和proxy/cache副作用由独立规则重算。",
+      "MMIO、readonly lifetime和completion-bearing priority不被普通hint修复器删除。"
+    ],
+    "pass_criteria": [
+      "发生器保留对应访问/完成合同；所有已知未定值均与确定值oracle隔离。",
+      "无平台MMIO fixture时该分支blocked，不伪造物理I/O地址。"
+    ],
+    "fail_criteria": [
+      "将MMIO可观察访问合并，或从volatile推出精确I/O次数。",
+      "discard后断言未定义数据必须保持旧值，或吞掉带完成责任的priority操作。"
+    ],
+    "expected_artifacts": [
+      "manifest.json：锁定2026-11-09测试计划、源hash、seed/子流、profile、实际target/capability及服务配置。",
+      "program.ir与data_objects.json：保留指令身份、CFG、typed对象、初始化及cleanup。",
+      "resource_audit.json与event_obligations.json：独立账本/HB/phase/单位审计。",
+      "case_result.json与coverage_delta.json：区分生成/审计/接收/完成/检查，本阶段真实执行量及NOT_RUN/BLOCKED原因。"
+    ],
+    "coverage_ids": [
+      "CV-MEM-002"
+    ],
+    "suites": [
+      "DIRECTED",
+      "NEGATIVE",
+      "REPLAY"
+    ],
+    "fixed_seed": null,
+    "timeout_policy": "GEN_BOUNDED",
+    "current_status": "NOT_RUN",
+    "current_gate": "BLOCKED_MISSING_IMPLEMENTATION"
+  },
+  {
+    "source_testpoint_id": "SIG-MEM-003",
+    "id": "TC-MEM-003",
+    "title": "memory litmus",
+    "phase": "P2_REFERENCE_PROGRAM",
+    "prerequisites": [
+      "固定PTX9.4清单及SM-ARCH-S0来源hash通过preflight；独立形式/资源审计器与本阶段harness已实现。",
+      "由manifest绑定精确target、capability及合法form allowlist；未解析的target/形式保持UNRESOLVED并阻止对应正向分支，不推定数字更大的target继承能力。",
+      "独立语义/内存/事件模型及其允许结果集合已锁定；生成器shadow不能作为唯一oracle。"
+    ],
+    "config_profile": "TP-REF-BASE",
+    "parameters": {
+      "target_binding": "MANIFEST_EXACT_TARGET_AND_FORM_ALLOWLIST_REQUIRED",
+      "unresolved_capability_policy": "BLOCK_POSITIVE_BRANCH_AND_REPORT_UNRESOLVED",
+      "threads": 2,
+      "atomic_object": "shared::cta u32 x=0",
+      "atomic_exchange_values": [
+        1,
+        2
+      ],
+      "allowed_atomic_outcomes": [
+        {
+          "old_t0": 0,
+          "old_t1": 1,
+          "final_x": 2
+        },
+        {
+          "old_t0": 2,
+          "old_t1": 0,
+          "final_x": 1
+        }
+      ],
+      "litmus_modes": [
+        "明确HB的singleton子集",
+        "并发atomic合法线性化",
+        "catalogue声明的弱内存litmus"
+      ],
+      "scope_proxy": "从具体合法recipe绑定，不将warp当memory scope"
+    },
+    "initial_state": [
+      "x及通信data/flag初始化为0，通信变量/原子对象分区且带初始化版本。",
+      "允许集合由独立内存/线性化模型产生；不从host任意调度产生唯一gold。"
+    ],
+    "steps": [
+      "构建具有显式HB的确定通信子集，独立证明允许集合为单例后才启用逐值比对。",
+      "构建两thread atomic.exch的并发程序，枚举两种合法线性化并记录返回值和最终值。",
+      "加入源catalogue的weak-memory litmus，探索模型允许顺序，只拒绝禁止结果。",
+      "对每个调度完成相应访问与同步，收集结果/返回值后关闭对象引用并退出。"
+    ],
+    "checkpoints": [
+      "race-free与singleton分类独立；atomic返回值/最终值满足同一可验证线性化。",
+      "模型探索不将所有弱内存行为强制成一个顺序解释器结果。"
+    ],
+    "pass_criteria": [
+      "singleton子集严格匹配；atomic示例只接受给定两组一致结果。",
+      "其他litmus按其明确模型allowed set/关系检查，未解析语义阻止关闭。"
+    ],
+    "fail_criteria": [
+      "仅因程序race-free就拒绝另一合法原子顺序，或接受无法统一线性化的返回/最终值。",
+      "模型没有执行任何可达结果却报告allowed-outcome检查通过。"
+    ],
+    "expected_artifacts": [
+      "manifest.json：锁定2026-11-09测试计划、源hash、seed/子流、profile、实际target/capability及服务配置。",
+      "program.ir与data_objects.json：保留指令身份、CFG、typed对象、初始化及cleanup。",
+      "resource_audit.json与event_obligations.json：独立账本/HB/phase/单位审计。",
+      "case_result.json与coverage_delta.json：区分生成/审计/接收/完成/检查，本阶段真实执行量及NOT_RUN/BLOCKED原因。",
+      "memory_allowed_outcomes.json与linearization_witness.json：保存模型、具体观察和关系见证。"
+    ],
+    "coverage_ids": [
+      "CV-MEM-001"
+    ],
+    "suites": [
+      "SMOKE",
+      "DIRECTED",
+      "RANDOM",
+      "REPLAY"
+    ],
+    "fixed_seed": null,
+    "timeout_policy": "REFERENCE_BOUNDED",
+    "current_status": "NOT_RUN",
+    "current_gate": "BLOCKED_MISSING_IMPLEMENTATION"
+  },
+  {
+    "source_testpoint_id": "SIG-MEM-004",
+    "id": "TC-MEM-004",
+    "title": "合并与返回",
+    "phase": "P3_SM_RTL",
+    "prerequisites": [
+      "固定PTX9.4清单及SM-ARCH-S0来源hash通过preflight；独立形式/资源审计器与本阶段harness已实现。",
+      "由manifest绑定精确target、capability及合法form allowlist；未解析的target/形式保持UNRESOLVED并阻止对应正向分支，不推定数字更大的target继承能力。",
+      "SM、对应adapter和monitor真实可用；全部事务的owner/epoch/返回身份及服务公平合同已配置。"
+    ],
+    "config_profile": "TP-SM-BASE",
+    "parameters": {
+      "target_binding": "MANIFEST_EXACT_TARGET_AND_FORM_ALLOWLIST_REQUIRED",
+      "unresolved_capability_policy": "BLOCK_POSITIVE_BRANCH_AND_REPORT_UNRESOLVED",
+      "threads": 32,
+      "initialized_data_bytes": 8192,
+      "element_bytes": [
+        1,
+        2,
+        4,
+        8
+      ],
+      "address_patterns": [
+        "同地址广播候选",
+        "连续lane",
+        "128B stride",
+        "不同对象合法别名"
+      ],
+      "logical_response_fragments": [
+        1,
+        2,
+        4
+      ],
+      "delivery_orders": [
+        "顺序",
+        "逆序",
+        "合法随机"
+      ],
+      "mmio_fixture_accesses": 4
+    },
+    "initial_state": [
+      "data按lane/offset生成唯一可核对pattern；MMIO fixture与普通内存分离。",
+      "预留整目的寄存器及片段归属，SoC合法返回/重放身份已注册。"
+    ],
+    "steps": [
+      "生成不同lane地址分布与宽度，先审计空间、范围及每lane副作用。",
+      "实际驱动SM，服务模型按合法顺序/逆序/随机返回片段，穿插4次已定义MMIO访问。",
+      "首片返回时检查整目的仍未ready；全部片段ack后才允许后继消费者。",
+      "等待全部ordinary访问/副作用关闭，核对canary、MMIO计数并drain。"
+    ],
+    "checkpoints": [
+      "每lane/byte返回对应原指令/owner，合并/replay不能丢失或重复副作用。",
+      "MMIO访问次数与顺序仅依据fixture的对应form合同检查。"
+    ],
+    "pass_criteria": [
+      "结果、mask及源/目的身份正确；所有完成均恰一次且整值ready时点正确。",
+      "实际checked trace和零泄漏账本存在，不以接口输出文本计执行。"
+    ],
+    "fail_criteria": [
+      "首fragment即整体ready、tag错配，或普通coalescing策略合并了不允许的MMIO访问。",
+      "外部未按服务合同返回时仍无分类地归咎DUT或报告pass。"
+    ],
+    "expected_artifacts": [
+      "manifest.json：锁定2026-11-09测试计划、源hash、seed/子流、profile、实际target/capability及服务配置。",
+      "program.ir与data_objects.json：保留指令身份、CFG、typed对象、初始化及cleanup。",
+      "resource_audit.json与event_obligations.json：独立账本/HB/phase/单位审计。",
+      "case_result.json与coverage_delta.json：区分生成/审计/接收/完成/检查，本阶段真实执行量及NOT_RUN/BLOCKED原因。",
+      "sm_admit_return_trace.jsonl、lane_byte_scoreboard.json、mmio_observations.json。"
+    ],
+    "coverage_ids": [
+      "CV-MEM-003"
+    ],
+    "suites": [
+      "DIRECTED",
+      "RANDOM",
+      "STRESS",
+      "REPLAY"
+    ],
+    "fixed_seed": null,
+    "timeout_policy": "SM_PROGRESS",
+    "current_status": "NOT_RUN",
+    "current_gate": "BLOCKED_MISSING_IMPLEMENTATION"
+  },
+  {
+    "source_testpoint_id": "SIG-SMEM-001",
+    "id": "TC-SMEM-001",
+    "title": "多CTA与联合预算",
+    "phase": "P1_GENERATOR_UNIT",
+    "prerequisites": [
+      "固定PTX9.4清单及SM-ARCH-S0来源hash通过preflight；独立形式/资源审计器与本阶段harness已实现。",
+      "由manifest绑定精确target、capability及合法form allowlist；未解析的target/形式保持UNRESOLVED并阻止对应正向分支，不推定数字更大的target继承能力。"
+    ],
+    "config_profile": "TP-GEN-BASE",
+    "parameters": {
+      "target_binding": "MANIFEST_EXACT_TARGET_AND_FORM_ALLOWLIST_REQUIRED",
+      "unresolved_capability_policy": "BLOCK_POSITIVE_BRANCH_AND_REPORT_UNRESOLVED",
+      "smem_pool_bytes": 262144,
+      "cta_slots_limit": 8,
+      "warp_slots_limit": 64,
+      "launch_scenarios": [
+        {
+          "ctas": 4,
+          "visible_bytes_each": 65536,
+          "reserved_bytes_each": 0
+        },
+        {
+          "ctas": 5,
+          "visible_bytes_each": 65536,
+          "reserved_bytes_each": 0
+        },
+        {
+          "ctas": 8,
+          "visible_bytes_each": 31744,
+          "reserved_bytes_each": 1024
+        }
+      ],
+      "warps_each_cta": 4,
+      "RF_budget": "R_SM及编译分配取整后联合检查",
+      "same_local_offset": 0
+    },
+    "initial_state": [
+      "用S0资源表建立空pool；单CTA target/ABI上限若小于候选请求，先标该正向变体unresolved/disabled。",
+      "visible与allocation/reserved区间分账，8个owner generation不同。"
+    ],
+    "steps": [
+      "依次实例化4×64KiB恰好满、5×64KiB超预算和8×(31KiB+1KiBreserved)场景。",
+      "独立计算warp、RF、SMEM真实reservation与target单CTA限制，未全部获得前不发布launch。",
+      "在获准owner的offset0写不同值，检查逻辑对象隔离及程序不能访问reserved。",
+      "模拟所有已接受CTA正常结束并关闭引用，再回收区间/递增generation。"
+    ],
+    "checkpoints": [
+      "有CTA slot不等于通过shared/RF预算；拒绝或等待不能留下半admit owner。",
+      "同offset不同owner不别名；reserved不与已声明barrier重复计算。"
+    ],
+    "pass_criteria": [
+      "每个场景的联合预算与独立interval模型一致，超预算CTA未运行。",
+      "所有已接受owner最终只回收一次，未偷用任意target单CTA可见容量。"
+    ],
+    "fail_criteria": [
+      "8槽被当成8份256KiB，或pool有空间就无视target单CTA上限。",
+      "失败launch泄漏RF/shared reservation，或用户数据写入reserved。"
+    ],
+    "expected_artifacts": [
+      "manifest.json：锁定2026-11-09测试计划、源hash、seed/子流、profile、实际target/capability及服务配置。",
+      "program.ir与data_objects.json：保留指令身份、CFG、typed对象、初始化及cleanup。",
+      "resource_audit.json与event_obligations.json：独立账本/HB/phase/单位审计。",
+      "case_result.json与coverage_delta.json：区分生成/审计/接收/完成/检查，本阶段真实执行量及NOT_RUN/BLOCKED原因。"
+    ],
+    "coverage_ids": [
+      "CV-SMEM-001"
+    ],
+    "suites": [
+      "SMOKE",
+      "DIRECTED",
+      "NEGATIVE",
+      "REPLAY"
+    ],
+    "fixed_seed": null,
+    "timeout_policy": "GEN_BOUNDED",
+    "current_status": "NOT_RUN",
+    "current_gate": "BLOCKED_MISSING_IMPLEMENTATION"
+  },
+  {
+    "source_testpoint_id": "SIG-SMEM-002",
+    "id": "TC-SMEM-002",
+    "title": "RMW与原子能力",
+    "phase": "P1_GENERATOR_UNIT",
+    "prerequisites": [
+      "固定PTX9.4清单及SM-ARCH-S0来源hash通过preflight；独立形式/资源审计器与本阶段harness已实现。",
+      "由manifest绑定精确target、capability及合法form allowlist；未解析的target/形式保持UNRESOLVED并阻止对应正向分支，不推定数字更大的target继承能力。"
+    ],
+    "config_profile": "TP-GEN-BASE",
+    "parameters": {
+      "target_binding": "MANIFEST_EXACT_TARGET_AND_FORM_ALLOWLIST_REQUIRED",
+      "unresolved_capability_policy": "BLOCK_POSITIVE_BRANCH_AND_REPORT_UNRESOLVED",
+      "shared_bytes": 256,
+      "word_bytes": 4,
+      "initial_word_hex": "11223344",
+      "byte_offsets": [
+        0,
+        1,
+        2,
+        3
+      ],
+      "write_masks": [
+        "单byte",
+        "两个互不重叠byte"
+      ],
+      "atomic_variants": [
+        "合法S32 scalar",
+        "合法packed FP逐元素"
+      ],
+      "b128_shared_capability": false,
+      "negative_b128_request": "只供preflight拒绝，不用四store替代"
+    },
+    "initial_state": [
+      "共享words和guard初始化；合法atomic对象按实际宽度对齐且不与ordinary并发访问混用。",
+      "packed元素初值为可精确表示的小整数，独立模型按每scalar element提供原子性。"
+    ],
+    "steps": [
+      "构建byte/half masked write意图并独立计算little-endian merge，不假设宏有免费byte端口。",
+      "构建scalar与packed atomic合法程序，保留各元素/返回义务及必要HB。",
+      "从合法候选变异为关闭的b128 shared CAS，检查capability拒绝且不发出非原子降级序列。",
+      "对合法程序完成写回/同步和对象回收，独立审计所有RMW责任。"
+    ],
+    "checkpoints": [
+      "原子宽度及packed逐元素粒度不被扩大或缩窄。",
+      "b128关闭分支在指定层拒绝，byte mask期望不受地址合并影响。"
+    ],
+    "pass_criteria": [
+      "合法正例的mask、数值与义务完整；负例准确报告缺失capability。",
+      "无用普通四store模拟b128整体原子的假支持。"
+    ],
+    "fail_criteria": [
+      "RMW丢写、packed被强制whole-vector原子，或b128 silently lower为无互斥store。",
+      "缺少合法form来源仍接受任意atomic op/type。"
+    ],
+    "expected_artifacts": [
+      "manifest.json：锁定2026-11-09测试计划、源hash、seed/子流、profile、实际target/capability及服务配置。",
+      "program.ir与data_objects.json：保留指令身份、CFG、typed对象、初始化及cleanup。",
+      "resource_audit.json与event_obligations.json：独立账本/HB/phase/单位审计。",
+      "case_result.json与coverage_delta.json：区分生成/审计/接收/完成/检查，本阶段真实执行量及NOT_RUN/BLOCKED原因。"
+    ],
+    "coverage_ids": [
+      "CV-SMEM-002"
+    ],
+    "suites": [
+      "DIRECTED",
+      "NEGATIVE",
+      "REPLAY"
+    ],
+    "fixed_seed": null,
+    "timeout_policy": "GEN_BOUNDED",
+    "current_status": "NOT_RUN",
+    "current_gate": "BLOCKED_MISSING_IMPLEMENTATION"
+  },
+  {
+    "source_testpoint_id": "SIG-SMEM-003",
+    "id": "TC-SMEM-003",
+    "title": "可见性与collector版本",
+    "phase": "P2_REFERENCE_PROGRAM",
+    "prerequisites": [
+      "固定PTX9.4清单及SM-ARCH-S0来源hash通过preflight；独立形式/资源审计器与本阶段harness已实现。",
+      "由manifest绑定精确target、capability及合法form allowlist；未解析的target/形式保持UNRESOLVED并阻止对应正向分支，不推定数字更大的target继承能力。",
+      "独立语义/内存/事件模型及其允许结果集合已锁定；生成器shadow不能作为唯一oracle。"
+    ],
+    "config_profile": "TP-REF-BASE",
+    "parameters": {
+      "target_binding": "MANIFEST_EXACT_TARGET_AND_FORM_ALLOWLIST_REQUIRED",
+      "unresolved_capability_policy": "BLOCK_POSITIVE_BRANCH_AND_REPORT_UNRESOLVED",
+      "ctas": 1,
+      "warps": 4,
+      "A_view": "F16 M128xK16",
+      "B_view": "F16 K16xN64",
+      "A_versions": [
+        "v0=1",
+        "v1=2"
+      ],
+      "B_value": 1,
+      "C_value": 0,
+      "event_orders": [
+        "bankcommit→enqueue→apply→publish",
+        "apply延后且旧snapshot继续使用"
+      ],
+      "collector_policy": "future lookup失效确认与active immutable snapshot独立"
+    },
+    "initial_state": [
+      "A/B/C均初始化，建立v0源版本和命令私有A snapshot；仅使用已解析合法f16 recipe。",
+      "proxy/线程交接由模型的canonical recipe表示，尚未把enqueue当实际失效。"
+    ],
+    "steps": [
+      "建立v0矩阵操作及对应源引用，记录snapshot不变量。",
+      "在合法A-read/线程交接后改写原A到v1，保留B和full/D责任。",
+      "分别探索失效入队、实际apply与proxy publish的允许间隔，未来命令只在发布后读取v1。",
+      "比较旧命令v0与新命令v1的结果关系，关闭两命令/full与源引用后回收对象。"
+    ],
+    "checkpoints": [
+      "失效enqueue不能产生future-visible ack；publish只覆盖captured cutoff。",
+      "活动snapshot不因原A写入被覆盖，B的可能重读责任未被A-read释放。"
+    ],
+    "pass_criteria": [
+      "旧命令使用v0、新命令在合法发布后使用v1，HB与版本模型一致。",
+      "参考事件所有允许顺序均无提前复用或遗留引用。"
+    ],
+    "fail_criteria": [
+      "future reuse仍命中v0，或原A更新销毁active snapshot。",
+      "以A-read释放整个SMEM slice/B/D/full token。"
+    ],
+    "expected_artifacts": [
+      "manifest.json：锁定2026-11-09测试计划、源hash、seed/子流、profile、实际target/capability及服务配置。",
+      "program.ir与data_objects.json：保留指令身份、CFG、typed对象、初始化及cleanup。",
+      "resource_audit.json与event_obligations.json：独立账本/HB/phase/单位审计。",
+      "case_result.json与coverage_delta.json：区分生成/审计/接收/完成/检查，本阶段真实执行量及NOT_RUN/BLOCKED原因。",
+      "reference_visibility_trace.jsonl、collector_version_witness.json。"
+    ],
+    "coverage_ids": [
+      "CV-SMEM-001"
+    ],
+    "suites": [
+      "DIRECTED",
+      "RANDOM",
+      "REPLAY"
+    ],
+    "fixed_seed": null,
+    "timeout_policy": "REFERENCE_BOUNDED",
+    "current_status": "NOT_RUN",
+    "current_gate": "BLOCKED_MISSING_IMPLEMENTATION"
+  },
+  {
+    "source_testpoint_id": "SIG-SMEM-004",
+    "id": "TC-SMEM-004",
+    "title": "共享竞争及scrub",
+    "phase": "P3_SM_RTL",
+    "prerequisites": [
+      "固定PTX9.4清单及SM-ARCH-S0来源hash通过preflight；独立形式/资源审计器与本阶段harness已实现。",
+      "由manifest绑定精确target、capability及合法form allowlist；未解析的target/形式保持UNRESOLVED并阻止对应正向分支，不推定数字更大的target继承能力。",
+      "SM、对应adapter和monitor真实可用；全部事务的owner/epoch/返回身份及服务公平合同已配置。"
+    ],
+    "config_profile": "TP-SM-STRESS",
+    "parameters": {
+      "target_binding": "MANIFEST_EXACT_TARGET_AND_FORM_ALLOWLIST_REQUIRED",
+      "unresolved_capability_policy": "BLOCK_POSITIVE_BRANCH_AND_REPORT_UNRESOLVED",
+      "clients": [
+        "LSU",
+        "TMA",
+        "Tensor",
+        "peer",
+        "barrier"
+      ],
+      "shared_object_bytes": 4096,
+      "bank_profile": "显式选择v1.1项目64x32bit1R1W配置，或绑定实际实现配置",
+      "hotspot_word_offsets": [
+        0,
+        256
+      ],
+      "ecc_modes": [
+        "OFF",
+        "ON_IF_IMPLEMENTED"
+      ],
+      "scrub_sequence": [
+        "旧read纠正责任",
+        "new store",
+        "迟到scrub入队",
+        "锁内重读当前word"
+      ]
+    },
+    "initial_state": [
+      "多owner buffer/canary和barrier对象合法初始化；所有client带正确generation。",
+      "ECC可选分支要求真实模型/实现存在，否则该分支blocked；服务公平和有限回压schedule固定。"
+    ],
+    "steps": [
+      "对共享热点与分散地址混合施加5类client压力，不给每client额外免费峰值。",
+      "制造旧corrected-read后新store，再让旧scrub ticket迟到入队，验证锁内重读。",
+      "压满本类response预算并保留control完成进度；允许已有返回与barrier RMW继续。",
+      "停止新增压力、解除有限回压，drain所有owner/client/RMW/scrub/visibility责任后回收。"
+    ],
+    "checkpoints": [
+      "scrub没有写回旧cached corrected值，owner byte range与RMW原子宽度正确。",
+      "response/visibility控制责任不依赖消费者先执行，公平假设实际兑现。"
+    ],
+    "pass_criteria": [
+      "当前word保持新store数据或其当前ECC纠正结果，无旧值覆盖或跨owner别名。",
+      "在服务合同满足下控制/返回前进并最终drain，所有ack恰一次。"
+    ],
+    "fail_criteria": [
+      "old scrub覆盖新值、RMW撕裂或client占光控制保留进度形成环等。",
+      "将ECC未实现/服务永久stall当作已运行通过。"
+    ],
+    "expected_artifacts": [
+      "manifest.json：锁定2026-11-09测试计划、源hash、seed/子流、profile、实际target/capability及服务配置。",
+      "program.ir与data_objects.json：保留指令身份、CFG、typed对象、初始化及cleanup。",
+      "resource_audit.json与event_obligations.json：独立账本/HB/phase/单位审计。",
+      "case_result.json与coverage_delta.json：区分生成/审计/接收/完成/检查，本阶段真实执行量及NOT_RUN/BLOCKED原因。",
+      "owner_rmw_visibility_trace.jsonl、scrub_race_witness.json、wait_for_graph.json。"
+    ],
+    "coverage_ids": [
+      "CV-SMEM-003"
+    ],
+    "suites": [
+      "DIRECTED",
+      "STRESS",
+      "REPLAY"
+    ],
+    "fixed_seed": null,
+    "timeout_policy": "SM_PROGRESS",
+    "current_status": "NOT_RUN",
+    "current_gate": "BLOCKED_MISSING_IMPLEMENTATION"
+  },
+  {
+    "source_testpoint_id": "SIG-SYNC-001",
+    "id": "TC-SYNC-001",
+    "title": "mbarrier生命周期",
+    "phase": "P1_GENERATOR_UNIT",
+    "prerequisites": [
+      "固定PTX9.4清单及SM-ARCH-S0来源hash通过preflight；独立形式/资源审计器与本阶段harness已实现。",
+      "由manifest绑定精确target、capability及合法form allowlist；未解析的target/形式保持UNRESOLVED并阻止对应正向分支，不推定数字更大的target继承能力。"
+    ],
+    "config_profile": "TP-GEN-BASE",
+    "parameters": {
+      "target_binding": "MANIFEST_EXACT_TARGET_AND_FORM_ALLOWLIST_REQUIRED",
+      "unresolved_capability_policy": "BLOCK_POSITIVE_BRANCH_AND_REPORT_UNRESOLVED",
+      "barrier_alignment_bytes": 8,
+      "layouts": [
+        "v0",
+        "v1"
+      ],
+      "arrival_counts_v0": [
+        1,
+        2,
+        1048575
+      ],
+      "arrival_counts_v1": [
+        1,
+        2,
+        510,
+        511
+      ],
+      "invalid_arrival_v1": [
+        512
+      ],
+      "tx_boundary_model_values": [
+        -1048575,
+        0,
+        1048575
+      ],
+      "counter_boundary_mode": "大计数用符号计数单元模型，不伪造百万驻留threads",
+      "phase_count": 3
+    },
+    "initial_state": [
+      "barrier独占shared对象处于未init；每变体拥有独立owner/phase ID。",
+      "target/layout/操作合法性已解析，typed tx units按recipe绑定。"
+    ],
+    "steps": [
+      "生成各layout合法init/use序列，明确arrival与expect/complete数目及单位。",
+      "采用原子arrive.expect_tx或先expect并保留arrival后arrive，探索complete早/晚到。",
+      "执行wait/phase观察与合法arrive_drop变体，再按复用规则inval；大边界使用有界符号计数。",
+      "对v1=512或active对象普通写/重复init作单因素静态负例，不送正常执行。"
+    ],
+    "checkpoints": [
+      "独立计数器保留signed tx并检查layout上限，不按thread槽限制符号计数模型。",
+      "active对象生命周期、phase与inval前引用准确；无提前phase推进。"
+    ],
+    "pass_criteria": [
+      "所有合法模板按正确phase闭合；负例命中指定layout/lifetime规则。",
+      "0执行、无规则或符号模型不覆盖的分支不算通过。"
+    ],
+    "fail_criteria": [
+      "v1允许512、tx units混淆、active barrier被普通store重置。",
+      "先最后arrival再expect导致phase提前结束，或以parity单bit替代逻辑phase。"
+    ],
+    "expected_artifacts": [
+      "manifest.json：锁定2026-11-09测试计划、源hash、seed/子流、profile、实际target/capability及服务配置。",
+      "program.ir与data_objects.json：保留指令身份、CFG、typed对象、初始化及cleanup。",
+      "resource_audit.json与event_obligations.json：独立账本/HB/phase/单位审计。",
+      "case_result.json与coverage_delta.json：区分生成/审计/接收/完成/检查，本阶段真实执行量及NOT_RUN/BLOCKED原因。"
+    ],
+    "coverage_ids": [
+      "CV-SYNC-001"
+    ],
+    "suites": [
+      "SMOKE",
+      "DIRECTED",
+      "NEGATIVE",
+      "REPLAY"
+    ],
+    "fixed_seed": null,
+    "timeout_policy": "GEN_BOUNDED",
+    "current_status": "NOT_RUN",
+    "current_gate": "BLOCKED_MISSING_IMPLEMENTATION"
+  },
+  {
+    "source_testpoint_id": "SIG-SYNC-002",
+    "id": "TC-SYNC-002",
+    "title": "phase与报告",
+    "phase": "P1_GENERATOR_UNIT",
+    "prerequisites": [
+      "固定PTX9.4清单及SM-ARCH-S0来源hash通过preflight；独立形式/资源审计器与本阶段harness已实现。",
+      "由manifest绑定精确target、capability及合法form allowlist；未解析的target/形式保持UNRESOLVED并阻止对应正向分支，不推定数字更大的target继承能力。"
+    ],
+    "config_profile": "TP-GEN-BASE",
+    "parameters": {
+      "target_binding": "MANIFEST_EXACT_TARGET_AND_FORM_ALLOWLIST_REQUIRED",
+      "unresolved_capability_policy": "BLOCK_POSITIVE_BRANCH_AND_REPORT_UNRESOLVED",
+      "layout": "v1",
+      "phase_count": 4,
+      "logical_phase_ids": [
+        0,
+        1,
+        2,
+        3
+      ],
+      "observations": [
+        "primary真conditional假",
+        "try_wait false",
+        "成功项不清旧错误"
+      ],
+      "report_value": "opaque b8，只按已定义predicate/允许报告关系检查"
+    },
+    "initial_state": [
+      "每个phase有已初始化对象与独立逻辑ID；错误报告由合法producer模型产生。",
+      "保留pending arrival/expect登记以防phase过早结束，不要求conditional在失败时最终成功。"
+    ],
+    "steps": [
+      "构造一个合法报告失败phase，使primary终点到达而conditional条件不成立。",
+      "插入允许的try_wait false观察，不把此时report读作有效值。",
+      "交错成功/失败producer，再按合法观察及生命周期推进后续phase并覆盖parity复用。",
+      "在定义的错误处理路径关闭primary/报告及资源责任，必要复用先inval，禁止无限等失败conditional。"
+    ],
+    "checkpoints": [
+      "primary/conditional分别检查，逻辑phase而非仅parity决定本次观察归属。",
+      "成功事件不擦除本phase已有报告，false不释放payload消费权。"
+    ],
+    "pass_criteria": [
+      "报告/phase/false语义与独立模型一致，失败conditional不会制造无解除条件cleanup。",
+      "四phase的合法复用和等待身份可重放。"
+    ],
+    "fail_criteria": [
+      "把primary成功等同conditional成功，或比较false时未定义report。",
+      "旧phase等待误认新phase，或错误cleanup一直等不可能的conditional。"
+    ],
+    "expected_artifacts": [
+      "manifest.json：锁定2026-11-09测试计划、源hash、seed/子流、profile、实际target/capability及服务配置。",
+      "program.ir与data_objects.json：保留指令身份、CFG、typed对象、初始化及cleanup。",
+      "resource_audit.json与event_obligations.json：独立账本/HB/phase/单位审计。",
+      "case_result.json与coverage_delta.json：区分生成/审计/接收/完成/检查，本阶段真实执行量及NOT_RUN/BLOCKED原因。"
+    ],
+    "coverage_ids": [
+      "CV-SYNC-002"
+    ],
+    "suites": [
+      "DIRECTED",
+      "NEGATIVE",
+      "REPLAY"
+    ],
+    "fixed_seed": null,
+    "timeout_policy": "GEN_BOUNDED",
+    "current_status": "NOT_RUN",
+    "current_gate": "BLOCKED_MISSING_IMPLEMENTATION"
+  },
+  {
+    "source_testpoint_id": "SIG-SYNC-003",
+    "id": "TC-SYNC-003",
+    "title": "fence与HB模板",
+    "phase": "P2_REFERENCE_PROGRAM",
+    "prerequisites": [
+      "固定PTX9.4清单及SM-ARCH-S0来源hash通过preflight；独立形式/资源审计器与本阶段harness已实现。",
+      "由manifest绑定精确target、capability及合法form allowlist；未解析的target/形式保持UNRESOLVED并阻止对应正向分支，不推定数字更大的target继承能力。",
+      "独立语义/内存/事件模型及其允许结果集合已锁定；生成器shadow不能作为唯一oracle。"
+    ],
+    "config_profile": "TP-REF-BASE",
+    "parameters": {
+      "target_binding": "MANIFEST_EXACT_TARGET_AND_FORM_ALLOWLIST_REQUIRED",
+      "unresolved_capability_policy": "BLOCK_POSITIVE_BRANCH_AND_REPORT_UNRESOLVED",
+      "recipes": [
+        "generic→async共享发布",
+        "tensor-map update→发布→TMA",
+        "fabric与本地generic交接"
+      ],
+      "producer_consumer_threads": 2,
+      "payload_bytes": 256,
+      "scope_variants": [
+        "具体recipe允许的cta",
+        "启用时cluster/gpu/sys"
+      ],
+      "negative_mutations": [
+        "删除必要proxy fence",
+        "反转方向",
+        "替换为无关thread barrier"
+      ]
+    },
+    "initial_state": [
+      "payload、控制flag、descriptor/tensor-map对象按各自空间初始化且互不混用。",
+      "独立内存/proxy模型包含所用recipe与target条件。"
+    ],
+    "steps": [
+      "逐recipe生成producer写入、正确线程/proxy发布与consumer访问，保持scope/方向和cutoff。",
+      "探索后发写不延长先前fence cutoff的允许顺序。",
+      "从合法程序单因素删除/反转必要边，验证resource/HB审计拒绝。",
+      "在参考模型完成所有责任并drain后比较可见性关系，不以全局清队列实现fence。"
+    ],
+    "checkpoints": [
+      "consumer访问被正确HB/可见性边支配，不以barrier或queue接收代替。",
+      "scope只决定同步范围，不扩大shared owner访问权。"
+    ],
+    "pass_criteria": [
+      "合法参考程序只产生允许结果，mutant准确命中缺失方向/HB规则。",
+      "无无关family完成被当作该proxy发布。"
+    ],
+    "fail_criteria": [
+      "普通fence被视作所有proxy万能发布，或系统scope越权访问shared。",
+      "oracle未经模型证明就将弱内存关系强制唯一顺序结果。"
+    ],
+    "expected_artifacts": [
+      "manifest.json：锁定2026-11-09测试计划、源hash、seed/子流、profile、实际target/capability及服务配置。",
+      "program.ir与data_objects.json：保留指令身份、CFG、typed对象、初始化及cleanup。",
+      "resource_audit.json与event_obligations.json：独立账本/HB/phase/单位审计。",
+      "case_result.json与coverage_delta.json：区分生成/审计/接收/完成/检查，本阶段真实执行量及NOT_RUN/BLOCKED原因。",
+      "proxy_hb_graph.json、cutoff_and_visibility_witness.json。"
+    ],
+    "coverage_ids": [
+      "CV-SYNC-001"
+    ],
+    "suites": [
+      "DIRECTED",
+      "NEGATIVE",
+      "RANDOM",
+      "REPLAY"
+    ],
+    "fixed_seed": null,
+    "timeout_policy": "REFERENCE_BOUNDED",
+    "current_status": "NOT_RUN",
+    "current_gate": "BLOCKED_MISSING_IMPLEMENTATION"
+  },
+  {
+    "source_testpoint_id": "SIG-SYNC-004",
+    "id": "TC-SYNC-004",
+    "title": "对象更新与等待",
+    "phase": "P3_SM_RTL",
+    "prerequisites": [
+      "固定PTX9.4清单及SM-ARCH-S0来源hash通过preflight；独立形式/资源审计器与本阶段harness已实现。",
+      "由manifest绑定精确target、capability及合法form allowlist；未解析的target/形式保持UNRESOLVED并阻止对应正向分支，不推定数字更大的target继承能力。",
+      "SM、对应adapter和monitor真实可用；全部事务的owner/epoch/返回身份及服务公平合同已配置。"
+    ],
+    "config_profile": "TP-SM-BASE",
+    "parameters": {
+      "target_binding": "MANIFEST_EXACT_TARGET_AND_FORM_ALLOWLIST_REQUIRED",
+      "unresolved_capability_policy": "BLOCK_POSITIVE_BRANCH_AND_REPORT_UNRESOLVED",
+      "barrier_alignment_bytes": 8,
+      "expected_arrivals": 1,
+      "event_schedule": [
+        "event入队",
+        "延后对象RMW",
+        "对象commit",
+        "ack",
+        "True acquire观察"
+      ],
+      "try_wait_probes": [
+        "对象commit前",
+        "对象commit后"
+      ]
+    },
+    "initial_state": [
+      "初始化barrier及关联payload；命令/事件引用持有稳定owner/phase metadata。",
+      "服务允许有限延迟RMW并保证最终前进，不规定固定周期。"
+    ],
+    "steps": [
+      "发起可产生真实完成事件的已启用操作，先使event可接收而对象RMW尚未提交。",
+      "在对象更新前观察wait与消费者门禁，不能因event enqueue即可消费。",
+      "让barrier agent真正原子更新SMEM对象并ack，消费者完成正确True acquire观察。",
+      "核对payload消费/phase并drain所有事件、对象引用和寄存器返回。"
+    ],
+    "checkpoints": [
+      "事件接收、对象commit、ack、成功观察四事件按合同区分。",
+      "metadata在ack前稳定，重试不会重复arrive或complete。"
+    ],
+    "pass_criteria": [
+      "对象更新前无提前消费，更新和正确观察后数据可用。",
+      "exactly-once更新/返回且退出无悬空owner引用。"
+    ],
+    "fail_criteria": [
+      "FIFO接收触发假完成，或True/false判断读错owner/phase。",
+      "元数据提前复用、重复计数或未兑现公平导致无法分类的hang。"
+    ],
+    "expected_artifacts": [
+      "manifest.json：锁定2026-11-09测试计划、源hash、seed/子流、profile、实际target/capability及服务配置。",
+      "program.ir与data_objects.json：保留指令身份、CFG、typed对象、初始化及cleanup。",
+      "resource_audit.json与event_obligations.json：独立账本/HB/phase/单位审计。",
+      "case_result.json与coverage_delta.json：区分生成/审计/接收/完成/检查，本阶段真实执行量及NOT_RUN/BLOCKED原因。",
+      "barrier_object_commit_trace.jsonl、wait_observation_scoreboard.json。"
+    ],
+    "coverage_ids": [
+      "CV-SYNC-003"
+    ],
+    "suites": [
+      "DIRECTED",
+      "STRESS",
+      "REPLAY"
+    ],
+    "fixed_seed": null,
+    "timeout_policy": "SM_PROGRESS",
+    "current_status": "NOT_RUN",
+    "current_gate": "BLOCKED_MISSING_IMPLEMENTATION"
+  },
+  {
+    "source_testpoint_id": "SIG-SYNC-005",
+    "id": "TC-SYNC-005",
+    "title": "remote规则与release进度",
+    "phase": "P4_SOC",
+    "prerequisites": [
+      "固定PTX9.4清单及SM-ARCH-S0来源hash通过preflight；独立形式/资源审计器与本阶段harness已实现。",
+      "由manifest绑定精确target、capability及合法form allowlist；未解析的target/形式保持UNRESOLVED并阻止对应正向分支，不推定数字更大的target继承能力。",
+      "跨SM/SoC运行时、对应服务及取消/返回模型可用；未实现系统能力保持blocked。"
+    ],
+    "config_profile": "TP-SOC-BASE",
+    "parameters": {
+      "target_binding": "MANIFEST_EXACT_TARGET_AND_FORM_ALLOWLIST_REQUIRED",
+      "unresolved_capability_policy": "BLOCK_POSITIVE_BRANCH_AND_REPORT_UNRESOLVED",
+      "ctas": 2,
+      "sms": 2,
+      "barrier_owner_rank": 1,
+      "barrier_alignment_bytes": 8,
+      "allowed_remote_operations": [
+        "source表允许的arrive/drop/expect/complete"
+      ],
+      "consumer_wait_location": "rank1本地barrier",
+      "static_mutations": [
+        "remote wait",
+        "remote init",
+        "remote inval"
+      ]
+    },
+    "initial_state": [
+      "两个CTA已共同admit且目标rank1存活；barrier由本地owner按合法layout初始化。",
+      "expect/arrival/tx数目和单位按具体remote recipe预先配平。"
+    ],
+    "steps": [
+      "由rank0对rank1合法barrier更新，保持实际owner引用和目标offset。",
+      "将控制更新与大量DSM数据返回交错，保留独立控制/返回进度。",
+      "rank1只在自己的local对象正确等待；单独对remote wait/init/inval执行preflight负例。",
+      "等待全部远端更新/数据/返回，解除owner pin后按cluster退出合同回收。"
+    ],
+    "checkpoints": [
+      "remote更新经真实对象原子commit后ack，消费者未执行非法remote wait。",
+      "退出前远端引用归零，控制信用不被数据反压永久占满。"
+    ],
+    "pass_criteria": [
+      "正向remote/local协议闭合且计数正确；静态负例无进入正常DUT数值检查。",
+      "延迟更新不写回已重用owner。"
+    ],
+    "fail_criteria": [
+      "通过裸SM号/XOR构造目标，或提前回收目标barrier/shared。",
+      "将remote不支持操作当规范要求硬件trap或普通成功。"
+    ],
+    "expected_artifacts": [
+      "manifest.json：锁定2026-11-09测试计划、源hash、seed/子流、profile、实际target/capability及服务配置。",
+      "program.ir与data_objects.json：保留指令身份、CFG、typed对象、初始化及cleanup。",
+      "resource_audit.json与event_obligations.json：独立账本/HB/phase/单位审计。",
+      "case_result.json与coverage_delta.json：区分生成/审计/接收/完成/检查，本阶段真实执行量及NOT_RUN/BLOCKED原因。",
+      "soc_remote_barrier_trace.jsonl、owner_reference_ledger.json。"
+    ],
+    "coverage_ids": [
+      "CV-SYNC-003"
+    ],
+    "suites": [
+      "DIRECTED",
+      "NEGATIVE",
+      "STRESS",
+      "REPLAY"
+    ],
+    "fixed_seed": null,
+    "timeout_policy": "SOC_PROGRESS",
+    "current_status": "NOT_RUN",
+    "current_gate": "BLOCKED_MISSING_IMPLEMENTATION"
+  },
+  {
+    "source_testpoint_id": "SIG-ASYNC-001",
+    "id": "TC-ASYNC-001",
+    "title": "group与方向约束",
+    "phase": "P1_GENERATOR_UNIT",
+    "prerequisites": [
+      "固定PTX9.4清单及SM-ARCH-S0来源hash通过preflight；独立形式/资源审计器与本阶段harness已实现。",
+      "由manifest绑定精确target、capability及合法form allowlist；未解析的target/形式保持UNRESOLVED并阻止对应正向分支，不推定数字更大的target继承能力。"
+    ],
+    "config_profile": "TP-GEN-BASE",
+    "parameters": {
+      "target_binding": "MANIFEST_EXACT_TARGET_AND_FORM_ALLOWLIST_REQUIRED",
+      "unresolved_capability_policy": "BLOCK_POSITIVE_BRANCH_AND_REPORT_UNRESOLVED",
+      "families": [
+        "classic_cp_async",
+        "bulk_copy_reduce",
+        "async_store_reduce",
+        "bulk_priority",
+        "st_bulk"
+      ],
+      "classic_fragment_bytes": [
+        4,
+        8,
+        16
+      ],
+      "group_counts": [
+        0,
+        1,
+        2
+      ],
+      "st_bulk_size_bytes": [
+        8,
+        16,
+        64
+      ],
+      "st_bulk_initval": 0,
+      "object_bytes": 512,
+      "direction_binding": "逐form合法方向，不自行扩展语法"
+    },
+    "initial_state": [
+      "各source/destination对象初始化且按所选form对齐；每family建立独立issuer/group。",
+      "classic/bulk/TMA与priority能力分开，barrier/group对象按recipe声明。"
+    ],
+    "steps": [
+      "遍历合法方向和空/非空group，生成相应commit/wait或barrier完成链。",
+      "对st.bulk只生成合法shared置零尺寸/值，对priority保留bulk完成义务。",
+      "变异为跨family wait或非法方向，独立审计应拒绝而不是自动换成另一wait。",
+      "构造完整cleanup，保存每条义务的source可重用点和目的终点。"
+    ],
+    "checkpoints": [
+      "classic/bulk/WGMMA/tcgen05 group互不替代，empty group按自身规则处理。",
+      "st.bulk不被打印成global memset或任意init值。"
+    ],
+    "pass_criteria": [
+      "所有合法recipe方向、group与收尾完整；指定mutant准确拒绝。",
+      "未解析方向/能力记录blocked，不静默降级。"
+    ],
+    "fail_criteria": [
+      "统一async_done清全部family，或丢弃priority completion。",
+      "负例被修成正例后仍算原规则拒绝覆盖。"
+    ],
+    "expected_artifacts": [
+      "manifest.json：锁定2026-11-09测试计划、源hash、seed/子流、profile、实际target/capability及服务配置。",
+      "program.ir与data_objects.json：保留指令身份、CFG、typed对象、初始化及cleanup。",
+      "resource_audit.json与event_obligations.json：独立账本/HB/phase/单位审计。",
+      "case_result.json与coverage_delta.json：区分生成/审计/接收/完成/检查，本阶段真实执行量及NOT_RUN/BLOCKED原因。"
+    ],
+    "coverage_ids": [
+      "CV-ASYNC-001"
+    ],
+    "suites": [
+      "SMOKE",
+      "DIRECTED",
+      "NEGATIVE",
+      "REPLAY"
+    ],
+    "fixed_seed": null,
+    "timeout_policy": "GEN_BOUNDED",
+    "current_status": "NOT_RUN",
+    "current_gate": "BLOCKED_MISSING_IMPLEMENTATION"
+  },
+  {
+    "source_testpoint_id": "SIG-ASYNC-002",
+    "id": "TC-ASYNC-002",
+    "title": "TMA descriptor与report",
+    "phase": "P1_GENERATOR_UNIT",
+    "prerequisites": [
+      "固定PTX9.4清单及SM-ARCH-S0来源hash通过preflight；独立形式/资源审计器与本阶段harness已实现。",
+      "由manifest绑定精确target、capability及合法form allowlist；未解析的target/形式保持UNRESOLVED并阻止对应正向分支，不推定数字更大的target继承能力。"
+    ],
+    "config_profile": "TP-GEN-BASE",
+    "parameters": {
+      "target_binding": "MANIFEST_EXACT_TARGET_AND_FORM_ALLOWLIST_REQUIRED",
+      "unresolved_capability_policy": "BLOCK_POSITIVE_BRANCH_AND_REPORT_UNRESOLVED",
+      "tensor_ranks": [
+        1,
+        2,
+        3,
+        4,
+        5
+      ],
+      "2d_example_elements": [
+        32,
+        16
+      ],
+      "element_type": "F16或所选report形式允许类型",
+      "report_modes": [
+        "disabled",
+        "per16bytes_if_legal",
+        "per_element_if_legal"
+      ],
+      "oob_variants": [
+        "无OOB",
+        "一个边界元素OOB"
+      ],
+      "ignore_oob": "仅合法global→shared::cta且report disabled",
+      "multicast_destination_sets": [
+        [
+          0
+        ],
+        [
+          0,
+          1
+        ]
+      ]
+    },
+    "initial_state": [
+      "tensor-map由锁定fixture/合法构建器产生；不用driver enum直接猜PTX字段。",
+      "shared/barrier对象、owner与payload按目的分别初始化，report enabled分支用合法v1。"
+    ],
+    "steps": [
+      "生成各rank/layout/override的已证合法form，再组合report/OOB/multicast约束。",
+      "初始化能被规定采样位置检测的pattern及仅非采样位置命中的对照；不把pattern报告当通用ECC。",
+      "逐一变异layout/report/barrier/ignore_oob/mask，独立checker核对目标规则。",
+      "为合法程序生成copy、观察、consumer和对象cleanup，保存目的布局期望。"
+    ],
+    "checkpoints": [
+      "tensor map和SMEM matrix descriptor/TMEM地址类型不互换。",
+      "report-enabled/v1与ignore_oob/report-disabled组合符合具体form。"
+    ],
+    "pass_criteria": [
+      "合法fixture可独立重构布局/采样；负例命中预定tuple规则。",
+      "缺合法rank/override来源时对应分支unresolved且不关闭覆盖。"
+    ],
+    "fail_criteria": [
+      "随机填native descriptor字段、给不支持方向启用ignore_oob。",
+      "未采样pattern不报告就被当作通用数据完整性失败。"
+    ],
+    "expected_artifacts": [
+      "manifest.json：锁定2026-11-09测试计划、源hash、seed/子流、profile、实际target/capability及服务配置。",
+      "program.ir与data_objects.json：保留指令身份、CFG、typed对象、初始化及cleanup。",
+      "resource_audit.json与event_obligations.json：独立账本/HB/phase/单位审计。",
+      "case_result.json与coverage_delta.json：区分生成/审计/接收/完成/检查，本阶段真实执行量及NOT_RUN/BLOCKED原因。",
+      "tensor_map_fixture.json、layout_and_report_sampling_audit.json。"
+    ],
+    "coverage_ids": [
+      "CV-ASYNC-002"
+    ],
+    "suites": [
+      "DIRECTED",
+      "NEGATIVE",
+      "REPLAY"
+    ],
+    "fixed_seed": null,
+    "timeout_policy": "GEN_BOUNDED",
+    "current_status": "NOT_RUN",
+    "current_gate": "BLOCKED_MISSING_IMPLEMENTATION"
+  },
+  {
+    "source_testpoint_id": "SIG-ASYNC-003",
+    "id": "TC-ASYNC-003",
+    "title": "partial/full边界",
+    "phase": "P2_REFERENCE_PROGRAM",
+    "prerequisites": [
+      "固定PTX9.4清单及SM-ARCH-S0来源hash通过preflight；独立形式/资源审计器与本阶段harness已实现。",
+      "由manifest绑定精确target、capability及合法form allowlist；未解析的target/形式保持UNRESOLVED并阻止对应正向分支，不推定数字更大的target继承能力。",
+      "独立语义/内存/事件模型及其允许结果集合已锁定；生成器shadow不能作为唯一oracle。"
+    ],
+    "config_profile": "TP-REF-BASE",
+    "parameters": {
+      "target_binding": "MANIFEST_EXACT_TARGET_AND_FORM_ALLOWLIST_REQUIRED",
+      "unresolved_capability_policy": "BLOCK_POSITIVE_BRANCH_AND_REPORT_UNRESOLVED",
+      "payload_bytes": 512,
+      "logical_check_partition_bytes": 128,
+      "partition_note": "仅参考checker分区，不规定native传输beat/端口",
+      "orders": [
+        "顺序",
+        "逆序",
+        "合法随机fragment",
+        "source读终点早于destination full"
+      ],
+      "operations": [
+        "合法SMEM→global bulk",
+        "带完成义务的bulk priority"
+      ]
+    },
+    "initial_state": [
+      "source有确定pattern，destination/canary初始化；bulk issuer/group与source引用独立。",
+      "对每个form建立真实语义的read-partial/full义务。"
+    ],
+    "steps": [
+      "生成含多个逻辑检查片段的bulk程序及对应commit/read-wait/full-wait。",
+      "参考模型探索允许fragment乱序，先完成source读并观察read-wait。",
+      "允许安全重用已获准source，同时禁止consumer把未full destination当可用。",
+      "推进剩余fragment/priority full，观察正确终点并关闭全部对象/tx义务。"
+    ],
+    "checkpoints": [
+      "read-only终点只释放对应source/tensor-map读取，不直接清目的责任。",
+      "每段及整条计数恰一次，不凭checker分区假设native片段数。"
+    ],
+    "pass_criteria": [
+      "所有允许顺序中目的消费都有full/visibility保护。",
+      "reference trace保存每个partial/full归属，最终无孤儿义务。"
+    ],
+    "fail_criteria": [
+      "read-wait后立即允许目的消费，或priority被当no-op而漏group完成。",
+      "同一fragment重试重复计数导致早完成。"
+    ],
+    "expected_artifacts": [
+      "manifest.json：锁定2026-11-09测试计划、源hash、seed/子流、profile、实际target/capability及服务配置。",
+      "program.ir与data_objects.json：保留指令身份、CFG、typed对象、初始化及cleanup。",
+      "resource_audit.json与event_obligations.json：独立账本/HB/phase/单位审计。",
+      "case_result.json与coverage_delta.json：区分生成/审计/接收/完成/检查，本阶段真实执行量及NOT_RUN/BLOCKED原因。",
+      "reference_bulk_partial_full_trace.jsonl、typed_completion_ledger.json。"
+    ],
+    "coverage_ids": [
+      "CV-ASYNC-001"
+    ],
+    "suites": [
+      "DIRECTED",
+      "RANDOM",
+      "REPLAY"
+    ],
+    "fixed_seed": null,
+    "timeout_policy": "REFERENCE_BOUNDED",
+    "current_status": "NOT_RUN",
+    "current_gate": "BLOCKED_MISSING_IMPLEMENTATION"
+  },
+  {
+    "source_testpoint_id": "SIG-ASYNC-004",
+    "id": "TC-ASYNC-004",
+    "title": "真实TMA竞争与报告",
+    "phase": "P3_SM_RTL",
+    "prerequisites": [
+      "固定PTX9.4清单及SM-ARCH-S0来源hash通过preflight；独立形式/资源审计器与本阶段harness已实现。",
+      "由manifest绑定精确target、capability及合法form allowlist；未解析的target/形式保持UNRESOLVED并阻止对应正向分支，不推定数字更大的target继承能力。",
+      "SM、对应adapter和monitor真实可用；全部事务的owner/epoch/返回身份及服务公平合同已配置。"
+    ],
+    "config_profile": "TP-SM-BASE",
+    "parameters": {
+      "target_binding": "MANIFEST_EXACT_TARGET_AND_FORM_ALLOWLIST_REQUIRED",
+      "unresolved_capability_policy": "BLOCK_POSITIVE_BRANCH_AND_REPORT_UNRESOLVED",
+      "tile_example_elements": [
+        32,
+        16
+      ],
+      "element_bytes": 2,
+      "im2col_fixture": {
+        "H": 8,
+        "W": 8,
+        "C": 8,
+        "window": [
+          3,
+          3
+        ]
+      },
+      "legal_pattern_positions": [
+        "规定采样element",
+        "仅未采样element",
+        "无pattern"
+      ],
+      "return_orders": [
+        "顺序",
+        "合法乱序",
+        "尾片延后"
+      ],
+      "report_modes": [
+        "disabled",
+        "enabled_if_capable"
+      ],
+      "peer_boundary": "P3使用声明的服务模型；跨SM端到端关闭留P4"
+    },
+    "initial_state": [
+      "global激活/矩阵、合法tensor map和shared目标/canary初始化。",
+      "barrier使用相容layout，expect登记与arrival保证不会提前phase结束；im2col fixture需精确target recipe。"
+    ],
+    "steps": [
+      "驱动已启用tile/im2col copy，分别注入规定pattern而非任意ECC错误。",
+      "服务模型扰动L2/SMEM返回及尾片，实际monitor跟踪所有目的对象/tx责任。",
+      "等待对应终点并比较独立布局和报告oracle，partial时不得消费目的。",
+      "完成所有目的、报告及consumer后drain source/destination/barrier引用。"
+    ],
+    "checkpoints": [
+      "最后payload尚未落地时不能先减完tx或报告整操作完成。",
+      "report按规定采样，multi-destination每owner/phase独立闭合。"
+    ],
+    "pass_criteria": [
+      "数据位置、zero/OOB规则和报告关系正确；真实event达到form规定终点。",
+      "P3模型边界明确，不把未实现跨SM服务计入P4执行覆盖。"
+    ],
+    "fail_criteria": [
+      "早complete_tx、错误swizzle/owner、将非采样数据作为必报错误。",
+      "报告或source/full终点错配，而checked trace缺实际观察。"
+    ],
+    "expected_artifacts": [
+      "manifest.json：锁定2026-11-09测试计划、源hash、seed/子流、profile、实际target/capability及服务配置。",
+      "program.ir与data_objects.json：保留指令身份、CFG、typed对象、初始化及cleanup。",
+      "resource_audit.json与event_obligations.json：独立账本/HB/phase/单位审计。",
+      "case_result.json与coverage_delta.json：区分生成/审计/接收/完成/检查，本阶段真实执行量及NOT_RUN/BLOCKED原因。",
+      "tma_smem_barrier_trace.jsonl、layout_report_scoreboard.json。"
+    ],
+    "coverage_ids": [
+      "CV-ASYNC-003"
+    ],
+    "suites": [
+      "DIRECTED",
+      "RANDOM",
+      "STRESS",
+      "REPLAY"
+    ],
+    "fixed_seed": null,
+    "timeout_policy": "SM_PROGRESS",
+    "current_status": "NOT_RUN",
+    "current_gate": "BLOCKED_MISSING_IMPLEMENTATION"
+  },
+  {
+    "source_testpoint_id": "SIG-ASYNC-005",
+    "id": "TC-ASYNC-005",
+    "title": "多目的bulk系统",
+    "phase": "P4_SOC",
+    "prerequisites": [
+      "固定PTX9.4清单及SM-ARCH-S0来源hash通过preflight；独立形式/资源审计器与本阶段harness已实现。",
+      "由manifest绑定精确target、capability及合法form allowlist；未解析的target/形式保持UNRESOLVED并阻止对应正向分支，不推定数字更大的target继承能力。",
+      "跨SM/SoC运行时、对应服务及取消/返回模型可用；未实现系统能力保持blocked。"
+    ],
+    "config_profile": "TP-SOC-BASE",
+    "parameters": {
+      "target_binding": "MANIFEST_EXACT_TARGET_AND_FORM_ALLOWLIST_REQUIRED",
+      "unresolved_capability_policy": "BLOCK_POSITIVE_BRANCH_AND_REPORT_UNRESOLVED",
+      "destinations": [
+        2,
+        4
+      ],
+      "payload_bytes": 512,
+      "source_rank": 0,
+      "destination_schedule": [
+        "一个目的最早full",
+        "一个目的尾片延后",
+        "其余合法乱序"
+      ],
+      "variants": [
+        "capable multicast",
+        "DSM配合的多目标程序",
+        "capable multimem bulk"
+      ]
+    },
+    "initial_state": [
+      "各目的CTA共同admit且各有独立shared/barrier owner；目的集由legal recipe编码。",
+      "源/目标payload和计数按实际方向/单位分别初始化。"
+    ],
+    "steps": [
+      "发起一个可明确关联多目的责任的合法bulk系统事务。",
+      "先使一个目的完成并允许该目的合法consumer，保留其他目的/源仍需责任。",
+      "延后远端尾片与barrier更新，检查整个parent不能因单目的full而退休。",
+      "全部目的真正闭合后按各方向wait/report与cluster退出规则drain。"
+    ],
+    "checkpoints": [
+      "parent完成由全部required目的及事件终点共同决定。",
+      "延迟目的owner仍pin住，multicast通知与payload不混淆。"
+    ],
+    "pass_criteria": [
+      "每目的数据/计数/报告正确且完整parent只完成一次。",
+      "所有本地/远端引用关闭后才复用owner。"
+    ],
+    "fail_criteria": [
+      "单目的完成导致全事务free，或向同offset错误套本端base。",
+      "跨目的tx单位重复/少算，或者迟到远端写入新generation。"
+    ],
+    "expected_artifacts": [
+      "manifest.json：锁定2026-11-09测试计划、源hash、seed/子流、profile、实际target/capability及服务配置。",
+      "program.ir与data_objects.json：保留指令身份、CFG、typed对象、初始化及cleanup。",
+      "resource_audit.json与event_obligations.json：独立账本/HB/phase/单位审计。",
+      "case_result.json与coverage_delta.json：区分生成/审计/接收/完成/检查，本阶段真实执行量及NOT_RUN/BLOCKED原因。",
+      "soc_multidestination_trace.jsonl、parent_child_completion_witness.json。"
+    ],
+    "coverage_ids": [
+      "CV-ASYNC-003"
+    ],
+    "suites": [
+      "DIRECTED",
+      "RANDOM",
+      "STRESS",
+      "REPLAY"
+    ],
+    "fixed_seed": null,
+    "timeout_policy": "SOC_PROGRESS",
+    "current_status": "NOT_RUN",
+    "current_gate": "BLOCKED_MISSING_IMPLEMENTATION"
+  },
+  {
+    "source_testpoint_id": "SIG-TMEM-001",
+    "id": "TC-TMEM-001",
+    "title": "分配规则与permit",
+    "phase": "P1_GENERATOR_UNIT",
+    "prerequisites": [
+      "固定PTX9.4清单及SM-ARCH-S0来源hash通过preflight；独立形式/资源审计器与本阶段harness已实现。",
+      "由manifest绑定精确target、capability及合法form allowlist；未解析的target/形式保持UNRESOLVED并阻止对应正向分支，不推定数字更大的target继承能力。"
+    ],
+    "config_profile": "TP-GEN-BASE",
+    "parameters": {
+      "target_binding": "MANIFEST_EXACT_TARGET_AND_FORM_ALLOWLIST_REQUIRED",
+      "unresolved_capability_policy": "BLOCK_POSITIVE_BRANCH_AND_REPORT_UNRESOLVED",
+      "profiles_columns": [
+        512,
+        576
+      ],
+      "nonexclusive_sequences": [
+        [
+          256,
+          128,
+          64,
+          32,
+          32
+        ],
+        [
+          32,
+          32
+        ],
+        [
+          32,
+          32,
+          32,
+          32,
+          32,
+          32,
+          32,
+          32,
+          32,
+          32,
+          32,
+          32,
+          32,
+          32,
+          32,
+          32,
+          32,
+          32
+        ]
+      ],
+      "exclusive_sizes_columns": [
+        32,
+        96,
+        512,
+        576
+      ],
+      "profile_note": "18x32及576 exclusive仅在已解析576 profile；不强行用于512 profile",
+      "negative_variants": [
+        "同CTA连续32后64",
+        "exclusive非32倍数",
+        "relinquish后再alloc",
+        "不匹配dealloc"
+      ]
+    },
+    "initial_state": [
+      "TMEM为空且permit有效；各kernel固定cta_group，exclusive能力与MAX_COLS均来自精确target。",
+      "alloc结果写入的SMEM对象预分配，address发布顺序被保留。"
+    ],
+    "steps": [
+      "实例化非递增含相等边界的allocation序列，按profile预算校验base/columns/owner。",
+      "在独立场景生成exclusive大小及等待其他owner安全释放后取得容量，不把合法等待当非法。",
+      "relinquish后继续使用并匹配释放既有allocation，拒绝后续alloc；负例只做静态审计。",
+      "为每笔live allocation生成访问结束与匹配dealloc，发布结果并正常退出。"
+    ],
+    "checkpoints": [
+      "permit与allocation状态分离，exclusive属性和dealloc大小/group匹配。",
+      "512/576能力、连续申请顺序及无重叠不越权均独立检查。"
+    ],
+    "pass_criteria": [
+      "全部合法生命周期闭合，包括32→32相等边界；未知576能力阻止正向分支。",
+      "每个mutant按对应permit/顺序/属性规则拒绝。"
+    ],
+    "fail_criteria": [
+      "把permit放弃当free、给512 profile开放576，或合法alloc等待被误判必错。",
+      "同一allocation重复free、半发布地址或忽略有权范围。"
+    ],
+    "expected_artifacts": [
+      "manifest.json：锁定2026-11-09测试计划、源hash、seed/子流、profile、实际target/capability及服务配置。",
+      "program.ir与data_objects.json：保留指令身份、CFG、typed对象、初始化及cleanup。",
+      "resource_audit.json与event_obligations.json：独立账本/HB/phase/单位审计。",
+      "case_result.json与coverage_delta.json：区分生成/审计/接收/完成/检查，本阶段真实执行量及NOT_RUN/BLOCKED原因。"
+    ],
+    "coverage_ids": [
+      "CV-TMEM-001"
+    ],
+    "suites": [
+      "SMOKE",
+      "DIRECTED",
+      "NEGATIVE",
+      "RANDOM",
+      "REPLAY"
+    ],
+    "fixed_seed": null,
+    "timeout_policy": "GEN_BOUNDED",
+    "current_status": "NOT_RUN",
+    "current_gate": "BLOCKED_MISSING_IMPLEMENTATION"
+  },
+  {
+    "source_testpoint_id": "SIG-TMEM-002",
+    "id": "TC-TMEM-002",
+    "title": "参与与地址类型",
+    "phase": "P1_GENERATOR_UNIT",
+    "prerequisites": [
+      "固定PTX9.4清单及SM-ARCH-S0来源hash通过preflight；独立形式/资源审计器与本阶段harness已实现。",
+      "由manifest绑定精确target、capability及合法form allowlist；未解析的target/形式保持UNRESOLVED并阻止对应正向分支，不推定数字更大的target继承能力。"
+    ],
+    "config_profile": "TP-GEN-BASE",
+    "parameters": {
+      "target_binding": "MANIFEST_EXACT_TARGET_AND_FORM_ALLOWLIST_REQUIRED",
+      "unresolved_capability_policy": "BLOCK_POSITIVE_BRANCH_AND_REPORT_UNRESOLVED",
+      "group1": {
+        "ctas": 1,
+        "warps": 4,
+        "threads_per_warp": 32
+      },
+      "group2": {
+        "ctas": 2,
+        "sms": 2,
+        "allocator_warps_each_cta": 1
+      },
+      "tmem_views": [
+        "quarter0",
+        "quarter1",
+        "quarter2",
+        "quarter3"
+      ],
+      "base_operand": "同一warp统一symbolic TMEM base",
+      "negative_variants": [
+        "某lane不同base",
+        "成员缺失",
+        "TMEM误作byte地址",
+        "错误pair rank"
+      ]
+    },
+    "initial_state": [
+      "为每quarter建立合法allocation及对应warp身份；group1/group2分别使用独立kernel。",
+      "CTA pair已符合S0两个不同可互通endpoint和joint admission。"
+    ],
+    "steps": [
+      "生成warp ld/st/wait统一base与各quarter合法片段，独立验证lane/column坐标。",
+      "生成两CTA各一warp的allocation collective及正确单thread MCS发令意图，防重复parent。",
+      "单因素变异base/成员/地址类型/rank，只交参与/类型审计器拒绝。",
+      "对合法IR完成结果发布、相应wait及双边匹配释放。"
+    ],
+    "checkpoints": [
+      "collective按动态实例与成员匹配，ld/st一个warp不能获得全部TMEM lanes。",
+      "TMEM、SMEM byte地址和alloc的SMEM dst是不同typed对象。"
+    ],
+    "pass_criteria": [
+      "正确参与者/地址模板通过独立审计，非法变体在指定规则拒绝。",
+      "没有从M/N逻辑shape推物理lane数量或端口。"
+    ],
+    "fail_criteria": [
+      "单thread替代warp collective、两端重复发相同MCS parent。",
+      "地址cast靠裸整数巧合通过，或同PC不同轮实例被合并。"
+    ],
+    "expected_artifacts": [
+      "manifest.json：锁定2026-11-09测试计划、源hash、seed/子流、profile、实际target/capability及服务配置。",
+      "program.ir与data_objects.json：保留指令身份、CFG、typed对象、初始化及cleanup。",
+      "resource_audit.json与event_obligations.json：独立账本/HB/phase/单位审计。",
+      "case_result.json与coverage_delta.json：区分生成/审计/接收/完成/检查，本阶段真实执行量及NOT_RUN/BLOCKED原因。"
+    ],
+    "coverage_ids": [
+      "CV-TMEM-002"
+    ],
+    "suites": [
+      "DIRECTED",
+      "NEGATIVE",
+      "REPLAY"
+    ],
+    "fixed_seed": null,
+    "timeout_policy": "GEN_BOUNDED",
+    "current_status": "NOT_RUN",
+    "current_gate": "BLOCKED_MISSING_IMPLEMENTATION"
+  },
+  {
+    "source_testpoint_id": "SIG-TMEM-003",
+    "id": "TC-TMEM-003",
+    "title": "LD/ST布局与扩展",
+    "phase": "P2_REFERENCE_PROGRAM",
+    "prerequisites": [
+      "固定PTX9.4清单及SM-ARCH-S0来源hash通过preflight；独立形式/资源审计器与本阶段harness已实现。",
+      "由manifest绑定精确target、capability及合法form allowlist；未解析的target/形式保持UNRESOLVED并阻止对应正向分支，不推定数字更大的target继承能力。",
+      "独立语义/内存/事件模型及其允许结果集合已锁定；生成器shadow不能作为唯一oracle。"
+    ],
+    "config_profile": "TP-REF-BASE",
+    "parameters": {
+      "target_binding": "MANIFEST_EXACT_TARGET_AND_FORM_ALLOWLIST_REQUIRED",
+      "unresolved_capability_policy": "BLOCK_POSITIVE_BRANCH_AND_REPORT_UNRESOLVED",
+      "shape_candidates": [
+        "32x32b",
+        "16x64b",
+        "16x128b",
+        "16x256b",
+        "16x32bx2"
+      ],
+      "repeat_candidates": [
+        1,
+        4,
+        128
+      ],
+      "selection_policy": "仅保留该form/shape/target合法repeat",
+      "data_types": [
+        "合法F16 pack/unpack",
+        "F32/S32/U32 red",
+        "F32 spcompress2:4 b2"
+      ],
+      "F32_groups": [
+        [
+          1,
+          2,
+          3,
+          4
+        ],
+        [
+          0.0,
+          -0.0,
+          1,
+          1
+        ],
+        [
+          "NaN",
+          1,
+          2,
+          3
+        ]
+      ],
+      "spcompress_repeat_candidates": [
+        4,
+        128
+      ]
+    },
+    "initial_state": [
+      "实际访问范围由layout recipe求出后分配足够columns，不将所有repeat硬塞固定小allocation。",
+      "TMEM内容与预期register/meta片段由独立layout模型初始化。"
+    ],
+    "steps": [
+      "对每个合法shape/repeat构造st/ld、pack/unpack的参考程序并建立寄存器片段身份。",
+      "分别生成red、spcompress、red.spcompress的合法类型/target及特殊值组。",
+      "独立计算lane/column映射、压缩允许选择集合与metadata，区分reduction NaN控制。",
+      "按ld/st完成观察全部返回并关闭allocation/源寄存器引用后释放。"
+    ],
+    "checkpoints": [
+      "宽返回全部片段才ready，不以一个结果word代表整warp tuple。",
+      "tie/NaN处理按允许集合，spcompress metadata不未经适配冒充任意mma.sp。"
+    ],
+    "pass_criteria": [
+      "数据/packing/meta/reduction满足独立模型或允许集合。",
+      "target/shape/repeat未解析的组合blocked，不靠邻近形式补猜。"
+    ],
+    "fail_criteria": [
+      "pack改变数值或padding精度、归约当整数序替代浮点NaN规则。",
+      "越过allocation范围，或把spcompress限定符/metadata适用范围扩大。"
+    ],
+    "expected_artifacts": [
+      "manifest.json：锁定2026-11-09测试计划、源hash、seed/子流、profile、实际target/capability及服务配置。",
+      "program.ir与data_objects.json：保留指令身份、CFG、typed对象、初始化及cleanup。",
+      "resource_audit.json与event_obligations.json：独立账本/HB/phase/单位审计。",
+      "case_result.json与coverage_delta.json：区分生成/审计/接收/完成/检查，本阶段真实执行量及NOT_RUN/BLOCKED原因。",
+      "reference_tmem_fragment_map.json、compression_allowed_selection.json。"
+    ],
+    "coverage_ids": [
+      "CV-TMEM-001"
+    ],
+    "suites": [
+      "DIRECTED",
+      "RANDOM",
+      "REPLAY"
+    ],
+    "fixed_seed": null,
+    "timeout_policy": "REFERENCE_BOUNDED",
+    "current_status": "NOT_RUN",
+    "current_gate": "BLOCKED_MISSING_IMPLEMENTATION"
+  },
+  {
+    "source_testpoint_id": "SIG-TMEM-004",
+    "id": "TC-TMEM-004",
+    "title": "CP/shift与多片wait",
+    "phase": "P3_SM_RTL",
+    "prerequisites": [
+      "固定PTX9.4清单及SM-ARCH-S0来源hash通过preflight；独立形式/资源审计器与本阶段harness已实现。",
+      "由manifest绑定精确target、capability及合法form allowlist；未解析的target/形式保持UNRESOLVED并阻止对应正向分支，不推定数字更大的target继承能力。",
+      "SM、对应adapter和monitor真实可用；全部事务的owner/epoch/返回身份及服务公平合同已配置。"
+    ],
+    "config_profile": "TP-SM-BASE",
+    "parameters": {
+      "target_binding": "MANIFEST_EXACT_TARGET_AND_FORM_ALLOWLIST_REQUIRED",
+      "unresolved_capability_policy": "BLOCK_POSITIVE_BRANCH_AND_REPORT_UNRESOLVED",
+      "ctas": 1,
+      "warps": 4,
+      "allocation_columns": 128,
+      "operations": [
+        "SMEM→TMEM cp",
+        "合法TMEM shift",
+        "非冲突TMEM ld/st"
+      ],
+      "source_bytes": 512,
+      "shift_binding": "固定规范recipe的区域/方向，不自定义字段",
+      "return_variants": [
+        "多片顺序",
+        "多片乱序",
+        "最后片延后"
+      ]
+    },
+    "initial_state": [
+      "源/目的TMEM区域按recipe分区并初始化canary，alias shift仅使用指令定义的原地语义。",
+      "SMEM源已正确发布到async proxy，MCS issuer与ld/st warp streams分别建账。"
+    ],
+    "steps": [
+      "在资源/HB允许下交错cp、shift和独立ld/st，冲突对象按规范显式排序。",
+      "先后观察MCS full、ld/st片段与wait，允许彼此独立进度而不混用终点。",
+      "延后最后RF片段/写ack，检查消费者/后续覆盖仍被保护。",
+      "全部MCS与ld/st责任闭合后读取结果/canary并dealloc退出。"
+    ],
+    "checkpoints": [
+      "cp/shift数据真正提交TMEM才计对应full，RF需全片段ready。",
+      "相互重叠shift保留原数据语义；不是从未知固定周期推出完成。"
+    ],
+    "pass_criteria": [
+      "数据移动/片段/顺序与独立模型相符，normal commit和wait::ld/st不互代。",
+      "所有引用和完成exactly-once后资源归还。"
+    ],
+    "fail_criteria": [
+      "cp被当TMA或普通byte cast、shift覆盖尚未捕获源。",
+      "MCS full清掉仍未完成ld/st stream，或首片触发整体ready。"
+    ],
+    "expected_artifacts": [
+      "manifest.json：锁定2026-11-09测试计划、源hash、seed/子流、profile、实际target/capability及服务配置。",
+      "program.ir与data_objects.json：保留指令身份、CFG、typed对象、初始化及cleanup。",
+      "resource_audit.json与event_obligations.json：独立账本/HB/phase/单位审计。",
+      "case_result.json与coverage_delta.json：区分生成/审计/接收/完成/检查，本阶段真实执行量及NOT_RUN/BLOCKED原因。",
+      "move_tmem_rf_trace.jsonl、fragment_completion_scoreboard.json。"
+    ],
+    "coverage_ids": [
+      "CV-TMEM-003"
+    ],
+    "suites": [
+      "DIRECTED",
+      "RANDOM",
+      "STRESS",
+      "REPLAY"
+    ],
+    "fixed_seed": null,
+    "timeout_policy": "SM_PROGRESS",
+    "current_status": "NOT_RUN",
+    "current_gate": "BLOCKED_MISSING_IMPLEMENTATION"
+  },
+  {
+    "source_testpoint_id": "SIG-TMEM-005",
+    "id": "TC-TMEM-005",
+    "title": "释放与退出竞争",
+    "phase": "P3_SM_RTL",
+    "prerequisites": [
+      "固定PTX9.4清单及SM-ARCH-S0来源hash通过preflight；独立形式/资源审计器与本阶段harness已实现。",
+      "由manifest绑定精确target、capability及合法form allowlist；未解析的target/形式保持UNRESOLVED并阻止对应正向分支，不推定数字更大的target继承能力。",
+      "SM、对应adapter和monitor真实可用；全部事务的owner/epoch/返回身份及服务公平合同已配置。"
+    ],
+    "config_profile": "TP-SM-BASE",
+    "parameters": {
+      "target_binding": "MANIFEST_EXACT_TARGET_AND_FORM_ALLOWLIST_REQUIRED",
+      "unresolved_capability_policy": "BLOCK_POSITIVE_BRANCH_AND_REPORT_UNRESOLVED",
+      "allocation_columns": 128,
+      "reuse_rounds": 2,
+      "schedules": [
+        "MCS full先于ld返回",
+        "源读结束但目的writeack未到",
+        "合法最终全部关闭"
+      ],
+      "positive_release": "显式观察对应full及ld/st后才dealloc",
+      "negative_release": "独立静态mutant或已定义NONISA robustness路线，不默认运行UB"
+    },
+    "initial_state": [
+      "TMEM、barrier、register目的范围和generation映射均有效且已初始化。",
+      "已发起操作持有引用，释放请求尚未具备程序HB条件。"
+    ],
+    "steps": [
+      "生成一个有限延迟的MCS及相关ld/st，保持真实full/片段责任。",
+      "在正向程序中等待每个需要的终点和线程交接，再执行匹配dealloc。",
+      "另建提前release mutation，由资源审计拒绝；只在项目保护合同明确时走隔离robustness。",
+      "新一轮重用相同可分配范围并改变generation，检查迟到旧响应隔离及新数据。"
+    ],
+    "checkpoints": [
+      "同一full事件不能替代未完ld/st；A-read不能替代D/full。",
+      "复用发生在全部旧访问关闭或正式取消确认之后，旧消息不得改变新owner。"
+    ],
+    "pass_criteria": [
+      "正向释放前排除全部并发访问；每轮allocation只回收一次。",
+      "负例拒绝层正确，旧generation注入若属robustness则单列NONISA证据。"
+    ],
+    "fail_criteria": [
+      "以dealloc恰好阻塞替代程序同步，或旧writeack使新allocation提前完成。",
+      "undefined提前free被当正常合法程序比较数值结果。"
+    ],
+    "expected_artifacts": [
+      "manifest.json：锁定2026-11-09测试计划、源hash、seed/子流、profile、实际target/capability及服务配置。",
+      "program.ir与data_objects.json：保留指令身份、CFG、typed对象、初始化及cleanup。",
+      "resource_audit.json与event_obligations.json：独立账本/HB/phase/单位审计。",
+      "case_result.json与coverage_delta.json：区分生成/审计/接收/完成/检查，本阶段真实执行量及NOT_RUN/BLOCKED原因。",
+      "tmem_release_lifetime_trace.jsonl、generation_reuse_witness.json。"
+    ],
+    "coverage_ids": [
+      "CV-TMEM-003"
+    ],
+    "suites": [
+      "DIRECTED",
+      "NEGATIVE",
+      "STRESS",
+      "REPLAY"
+    ],
+    "fixed_seed": null,
+    "timeout_policy": "SM_PROGRESS",
+    "current_status": "NOT_RUN",
+    "current_gate": "BLOCKED_MISSING_IMPLEMENTATION"
+  },
+  {
+    "source_testpoint_id": "SIG-TMEM-006",
+    "id": "TC-TMEM-006",
+    "title": "CTA-pair双端资源",
+    "phase": "P4_SOC",
+    "prerequisites": [
+      "固定PTX9.4清单及SM-ARCH-S0来源hash通过preflight；独立形式/资源审计器与本阶段harness已实现。",
+      "由manifest绑定精确target、capability及合法form allowlist；未解析的target/形式保持UNRESOLVED并阻止对应正向分支，不推定数字更大的target继承能力。",
+      "跨SM/SoC运行时、对应服务及取消/返回模型可用；未实现系统能力保持blocked。"
+    ],
+    "config_profile": "TP-SOC-BASE",
+    "parameters": {
+      "target_binding": "MANIFEST_EXACT_TARGET_AND_FORM_ALLOWLIST_REQUIRED",
+      "unresolved_capability_policy": "BLOCK_POSITIVE_BRANCH_AND_REPORT_UNRESOLVED",
+      "ctas": 2,
+      "sms": 2,
+      "pair_ranks": [
+        0,
+        1
+      ],
+      "cta_group": 2,
+      "example_mma_shape": "M256xN128xK16 F16合法recipe",
+      "columns_each_endpoint": 128,
+      "allocator_warps_each_cta": 1,
+      "parent_issuer_threads": 1,
+      "schedule_variants": [
+        "peer prepare延迟",
+        "peer数据尾片延迟",
+        "双边正常释放"
+      ],
+      "independent_CTA1_exclusive": "仅在另一个group1 kernel场景验证，不同kernel混组"
+    },
+    "initial_state": [
+      "设备joint admission保证两个不同可互通endpoint；两CTA owner/barrier/SMEM源均合法初始化。",
+      "整个kernel的cta_group固定2，双边allocation属性和source布局由group2 recipe确定。"
+    ],
+    "steps": [
+      "两端collective申请共同合法范围并发布地址，不在单边prepare后消费。",
+      "由一个合法thread发起一次parent操作，peer仅保存对应child/双边义务。",
+      "交错双端访问并延迟一边完成，观察A-read/full masks不被单边清空。",
+      "双边访问与数据/事件ack全关闭后执行匹配dealloc，再允许两CTA退出。"
+    ],
+    "checkpoints": [
+      "allocation与释放无半边发布/回收，parent/child引用稳定且full需要required两端。",
+      "S0放置、rank配对和kernel group一致性独立审计。"
+    ],
+    "pass_criteria": [
+      "双端结果/计数正确，peer有限延迟不会丢事件或提前free。",
+      "group1独立exclusive只在独立kernel验证，不错误扩大成全pair锁。"
+    ],
+    "fail_criteria": [
+      "任意两CTA被配成peer、同SM未经定义适配，或两端重复parent。",
+      "单边完成释放全parent，或者group2与group1在同kernel随意切换。"
+    ],
+    "expected_artifacts": [
+      "manifest.json：锁定2026-11-09测试计划、源hash、seed/子流、profile、实际target/capability及服务配置。",
+      "program.ir与data_objects.json：保留指令身份、CFG、typed对象、初始化及cleanup。",
+      "resource_audit.json与event_obligations.json：独立账本/HB/phase/单位审计。",
+      "case_result.json与coverage_delta.json：区分生成/审计/接收/完成/检查，本阶段真实执行量及NOT_RUN/BLOCKED原因。",
+      "soc_pair_parent_child_trace.jsonl、paired_allocation_and_free_witness.json。"
+    ],
+    "coverage_ids": [
+      "CV-TMEM-003"
+    ],
+    "suites": [
+      "DIRECTED",
+      "RANDOM",
+      "STRESS",
+      "REPLAY"
+    ],
+    "fixed_seed": null,
+    "timeout_policy": "SOC_PROGRESS",
+    "current_status": "NOT_RUN",
+    "current_gate": "BLOCKED_MISSING_IMPLEMENTATION"
+  },
+  {
+    "source_testpoint_id": "SIG-MATRIX-001",
+    "id": "TC-MATRIX-001",
+    "title": "格式/scale/block独立约束",
+    "phase": "P1_GENERATOR_UNIT",
+    "prerequisites": [
+      "固定PTX9.4清单及SM-ARCH-S0来源hash通过preflight；独立形式/资源审计器与本阶段harness已实现。",
+      "由manifest绑定精确target、capability及合法form allowlist；未解析的target/形式保持UNRESOLVED并阻止对应正向分支，不推定数字更大的target继承能力。"
+    ],
+    "config_profile": "TP-GEN-BASE",
+    "parameters": {
+      "target_binding": "MANIFEST_EXACT_TARGET_AND_FORM_ALLOWLIST_REQUIRED",
+      "unresolved_capability_policy": "BLOCK_POSITIVE_BRANCH_AND_REPORT_UNRESOLVED",
+      "tuple_families": [
+        "f16",
+        "tf32",
+        "f8f6f4",
+        "mxf8f6f4",
+        "mxf4",
+        "mxf4nvf4"
+      ],
+      "native_scale_rules": [
+        "mxf8f6f4: UE8M0+BLOCK32",
+        "mxf4:E2M1+UE8M0+BLOCK32",
+        "mxf4nvf4:E2M1+合法UE8M0/UE4M3/UE5M3和BLOCK16/32；附精确target条件"
+      ],
+      "project_offsets_BLOCK16": [
+        0,
+        1,
+        15
+      ],
+      "project_offsets_BLOCK32": [
+        0,
+        1,
+        31
+      ],
+      "raw_Ti16": false,
+      "decoded_Ti16_range": [
+        -2047,
+        2047
+      ],
+      "native_AB_scale_format": "共同字段；项目接口独立字段不意味着native可不同"
+    },
+    "initial_state": [
+      "所有矩阵/scale/meta对象由已审核shape/layout recipe初始化；项目和native入口分别建fixture。",
+      "UE5M3及UE4M3+BLOCK32等target条件明确解析；缺证据组合不开启。"
+    ],
+    "steps": [
+      "从合法tuple表选择kind/shape/格式/source/scale/block，不做全字段随机笛卡尔积。",
+      "分别生成独立项目offset与native布局，检查项目adapter而不虚构PTX总线约束。",
+      "单因素变异scale fmt/block/target或请求raw Ti16；验证对应cap/tuple拒绝。",
+      "合法IR生成完整矩阵完成与cleanup，decoded Ti16单列项目扩展且范围审计。"
+    ],
+    "checkpoints": [
+      "native AB共用scale格式与项目独立字段映射正确，Cshift不混入scale。",
+      "raw Ti16保持关闭，decoded/S16不被标为原生s1z4m11编码。"
+    ],
+    "pass_criteria": [
+      "所有已解析正例合法、负例规则精确；target未解析分支明确blocked。",
+      "source phase/CV与native/project身份在manifest中保持分离。"
+    ],
+    "fail_criteria": [
+      "任意FP4均允许所有scale/BLOCK，或从sm数字大小自动继承能力。",
+      "把decoded Ti16通过记为raw native正向覆盖。"
+    ],
+    "expected_artifacts": [
+      "manifest.json：锁定2026-11-09测试计划、源hash、seed/子流、profile、实际target/capability及服务配置。",
+      "program.ir与data_objects.json：保留指令身份、CFG、typed对象、初始化及cleanup。",
+      "resource_audit.json与event_obligations.json：独立账本/HB/phase/单位审计。",
+      "case_result.json与coverage_delta.json：区分生成/审计/接收/完成/检查，本阶段真实执行量及NOT_RUN/BLOCKED原因。"
+    ],
+    "coverage_ids": [
+      "CV-MATRIX-001"
+    ],
+    "suites": [
+      "SMOKE",
+      "DIRECTED",
+      "NEGATIVE",
+      "RANDOM",
+      "REPLAY"
+    ],
+    "fixed_seed": null,
+    "timeout_policy": "GEN_BOUNDED",
+    "current_status": "NOT_RUN",
+    "current_gate": "BLOCKED_MISSING_IMPLEMENTATION"
+  },
+  {
+    "source_testpoint_id": "SIG-MATRIX-002",
+    "id": "TC-MATRIX-002",
+    "title": "Cseed和数学K",
+    "phase": "P1_GENERATOR_UNIT",
+    "prerequisites": [
+      "固定PTX9.4清单及SM-ARCH-S0来源hash通过preflight；独立形式/资源审计器与本阶段harness已实现。",
+      "由manifest绑定精确target、capability及合法form allowlist；未解析的target/形式保持UNRESOLVED并阻止对应正向分支，不推定数字更大的target继承能力。"
+    ],
+    "config_profile": "TP-GEN-BASE",
+    "parameters": {
+      "target_binding": "MANIFEST_EXACT_TARGET_AND_FORM_ALLOWLIST_REQUIRED",
+      "unresolved_capability_policy": "BLOCK_POSITIVE_BRANCH_AND_REPORT_UNRESOLVED",
+      "native_example": "合法f16 M128xN64xK16；Cshift仅规定f16/tf32 kind",
+      "project_A_B_formats": [
+        "F16/F16",
+        "BF16/BF16",
+        "TF32/TF32"
+      ],
+      "project_logical_K": [
+        1,
+        15,
+        16,
+        17,
+        31,
+        32,
+        33
+      ],
+      "C_value": 8,
+      "Cshift": [
+        0,
+        1,
+        15
+      ],
+      "enable_input_d": [
+        false,
+        true
+      ],
+      "disabled_old_D": "目标格式qNaN或未定义旧D；不允许任何读取依赖"
+    },
+    "initial_state": [
+      "合法浮点矩阵A/B初始化为1，正式C为8；禁用D变体另给旧D qNaN/未定义标记。",
+      "native K由选定shape固定，项目K候选不能未经合法化直接印为native shape。"
+    ],
+    "steps": [
+      "分别生成enable-input-d=true和false的dot/matrix意图，保留logical/packed/compressed K计数。",
+      "true传未缩放C及独立shift，false以正式零seed替代且不形成旧D读取请求。",
+      "改变beat切分/合法loop分组，确认C每dot只加一次并用独立精确/allowed-profile模型求值。",
+      "完成正确full/结果观察与源释放，保存Cshift和旧D读取义务审计。"
+    ],
+    "checkpoints": [
+      "s=0/1/15不被预量化或双缩放，C不按beat重复累加。",
+      "false分支没有旧D读/NaN传播；raw dtype/shape/profile仍合法。"
+    ],
+    "pass_criteria": [
+      "所选profile数值关系正确，逻辑K与源消耗/scale索引一致。",
+      "native及项目Cshift允许范围分别通过独立规则审计。"
+    ],
+    "fail_criteria": [
+      "false仍读旧D，或先对C量化再重复shift改变结果。",
+      "把任意kind的0..15 shift都默认合法，或把项目K印成非法native K。"
+    ],
+    "expected_artifacts": [
+      "manifest.json：锁定2026-11-09测试计划、源hash、seed/子流、profile、实际target/capability及服务配置。",
+      "program.ir与data_objects.json：保留指令身份、CFG、typed对象、初始化及cleanup。",
+      "resource_audit.json与event_obligations.json：独立账本/HB/phase/单位审计。",
+      "case_result.json与coverage_delta.json：区分生成/审计/接收/完成/检查，本阶段真实执行量及NOT_RUN/BLOCKED原因。",
+      "C_seed_shift_and_K_audit.json、reference_expected_results.json。"
+    ],
+    "coverage_ids": [
+      "CV-MATRIX-002"
+    ],
+    "suites": [
+      "DIRECTED",
+      "RANDOM",
+      "REPLAY"
+    ],
+    "fixed_seed": null,
+    "timeout_policy": "GEN_BOUNDED",
+    "current_status": "NOT_RUN",
+    "current_gate": "BLOCKED_MISSING_IMPLEMENTATION"
+  },
+  {
+    "source_testpoint_id": "SIG-MATRIX-003",
+    "id": "TC-MATRIX-003",
+    "title": "数值与稀疏变换",
+    "phase": "P2_REFERENCE_PROGRAM",
+    "prerequisites": [
+      "固定PTX9.4清单及SM-ARCH-S0来源hash通过preflight；独立形式/资源审计器与本阶段harness已实现。",
+      "由manifest绑定精确target、capability及合法form allowlist；未解析的target/形式保持UNRESOLVED并阻止对应正向分支，不推定数字更大的target继承能力。",
+      "独立语义/内存/事件模型及其允许结果集合已锁定；生成器shadow不能作为唯一oracle。"
+    ],
+    "config_profile": "TP-REF-BASE",
+    "parameters": {
+      "target_binding": "MANIFEST_EXACT_TARGET_AND_FORM_ALLOWLIST_REQUIRED",
+      "unresolved_capability_policy": "BLOCK_POSITIVE_BRANCH_AND_REPORT_UNRESOLVED",
+      "profiles": [
+        "PROJECT_EXACT",
+        "已解析native允许精度profile"
+      ],
+      "project_K": [
+        4,
+        8,
+        32
+      ],
+      "sparse_pattern": "每合法2:4组从六种2位置组合生成",
+      "value_classes": [
+        "有限精确相消",
+        "+0/-0",
+        "次正规",
+        "该格式合法NaN/Inf"
+      ],
+      "structural_zero_Inf": "PROJECT_EXACT展开基线检查；不冒充全部native硬件唯一规则",
+      "metadata_LUT": "按kind/shape/source layout分别生成"
+    },
+    "initial_state": [
+      "矩阵、scale、合法metadata与LUT分开初始化；FP4/FP6等无Inf格式不构造假Inf编码。",
+      "oracle独立解码并记录native保证/allowed set，缺数值公开规则分支blocked。"
+    ],
+    "steps": [
+      "生成可手算小dot、巨大相消及低精度scale边界；finite sparse先与展开关系核对。",
+      "在适用profile加入结构性零和对应B的Inf/NaN，检查项目展开语义不被跳项消失。",
+      "独立改变metadata位置/LUT索引与布局，计算位置和数值允许结果。",
+      "按完整矩阵事务完成并关闭资源，保存profile分离的数值见证。"
+    ],
+    "checkpoints": [
+      "Fraction/整数模型不调用DUT decode；native不被强制等于PROJECT_EXACT。",
+      "metadata、LUT、scale cursor分别对应logical/packed K和目标kind。"
+    ],
+    "pass_criteria": [
+      "精确profile逐位或规定舍入正确，native只接受其规范/目标允许结果。",
+      "无Inf编码的格式没有被错误当IEEE all-ones特例。"
+    ],
+    "fail_criteria": [
+      "省略项跳过导致项目0xInf/NaN错误，或元数据仅位宽相同就通用。",
+      "用单一exact oracle给无依据native精度声明bitfit。"
+    ],
+    "expected_artifacts": [
+      "manifest.json：锁定2026-11-09测试计划、源hash、seed/子流、profile、实际target/capability及服务配置。",
+      "program.ir与data_objects.json：保留指令身份、CFG、typed对象、初始化及cleanup。",
+      "resource_audit.json与event_obligations.json：独立账本/HB/phase/单位审计。",
+      "case_result.json与coverage_delta.json：区分生成/审计/接收/完成/检查，本阶段真实执行量及NOT_RUN/BLOCKED原因。",
+      "independent_numeric_and_sparse_witness.json、profile_allowed_results.json。"
+    ],
+    "coverage_ids": [
+      "CV-MATRIX-001"
+    ],
+    "suites": [
+      "DIRECTED",
+      "RANDOM",
+      "REPLAY"
+    ],
+    "fixed_seed": null,
+    "timeout_policy": "REFERENCE_BOUNDED",
+    "current_status": "NOT_RUN",
+    "current_gate": "BLOCKED_MISSING_IMPLEMENTATION"
+  },
+  {
+    "source_testpoint_id": "SIG-MATRIX-004",
+    "id": "TC-MATRIX-004",
+    "title": "同MALU后端多前端",
+    "phase": "P3_SM_RTL",
+    "prerequisites": [
+      "固定PTX9.4清单及SM-ARCH-S0来源hash通过preflight；独立形式/资源审计器与本阶段harness已实现。",
+      "由manifest绑定精确target、capability及合法form allowlist；未解析的target/形式保持UNRESOLVED并阻止对应正向分支，不推定数字更大的target继承能力。",
+      "SM、对应adapter和monitor真实可用；全部事务的owner/epoch/返回身份及服务公平合同已配置。"
+    ],
+    "config_profile": "TP-SM-BASE",
+    "parameters": {
+      "target_binding": "MANIFEST_EXACT_TARGET_AND_FORM_ALLOWLIST_REQUIRED",
+      "unresolved_capability_policy": "BLOCK_POSITIVE_BRANCH_AND_REPORT_UNRESOLVED",
+      "frontend_campaigns": [
+        "wmma/mma合法target单独程序",
+        "wgmma sm90a兼容候选单独程序",
+        "tcgen05合法target程序"
+      ],
+      "mix_policy": "单native kernel不得混互不兼容target；单后端混合仅显式项目兼容IR且能力已实现",
+      "backend": "共享dot-only数值服务",
+      "default_wgmma_compatibility": false,
+      "matrix_batches": 2
+    },
+    "initial_state": [
+      "每个frontend按自己的参与者/fragment/descriptor和profile初始化对象。",
+      "兼容扩展与native入口标识不同；关闭路径只执行preflight拒绝而不发真实未实现命令。"
+    ],
+    "steps": [
+      "先运行每个已启用frontend的闭合baseline，核对参与/寄存器或TMEM结果位置。",
+      "在支持的项目多前端路线交错两batch，观察共享数值后端的源保护、mode/返回身份。",
+      "分别执行warp同步、wgmma group及tcgen05 commit/wait，拒绝跨family替代mutation。",
+      "所有结果返回/实际存储写入完成后，逐frontend清理并退出。"
+    ],
+    "checkpoints": [
+      "没有给sm107等目标无依据开启wgmma sm90a native语法。",
+      "MALU仅dot+C，不因共享后端承担标量FMA/SFU。"
+    ],
+    "pass_criteria": [
+      "每代前端结果relation、成员和完成协议均正确；关闭分支有独立拒绝证据。",
+      "共享后端切换不串tag、不破坏已接受源快照/完成进度。"
+    ],
+    "fail_criteria": [
+      "同一native kernel混入target互斥形式，或以换opcode替代参与协议。",
+      "wgmma wait、warp mma与tcgen05 commit互相代等。"
+    ],
+    "expected_artifacts": [
+      "manifest.json：锁定2026-11-09测试计划、源hash、seed/子流、profile、实际target/capability及服务配置。",
+      "program.ir与data_objects.json：保留指令身份、CFG、typed对象、初始化及cleanup。",
+      "resource_audit.json与event_obligations.json：独立账本/HB/phase/单位审计。",
+      "case_result.json与coverage_delta.json：区分生成/审计/接收/完成/检查，本阶段真实执行量及NOT_RUN/BLOCKED原因。",
+      "frontend_completion_relation_trace.jsonl、shared_backend_identity_scoreboard.json。"
+    ],
+    "coverage_ids": [
+      "CV-MATRIX-003"
+    ],
+    "suites": [
+      "DIRECTED",
+      "RANDOM",
+      "STRESS",
+      "REPLAY"
+    ],
+    "fixed_seed": null,
+    "timeout_policy": "SM_PROGRESS",
+    "current_status": "NOT_RUN",
+    "current_gate": "BLOCKED_MISSING_IMPLEMENTATION"
+  },
+  {
+    "source_testpoint_id": "SIG-MATRIX-005",
+    "id": "TC-MATRIX-005",
+    "title": "Aread/full和collector",
+    "phase": "P3_SM_RTL",
+    "prerequisites": [
+      "固定PTX9.4清单及SM-ARCH-S0来源hash通过preflight；独立形式/资源审计器与本阶段harness已实现。",
+      "由manifest绑定精确target、capability及合法form allowlist；未解析的target/形式保持UNRESOLVED并阻止对应正向分支，不推定数字更大的target继承能力。",
+      "SM、对应adapter和monitor真实可用；全部事务的owner/epoch/返回身份及服务公平合同已配置。"
+    ],
+    "config_profile": "TP-SM-BASE",
+    "parameters": {
+      "target_binding": "MANIFEST_EXACT_TARGET_AND_FORM_ALLOWLIST_REQUIRED",
+      "unresolved_capability_policy": "BLOCK_POSITIVE_BRANCH_AND_REPORT_UNRESOLVED",
+      "example": "合法SMEM-A f16 M128xN64xK16",
+      "restricted_Aread_capability": "必须已解析支持该修饰符的精确target",
+      "A_versions": [
+        1,
+        2
+      ],
+      "B_value": 1,
+      "C_seed": 0,
+      "schedules": [
+        "A-read观察早于full",
+        "full观察可早于受限通知交付",
+        "collector miss重读"
+      ],
+      "barriers": "restricted/full分别使用正确phase与typed义务"
+    },
+    "initial_state": [
+      "原A/B初始化并发布，旧命令保存正确source版本；D具有合法seed。",
+      "Aread和normal完整责任分开，B可重读与D lease未结束。"
+    ],
+    "steps": [
+      "同一合法issuer发MMA并登记restricted/normal commit及相应观察。",
+      "仅在A-read正确观察并完成必要线程/proxy交接后覆写获准原A；不覆盖B或D。",
+      "故意让collector miss/未来reuse读取新版本，同时旧命令保有不可变snapshot。",
+      "等待normal full及全部结果/事件ack再释放B/D/allocation/owner。"
+    ],
+    "checkpoints": [
+      "A-read不提前清full token、B读取义务或整个shared slice。",
+      "future lookup失效实际生效后才ack，通知交付允许顺序不假设等于物理里程碑顺序。"
+    ],
+    "pass_criteria": [
+      "旧命令仍按正确版本计算，新命令只在合法发布后取新版本。",
+      "source/full账本与真实事件匹配且最终零孤儿引用。"
+    ],
+    "fail_criteria": [
+      "覆盖A同时释放B/D、或cache命中被当作早退源许可。",
+      "对合法full先观察/partial通知晚交付的次序作错误断言。"
+    ],
+    "expected_artifacts": [
+      "manifest.json：锁定2026-11-09测试计划、源hash、seed/子流、profile、实际target/capability及服务配置。",
+      "program.ir与data_objects.json：保留指令身份、CFG、typed对象、初始化及cleanup。",
+      "resource_audit.json与event_obligations.json：独立账本/HB/phase/单位审计。",
+      "case_result.json与coverage_delta.json：区分生成/审计/接收/完成/检查，本阶段真实执行量及NOT_RUN/BLOCKED原因。",
+      "Aread_full_and_collector_trace.jsonl、source_version_and_ownership_witness.json。"
+    ],
+    "coverage_ids": [
+      "CV-MATRIX-003"
+    ],
+    "suites": [
+      "DIRECTED",
+      "RANDOM",
+      "STRESS",
+      "REPLAY"
+    ],
+    "fixed_seed": null,
+    "timeout_policy": "SM_PROGRESS",
+    "current_status": "NOT_RUN",
+    "current_gate": "BLOCKED_MISSING_IMPLEMENTATION"
+  },
+  {
+    "source_testpoint_id": "SIG-MATRIX-006",
+    "id": "TC-MATRIX-006",
+    "title": "BLOCK边界与dot beat压力",
+    "phase": "P3_SM_RTL",
+    "prerequisites": [
+      "固定PTX9.4清单及SM-ARCH-S0来源hash通过preflight；独立形式/资源审计器与本阶段harness已实现。",
+      "由manifest绑定精确target、capability及合法form allowlist；未解析的target/形式保持UNRESOLVED并阻止对应正向分支，不推定数字更大的target继承能力。",
+      "SM、对应adapter和monitor真实可用；全部事务的owner/epoch/返回身份及服务公平合同已配置。"
+    ],
+    "config_profile": "TP-SM-BASE",
+    "parameters": {
+      "target_binding": "MANIFEST_EXACT_TARGET_AND_FORM_ALLOWLIST_REQUIRED",
+      "unresolved_capability_policy": "BLOCK_POSITIVE_BRANCH_AND_REPORT_UNRESOLVED",
+      "interface_LANES": [
+        1,
+        4
+      ],
+      "K": [
+        1,
+        15,
+        16,
+        17,
+        31,
+        32,
+        33,
+        65
+      ],
+      "BLOCK16_offsets": [
+        0,
+        1,
+        15
+      ],
+      "BLOCK32_offsets": [
+        0,
+        1,
+        31
+      ],
+      "AB_offsets": "两侧独立，仅project adapter范围；native先经合法layout解包",
+      "scale_math_values": [
+        0.5,
+        1,
+        2
+      ],
+      "backpressure": "有限随机握手停顿，无固定native周期",
+      "project_profile": "PROJECT_EXACT"
+    },
+    "initial_state": [
+      "有效A/B/C及每逻辑块scale payload初始化，格式取项目实际合法组合。",
+      "每dot锁存cfg/tag；按两侧最早块边界和LANES算合法beat计划。"
+    ],
+    "steps": [
+      "对每K/block/独立offset生成多个合法beat切分，C仅请求一次。",
+      "施加input/output有限随机stall，保持valid且未ready时payload稳定。",
+      "检查每beat不跨任一边界、同块重复scale一致、累计op_count与last恰好等于K。",
+      "消费单一response并完成TMEM写ack/parent责任后，才发下一事务并cleanup。"
+    ],
+    "checkpoints": [
+      "K和块游标不因stall/beat重置，C不重复加入。",
+      "同逻辑dot换切分保持PROJECT_EXACT结果；协议mutation单列NONISA。"
+    ],
+    "pass_criteria": [
+      "所有合法切分数值一致、身份/长度/scale契约满足。",
+      "adapter与完整SM缺失时仍blocked，不因既有MALU回归标该case已运行。"
+    ],
+    "fail_criteria": [
+      "跨边界beat、块内payload改变、early/late last或输出tag串事务。",
+      "用LANES缓存槽当每周期并行乘法资源或硬编码完成周期。"
+    ],
+    "expected_artifacts": [
+      "manifest.json：锁定2026-11-09测试计划、源hash、seed/子流、profile、实际target/capability及服务配置。",
+      "program.ir与data_objects.json：保留指令身份、CFG、typed对象、初始化及cleanup。",
+      "resource_audit.json与event_obligations.json：独立账本/HB/phase/单位审计。",
+      "case_result.json与coverage_delta.json：区分生成/审计/接收/完成/检查，本阶段真实执行量及NOT_RUN/BLOCKED原因。",
+      "dot_beat_plan.json、adapter_handshake_trace.jsonl、beat_invariance_results.json。"
+    ],
+    "coverage_ids": [
+      "CV-MATRIX-003"
+    ],
+    "suites": [
+      "SMOKE",
+      "DIRECTED",
+      "RANDOM",
+      "STRESS",
+      "REPLAY"
+    ],
+    "fixed_seed": null,
+    "timeout_policy": "SM_PROGRESS",
+    "current_status": "NOT_RUN",
+    "current_gate": "BLOCKED_MISSING_IMPLEMENTATION"
+  },
+  {
+    "source_testpoint_id": "SIG-CLUSTER-001",
+    "id": "TC-CLUSTER-001",
+    "title": "cluster资源映射",
+    "phase": "P1_GENERATOR_UNIT",
+    "prerequisites": [
+      "固定PTX9.4清单及SM-ARCH-S0来源hash通过preflight；独立形式/资源审计器与本阶段harness已实现。",
+      "由manifest绑定精确target、capability及合法form allowlist；未解析的target/形式保持UNRESOLVED并阻止对应正向分支，不推定数字更大的target继承能力。"
+    ],
+    "config_profile": "TP-GEN-BASE",
+    "parameters": {
+      "target_binding": "MANIFEST_EXACT_TARGET_AND_FORM_ALLOWLIST_REQUIRED",
+      "unresolved_capability_policy": "BLOCK_POSITIVE_BRANCH_AND_REPORT_UNRESOLVED",
+      "cluster_shapes": [
+        [
+          2,
+          1,
+          1
+        ],
+        [
+          4,
+          1,
+          1
+        ]
+      ],
+      "warps_each_CTA": 4,
+      "shared_visible_bytes_each": 16384,
+      "placement": "按target允许cluster和S0 pair约束解析",
+      "negative_variants": [
+        "group2 pair同SM",
+        "缺一个peer资源",
+        "rank映射错误",
+        "shared总预算不足"
+      ]
+    },
+    "initial_state": [
+      "cluster membership/rank→SM-owner表及R_SM/SMEM reservation为空且可核对。",
+      "确切target的cluster维度/共同驻留条件未解析时不接纳正向launch。"
+    ],
+    "steps": [
+      "构造两CTA和四CTA合法cluster候选，独立联合计算所有参与SM的资源。",
+      "检查even/odd pair放到两个可互通不同endpoint，所有owner一起成功才发布launch。",
+      "针对放置/资源/rank作单因素mutation，确认没有部分cluster开始执行。",
+      "合法场景建立各owner shared引用并模拟全部远端责任关闭后退出回收。"
+    ],
+    "checkpoints": [
+      "cluster范围与pair范围不同；任意DSM目标不是当前Tensor peer。",
+      "失败admission不泄漏单边资源或留下运行CTA。"
+    ],
+    "pass_criteria": [
+      "合法映射/预算正确，负例准确在项目放置/资源层拒绝。",
+      "不同owner同offset不产生错误physical别名。"
+    ],
+    "fail_criteria": [
+      "随机凑peer或先启动CTA再等基础资源导致无解除者。",
+      "把S0同SM group2限制误称PTX对所有硬件的通用规则。"
+    ],
+    "expected_artifacts": [
+      "manifest.json：锁定2026-11-09测试计划、源hash、seed/子流、profile、实际target/capability及服务配置。",
+      "program.ir与data_objects.json：保留指令身份、CFG、typed对象、初始化及cleanup。",
+      "resource_audit.json与event_obligations.json：独立账本/HB/phase/单位审计。",
+      "case_result.json与coverage_delta.json：区分生成/审计/接收/完成/检查，本阶段真实执行量及NOT_RUN/BLOCKED原因。"
+    ],
+    "coverage_ids": [
+      "CV-CLUSTER-001"
+    ],
+    "suites": [
+      "DIRECTED",
+      "NEGATIVE",
+      "REPLAY"
+    ],
+    "fixed_seed": null,
+    "timeout_policy": "GEN_BOUNDED",
+    "current_status": "NOT_RUN",
+    "current_gate": "BLOCKED_MISSING_IMPLEMENTATION"
+  },
+  {
+    "source_testpoint_id": "SIG-CLUSTER-002",
+    "id": "TC-CLUSTER-002",
+    "title": "cancel与grid模板",
+    "phase": "P1_GENERATOR_UNIT",
+    "prerequisites": [
+      "固定PTX9.4清单及SM-ARCH-S0来源hash通过preflight；独立形式/资源审计器与本阶段harness已实现。",
+      "由manifest绑定精确target、capability及合法form allowlist；未解析的target/形式保持UNRESOLVED并阻止对应正向分支，不推定数字更大的target继承能力。"
+    ],
+    "config_profile": "TP-GEN-BASE",
+    "parameters": {
+      "target_binding": "MANIFEST_EXACT_TARGET_AND_FORM_ALLOWLIST_REQUIRED",
+      "unresolved_capability_policy": "BLOCK_POSITIVE_BRANCH_AND_REPORT_UNRESOLVED",
+      "runtime_work_ids": [
+        0,
+        1,
+        2,
+        3
+      ],
+      "initial_running_ids": [
+        0
+      ],
+      "initial_pending_ids": [
+        1,
+        2,
+        3
+      ],
+      "cancel_response_bytes": 16,
+      "response_storage_alignment_bytes": 256,
+      "response_and_barrier": "独立合法shared对象；barrier layout/tx按CLC recipe",
+      "branches": [
+        "cancel成功",
+        "cancel失败后不再try_cancel"
+      ],
+      "grid_dependency": "launch_dependents与wait分别建模"
+    },
+    "initial_state": [
+      "工作队列、唯一ID与pending/running状态由runtime fixture建立。",
+      "response bytes未定义，barrier已合法初始化并正确登记16B完成责任。"
+    ],
+    "steps": [
+      "生成对尚未启动cluster的合法try_cancel意图及对应响应/等待程序。",
+      "独立模型分别返回成功ID或失败，只有完成/正确查询后才使用opaque response。",
+      "成功分支接管唯一工作；失败观察后禁止再try_cancel，并保留该规则负例。",
+      "生成grid依赖通知/等待模板，完成response/barrier及工作引用后cleanup。"
+    ],
+    "checkpoints": [
+      "try_cancel不是kill running cluster，成功ID唯一且不是猜response内部位编码。",
+      "launch_dependents不代表当前grid完成；wait按prerequisite语义。"
+    ],
+    "pass_criteria": [
+      "所有分支状态/义务完整，失败后非法重试被指定审计器拒绝。",
+      "response未完成前不读其ID/成功值。"
+    ],
+    "fail_criteria": [
+      "取消正在运行CTA、重复领取成功ID，或查询前把16B响应当普通整数。",
+      "缺少runtime服务而伪造本地dummy done。"
+    ],
+    "expected_artifacts": [
+      "manifest.json：锁定2026-11-09测试计划、源hash、seed/子流、profile、实际target/capability及服务配置。",
+      "program.ir与data_objects.json：保留指令身份、CFG、typed对象、初始化及cleanup。",
+      "resource_audit.json与event_obligations.json：独立账本/HB/phase/单位审计。",
+      "case_result.json与coverage_delta.json：区分生成/审计/接收/完成/检查，本阶段真实执行量及NOT_RUN/BLOCKED原因。",
+      "reference_runtime_cancel_trace.jsonl、opaque_response_lifetime_audit.json。"
+    ],
+    "coverage_ids": [
+      "CV-CLUSTER-002"
+    ],
+    "suites": [
+      "DIRECTED",
+      "NEGATIVE",
+      "REPLAY"
+    ],
+    "fixed_seed": null,
+    "timeout_policy": "GEN_BOUNDED",
+    "current_status": "NOT_RUN",
+    "current_gate": "BLOCKED_MISSING_IMPLEMENTATION"
+  },
+  {
+    "source_testpoint_id": "SIG-CLUSTER-003",
+    "id": "TC-CLUSTER-003",
+    "title": "DSM与可见性",
+    "phase": "P2_REFERENCE_PROGRAM",
+    "prerequisites": [
+      "固定PTX9.4清单及SM-ARCH-S0来源hash通过preflight；独立形式/资源审计器与本阶段harness已实现。",
+      "由manifest绑定精确target、capability及合法form allowlist；未解析的target/形式保持UNRESOLVED并阻止对应正向分支，不推定数字更大的target继承能力。",
+      "独立语义/内存/事件模型及其允许结果集合已锁定；生成器shadow不能作为唯一oracle。"
+    ],
+    "config_profile": "TP-REF-BASE",
+    "parameters": {
+      "target_binding": "MANIFEST_EXACT_TARGET_AND_FORM_ALLOWLIST_REQUIRED",
+      "unresolved_capability_policy": "BLOCK_POSITIVE_BRANCH_AND_REPORT_UNRESOLVED",
+      "ctas": 2,
+      "sms": 2,
+      "shared_bytes_each": 1024,
+      "same_offset": 0,
+      "initial_values_each": [
+        17,
+        34
+      ],
+      "DSM_payload_bytes": 64,
+      "orders": [
+        "远端写后正确同步再读",
+        "远端尾响应晚到但目标保持live"
+      ],
+      "target_exit": "remote责任关闭后的合法cluster顺序"
+    },
+    "initial_state": [
+      "两CTA共同admit并使用不同generation/shared base，本地offset0内容不同。",
+      "mapa/getctarank采用typed转换，remote view映射到真实目标owner。"
+    ],
+    "steps": [
+      "构造本地/remote shared访问及正确release/acquire或cluster同步recipe。",
+      "模型探索远端写/响应及consumer观察顺序，target在所有引用结束前不退出。",
+      "核对同offset不同owner隔离和remote消费HB；删除关键同步/提前exit作为独立mutant。",
+      "双方关闭remote返回、barrier与owner pin后执行合法退出。"
+    ],
+    "checkpoints": [
+      "不同owner字节对象与rank映射准确，不能裸异或SM编号造地址。",
+      "remote对象live与可见性是两个条件，任何一个缺失都不允许消费。"
+    ],
+    "pass_criteria": [
+      "所有允许合法次序满足模型关系，mutant因缺失HB/lifetime拒绝。",
+      "owner复用前引用为零，旧generation不会映射到新对象。"
+    ],
+    "fail_criteria": [
+      "只因目标存在就忽略同步，或只因同步就允许已退出owner。",
+      "参考模型硬编码一条网络延迟导致漏掉合法长尾。"
+    ],
+    "expected_artifacts": [
+      "manifest.json：锁定2026-11-09测试计划、源hash、seed/子流、profile、实际target/capability及服务配置。",
+      "program.ir与data_objects.json：保留指令身份、CFG、typed对象、初始化及cleanup。",
+      "resource_audit.json与event_obligations.json：独立账本/HB/phase/单位审计。",
+      "case_result.json与coverage_delta.json：区分生成/审计/接收/完成/检查，本阶段真实执行量及NOT_RUN/BLOCKED原因。",
+      "reference_DSM_HB_and_owner_trace.jsonl、rank_mapping_witness.json。"
+    ],
+    "coverage_ids": [
+      "CV-CLUSTER-001"
+    ],
+    "suites": [
+      "DIRECTED",
+      "RANDOM",
+      "REPLAY"
+    ],
+    "fixed_seed": null,
+    "timeout_policy": "REFERENCE_BOUNDED",
+    "current_status": "NOT_RUN",
+    "current_gate": "BLOCKED_MISSING_IMPLEMENTATION"
+  },
+  {
+    "source_testpoint_id": "SIG-CLUSTER-004",
+    "id": "TC-CLUSTER-004",
+    "title": "真实cluster与工作服务",
+    "phase": "P4_SOC",
+    "prerequisites": [
+      "固定PTX9.4清单及SM-ARCH-S0来源hash通过preflight；独立形式/资源审计器与本阶段harness已实现。",
+      "由manifest绑定精确target、capability及合法form allowlist；未解析的target/形式保持UNRESOLVED并阻止对应正向分支，不推定数字更大的target继承能力。",
+      "跨SM/SoC运行时、对应服务及取消/返回模型可用；未实现系统能力保持blocked。"
+    ],
+    "config_profile": "TP-SOC-BASE",
+    "parameters": {
+      "target_binding": "MANIFEST_EXACT_TARGET_AND_FORM_ALLOWLIST_REQUIRED",
+      "unresolved_capability_policy": "BLOCK_POSITIVE_BRANCH_AND_REPORT_UNRESOLVED",
+      "cluster_ctas": 2,
+      "sms": 2,
+      "queued_clusters": 3,
+      "runtime_variants": [
+        "取消成功",
+        "取消失败",
+        "dependent grid可早launch但wait未满足"
+      ],
+      "service_orders": [
+        "本地早/远端尾",
+        "合法乱序",
+        "有限控制反压"
+      ],
+      "work_data_bytes": 256
+    },
+    "initial_state": [
+      "工作ID/rank/依赖图、初始payload和所有owner/barrier由SoC fixture建立。",
+      "source/phase/tx登记和cancel成功/失败的定义合同锁定，不猜runtime内部编码。"
+    ],
+    "steps": [
+      "实际运行多SM cluster通信并注入有限网络/返回扰动。",
+      "分别取消可取消queued工作及观察失败，跟踪唯一ID与响应完整性。",
+      "允许dependent grid早启动独立工作，但在读取前置结果前执行规定wait。",
+      "等待prerequisite/远端数据/控制完成，drain所有cluster引用后回收owner。"
+    ],
+    "checkpoints": [
+      "cancel不杀运行CTA；成功ID不重复，失败后不非法重试。",
+      "dependent launch不是数据可见，读取由真正wait/HB保护。"
+    ],
+    "pass_criteria": [
+      "真实SoC/DSM/runtime证据与独立模型一致，所有退出责任结清。",
+      "公平服务下长尾最终前进，未用dummy回应提前清计数。"
+    ],
+    "fail_criteria": [
+      "ID重复、response/phase错配、dependent提前读取未完成数据。",
+      "CTA退出忽略远端引用或故意服务永久stall仍按正常pass。"
+    ],
+    "expected_artifacts": [
+      "manifest.json：锁定2026-11-09测试计划、源hash、seed/子流、profile、实际target/capability及服务配置。",
+      "program.ir与data_objects.json：保留指令身份、CFG、typed对象、初始化及cleanup。",
+      "resource_audit.json与event_obligations.json：独立账本/HB/phase/单位审计。",
+      "case_result.json与coverage_delta.json：区分生成/审计/接收/完成/检查，本阶段真实执行量及NOT_RUN/BLOCKED原因。",
+      "soc_cluster_runtime_trace.jsonl、grid_dependency_visibility_witness.json。"
+    ],
+    "coverage_ids": [
+      "CV-CLUSTER-003"
+    ],
+    "suites": [
+      "DIRECTED",
+      "RANDOM",
+      "STRESS",
+      "REPLAY"
+    ],
+    "fixed_seed": null,
+    "timeout_policy": "SOC_PROGRESS",
+    "current_status": "NOT_RUN",
+    "current_gate": "BLOCKED_MISSING_IMPLEMENTATION"
+  },
+  {
+    "source_testpoint_id": "SIG-FABRIC-001",
+    "id": "TC-FABRIC-001",
+    "title": "句柄和单位约束",
+    "phase": "P1_GENERATOR_UNIT",
+    "prerequisites": [
+      "固定PTX9.4清单及SM-ARCH-S0来源hash通过preflight；独立形式/资源审计器与本阶段harness已实现。",
+      "由manifest绑定精确target、capability及合法form allowlist；未解析的target/形式保持UNRESOLVED并阻止对应正向分支，不推定数字更大的target继承能力。"
+    ],
+    "config_profile": "TP-GEN-BASE",
+    "parameters": {
+      "target_binding": "MANIFEST_EXACT_TARGET_AND_FORM_ALLOWLIST_REQUIRED",
+      "unresolved_capability_policy": "BLOCK_POSITIVE_BRANCH_AND_REPORT_UNRESOLVED",
+      "CFT_carriers": {
+        "leId": "u32",
+        "offset": "u64"
+      },
+      "transfer_bytes": [
+        16,
+        32,
+        256
+      ],
+      "get_pullred_tx_units": [
+        16,
+        32,
+        256
+      ],
+      "put_red_tx_units": [
+        1,
+        2,
+        16
+      ],
+      "counter_bytes": 8,
+      "counter_alignment_bytes": 256,
+      "valid_counter_offset": 256,
+      "data_offset": 0,
+      "data_bytes": 256,
+      "mutations": [
+        "counter仅8B对齐",
+        "counter与data重叠",
+        "layout_v0",
+        "tx单位错误",
+        "普通ld/st访问multimemVA"
+      ]
+    },
+    "initial_state": [
+      "host/runtime fixture提供合法CFT endpoint绑定和resource extent，服务未实现不声称存在真实连接。",
+      "本地shared源/目标与layoutv1 barrier独立初始化，counter位于不重叠合法range。"
+    ],
+    "steps": [
+      "生成各操作/size的handle、单位和barrier约束模板，独立重算tx责任。",
+      "单因素变异carrier/endpoint范围/counter对齐/overlap/layout/units。",
+      "核查ordinary VA、multimem VA与CFT类型不能裸cast互用，关闭能力仅走preflight。",
+      "正向IR保留submit/观察/drain尾部，负例停在预期审计层。"
+    ],
+    "checkpoints": [
+      "get/pullred按bytes，put/red按16B units；counter按最终目的bytes另计。",
+      "allwarp pullred参与约束来自具体form，不套一般subset规则。"
+    ],
+    "pass_criteria": [
+      "合法tuple及typed义务完整；所有mutant精确拒绝。",
+      "exact target/CFT支持未解析即阻止正向分支。"
+    ],
+    "fail_criteria": [
+      "counter只按8B自然对齐即接受，或units被统一成bytes。",
+      "无系统能力还生成可执行成功Fabric命令。"
+    ],
+    "expected_artifacts": [
+      "manifest.json：锁定2026-11-09测试计划、源hash、seed/子流、profile、实际target/capability及服务配置。",
+      "program.ir与data_objects.json：保留指令身份、CFG、typed对象、初始化及cleanup。",
+      "resource_audit.json与event_obligations.json：独立账本/HB/phase/单位审计。",
+      "case_result.json与coverage_delta.json：区分生成/审计/接收/完成/检查，本阶段真实执行量及NOT_RUN/BLOCKED原因。"
+    ],
+    "coverage_ids": [
+      "CV-FABRIC-001"
+    ],
+    "suites": [
+      "DIRECTED",
+      "NEGATIVE",
+      "REPLAY"
+    ],
+    "fixed_seed": null,
+    "timeout_policy": "GEN_BOUNDED",
+    "current_status": "NOT_RUN",
+    "current_gate": "BLOCKED_MISSING_IMPLEMENTATION"
+  },
+  {
+    "source_testpoint_id": "SIG-FABRIC-002",
+    "id": "TC-FABRIC-002",
+    "title": "提交/等待程序模板",
+    "phase": "P1_GENERATOR_UNIT",
+    "prerequisites": [
+      "固定PTX9.4清单及SM-ARCH-S0来源hash通过preflight；独立形式/资源审计器与本阶段harness已实现。",
+      "由manifest绑定精确target、capability及合法form allowlist；未解析的target/形式保持UNRESOLVED并阻止对应正向分支，不推定数字更大的target继承能力。"
+    ],
+    "config_profile": "TP-GEN-BASE",
+    "parameters": {
+      "target_binding": "MANIFEST_EXACT_TARGET_AND_FORM_ALLOWLIST_REQUIRED",
+      "unresolved_capability_policy": "BLOCK_POSITIVE_BRANCH_AND_REPORT_UNRESOLVED",
+      "logical_operations": [
+        "get",
+        "put",
+        "red",
+        "pullred_if_legal"
+      ],
+      "transfer_bytes_each": 256,
+      "completion_units": {
+        "get": 256,
+        "put": 16,
+        "red": 16,
+        "pullred": 256
+      },
+      "barrier_layout": "v1",
+      "arrival_registration": [
+        "原子arrive.expect_tx",
+        "先expect_tx并保留pending arrival后arrive"
+      ],
+      "schedules": [
+        "complete早于登记但arrival保留",
+        "complete晚于登记"
+      ],
+      "pullred_participants": "完整未退出warp且规定全membermask、相同operand"
+    },
+    "initial_state": [
+      "CFT fixture、本地payload、opaque barrier及对应typed单位明确初始化。",
+      "issuing thread/group身份确定，pending arrival在最后登记之前不会提前降至零。"
+    ],
+    "steps": [
+      "发起合法操作并由对应thread submit，fetching限定只包括get/pullred。",
+      "分别采用原子arrive.expect_tx或先expect并保留arrival后arrive，探索complete早/晚的允许顺序。",
+      "观察primary完成后检查合法report；fabric.wait仅用于local shared源读安全复用。",
+      "等待最终所有责任并关闭source/目的/报告，再生成grid退出尾部。"
+    ],
+    "checkpoints": [
+      "submit先于其phase推进，最后arrival不在tx0时先释放再登记期望。",
+      "Fabric local-read终点不清try_get目的或远端full责任。"
+    ],
+    "pass_criteria": [
+      "所有模板在允许顺序下均无提前phase/错误复用；typed计数恰好配平。",
+      "完整warp pullred只计其规范逻辑操作责任，不随日志lane数膨胀完成计数。"
+    ],
+    "fail_criteria": [
+      "误把arrive/expect斜杠实现为先最后arrive后expect，或submit遗漏。",
+      "只用fabric.wait就结束grid/消费get目的，或成功清旧报告。"
+    ],
+    "expected_artifacts": [
+      "manifest.json：锁定2026-11-09测试计划、源hash、seed/子流、profile、实际target/capability及服务配置。",
+      "program.ir与data_objects.json：保留指令身份、CFG、typed对象、初始化及cleanup。",
+      "resource_audit.json与event_obligations.json：独立账本/HB/phase/单位审计。",
+      "case_result.json与coverage_delta.json：区分生成/审计/接收/完成/检查，本阶段真实执行量及NOT_RUN/BLOCKED原因。",
+      "fabric_program_and_phase_audit.json、source_full_obligation_witness.json。"
+    ],
+    "coverage_ids": [
+      "CV-FABRIC-002"
+    ],
+    "suites": [
+      "SMOKE",
+      "DIRECTED",
+      "NEGATIVE",
+      "REPLAY"
+    ],
+    "fixed_seed": null,
+    "timeout_policy": "GEN_BOUNDED",
+    "current_status": "NOT_RUN",
+    "current_gate": "BLOCKED_MISSING_IMPLEMENTATION"
+  },
+  {
+    "source_testpoint_id": "SIG-FABRIC-003",
+    "id": "TC-FABRIC-003",
+    "title": "报告和counter模型",
+    "phase": "P2_REFERENCE_PROGRAM",
+    "prerequisites": [
+      "固定PTX9.4清单及SM-ARCH-S0来源hash通过preflight；独立形式/资源审计器与本阶段harness已实现。",
+      "由manifest绑定精确target、capability及合法form allowlist；未解析的target/形式保持UNRESOLVED并阻止对应正向分支，不推定数字更大的target继承能力。",
+      "独立语义/内存/事件模型及其允许结果集合已锁定；生成器shadow不能作为唯一oracle。"
+    ],
+    "config_profile": "TP-REF-BASE",
+    "parameters": {
+      "target_binding": "MANIFEST_EXACT_TARGET_AND_FORM_ALLOWLIST_REQUIRED",
+      "unresolved_capability_policy": "BLOCK_POSITIVE_BRANCH_AND_REPORT_UNRESOLVED",
+      "layout": "v1",
+      "same_phase_operations": 3,
+      "report_schedules": [
+        "失败→成功",
+        "成功→失败",
+        "多个失败允许报告集合"
+      ],
+      "successful_counter_expected_bytes": 256,
+      "successful_counter_partials": [
+        16,
+        64,
+        128,
+        256
+      ],
+      "multimem_destinations": 2,
+      "failed_transfer_data_counter": "仅按规定错误/允许集合检查，不断言失败仍写出完整正常payload"
+    },
+    "initial_state": [
+      "成功counter场景counter=0且256B对齐；失败报告场景单独fixture，不混用不兼容barrier报告机制。",
+      "各目的独立data/counter/phase责任与允许错误集合建立，opaque reportValue不猜固定错误编号。"
+    ],
+    "steps": [
+      "参考模型生成同phase多成功/失败事件，分别探索其可允许的完成顺序。",
+      "成功传输场景让counter分段增长，仅最终对应目的bytes满足终点后允许完成。",
+      "失败场景按primary/report结算，保留可能的部分副作用，不无条件重试reduce。",
+      "逐目的收齐合法终点/错误并drain source/目的/报告引用。"
+    ],
+    "checkpoints": [
+      "成功事件不擦除同phase已有错误；report只在有效观察时消费。",
+      "counter中间增长不当full，multimem各目的counter仅覆盖自身访问。"
+    ],
+    "pass_criteria": [
+      "报告关系、成功最终counter与多目的责任符合独立模型。",
+      "失败通过定义错误路径结清而非伪造正常零数据或强制完整成功counter。"
+    ],
+    "fail_criteria": [
+      "partial counter提前释放parent，或失败操作被盲重试导致重复副作用。",
+      "错误oracle按固定自造report编码或把不同目的计数合并。"
+    ],
+    "expected_artifacts": [
+      "manifest.json：锁定2026-11-09测试计划、源hash、seed/子流、profile、实际target/capability及服务配置。",
+      "program.ir与data_objects.json：保留指令身份、CFG、typed对象、初始化及cleanup。",
+      "resource_audit.json与event_obligations.json：独立账本/HB/phase/单位审计。",
+      "case_result.json与coverage_delta.json：区分生成/审计/接收/完成/检查，本阶段真实执行量及NOT_RUN/BLOCKED原因。",
+      "reference_fabric_report_counter_trace.jsonl、allowed_error_and_side_effects.json。"
+    ],
+    "coverage_ids": [
+      "CV-FABRIC-001"
+    ],
+    "suites": [
+      "DIRECTED",
+      "RANDOM",
+      "REPLAY"
+    ],
+    "fixed_seed": null,
+    "timeout_policy": "REFERENCE_BOUNDED",
+    "current_status": "NOT_RUN",
+    "current_gate": "BLOCKED_MISSING_IMPLEMENTATION"
+  },
+  {
+    "source_testpoint_id": "SIG-FABRIC-004",
+    "id": "TC-FABRIC-004",
+    "title": "系统传输失败与退出",
+    "phase": "P4_SOC",
+    "prerequisites": [
+      "固定PTX9.4清单及SM-ARCH-S0来源hash通过preflight；独立形式/资源审计器与本阶段harness已实现。",
+      "由manifest绑定精确target、capability及合法form allowlist；未解析的target/形式保持UNRESOLVED并阻止对应正向分支，不推定数字更大的target继承能力。",
+      "跨SM/SoC运行时、对应服务及取消/返回模型可用；未实现系统能力保持blocked。"
+    ],
+    "config_profile": "TP-SOC-FAULT",
+    "parameters": {
+      "target_binding": "MANIFEST_EXACT_TARGET_AND_FORM_ALLOWLIST_REQUIRED",
+      "unresolved_capability_policy": "BLOCK_POSITIVE_BRANCH_AND_REPORT_UNRESOLVED",
+      "legal_faults": [
+        "可报告transport访问失败",
+        "一个目的合法长尾"
+      ],
+      "logical_operations": [
+        "get",
+        "put",
+        "red_if_capable"
+      ],
+      "transfer_bytes": 256,
+      "proxy_domains": {
+        "CFT": "fabric",
+        "local_shared": "async",
+        "barrier": "generic"
+      },
+      "retry_policy": "仅应用已定义且证明幂等/明确完成的分支允许重试；无自动重试reduce"
+    },
+    "initial_state": [
+      "真实或锁定SoC服务fixture提供CFT与layoutv1对象；故障注入类型受定义服务合同限制。",
+      "初始化payload/canary、报告和每操作typed units，记录已承诺外部副作用。"
+    ],
+    "steps": [
+      "实际提交合法Fabric程序，注入可报告故障及有限延迟，而非构造UB指令。",
+      "分别观察source-read、目的/远端full及primary/report，保持proxy顺序。",
+      "按程序定义错误分支停止/收尾或有证明的重试，记录部分外部副作用与取消确认。",
+      "grid退出前drain所有Fabric责任；失败不被改写成正常零数据结果。"
+    ],
+    "checkpoints": [
+      "失败操作仍exactly-once结算并保持owner到相应终点。",
+      "proxy/domain/单位与真实报告匹配，不能仅FIFO接收即结束。"
+    ],
+    "pass_criteria": [
+      "数据成功或定义报告失败均按各自oracle正确分类，外部副作用无重复。",
+      "所有已接受事务完成或正式取消，退出不泄漏系统引用。"
+    ],
+    "fail_criteria": [
+      "将合法服务错误当UB/trap，或吞错为正常值。",
+      "对不明部分成功reduce自动重发，或过滤旧响应冒称撤销远端写。"
+    ],
+    "expected_artifacts": [
+      "manifest.json：锁定2026-11-09测试计划、源hash、seed/子流、profile、实际target/capability及服务配置。",
+      "program.ir与data_objects.json：保留指令身份、CFG、typed对象、初始化及cleanup。",
+      "resource_audit.json与event_obligations.json：独立账本/HB/phase/单位审计。",
+      "case_result.json与coverage_delta.json：区分生成/审计/接收/完成/检查，本阶段真实执行量及NOT_RUN/BLOCKED原因。",
+      "soc_fabric_transport_trace.jsonl、report_side_effect_cancel_ledger.json、grid_drain_witness.json。"
+    ],
+    "coverage_ids": [
+      "CV-FABRIC-003"
+    ],
+    "suites": [
+      "DIRECTED",
+      "STRESS",
+      "REPLAY"
+    ],
+    "fixed_seed": null,
+    "timeout_policy": "SOC_PROGRESS",
+    "current_status": "NOT_RUN",
+    "current_gate": "BLOCKED_MISSING_IMPLEMENTATION"
+  },
+  {
+    "source_testpoint_id": "SIG-LIFE-001",
+    "id": "TC-LIFE-001",
+    "title": "符号资源程序合成",
+    "phase": "P1_GENERATOR_UNIT",
+    "prerequisites": [
+      "固定PTX9.4清单及SM-ARCH-S0来源hash通过preflight；独立形式/资源审计器与本阶段harness已实现。",
+      "由manifest绑定精确target、capability及合法form allowlist；未解析的target/形式保持UNRESOLVED并阻止对应正向分支，不推定数字更大的target继承能力。"
+    ],
+    "config_profile": "TP-GEN-BASE",
+    "parameters": {
+      "target_binding": "MANIFEST_EXACT_TARGET_AND_FORM_ALLOWLIST_REQUIRED",
+      "unresolved_capability_policy": "BLOCK_POSITIVE_BRANCH_AND_REPORT_UNRESOLVED",
+      "semantic_IR_node_budget": 128,
+      "initial_cleanup_reserve_nodes": 48,
+      "body_node_limit_initial": 80,
+      "max_loop_iterations": 3,
+      "max_live_memory_objects": 4,
+      "CFG_shapes": [
+        "直线",
+        "diamond",
+        "有界loop"
+      ],
+      "motifs": [
+        "TMEM生命周期",
+        "合法barrier/async",
+        "独立对象通信"
+      ],
+      "budget_rule": "每次加入recipe重算实际cleanup需求；48不是所有程序充分的固定保证"
+    },
+    "initial_state": [
+      "空planned账本与独立审计器初始状态一致，各对象先定义而非直接伪造live。",
+      "已解析recipe声明pre/post、参与者、资源/phase、允许partial/full及cleanup cost。"
+    ],
+    "steps": [
+      "按dependency DAG和资源可行集合选择recipe，预留创建/发布/等待/释放执行者。",
+      "在diamond/loop分别维护path predicate、定义集合及loop-carried allocation/phase不变式。",
+      "独立重走全CFG与允许completion前缀，确认use由创建/发布支配、reuse/free有HB。",
+      "达预算前停止body，生成完整cleanup并重新序列化审计到合法终止。"
+    ],
+    "checkpoints": [
+      "planned/issued/observed分账，不能靠生成到第N节点猜测完成。",
+      "CFG merge只保留所有路径成立事实，单路径allocation不能merge后无条件释放。"
+    ],
+    "pass_criteria": [
+      "非空程序所有路径资源闭合且无依赖环；实际cleanup成本不超预算。",
+      "独立审计与generator不会调用同一约束函数自证。"
+    ],
+    "fail_criteria": [
+      "全局清shadow掩盖泄漏、缺路径cleanup，或source未初始化支配use。",
+      "全部候选UNSAT/空程序仍报告whole-program pass。"
+    ],
+    "expected_artifacts": [
+      "manifest.json：锁定2026-11-09测试计划、源hash、seed/子流、profile、实际target/capability及服务配置。",
+      "program.ir与data_objects.json：保留指令身份、CFG、typed对象、初始化及cleanup。",
+      "resource_audit.json与event_obligations.json：独立账本/HB/phase/单位审计。",
+      "case_result.json与coverage_delta.json：区分生成/审计/接收/完成/检查，本阶段真实执行量及NOT_RUN/BLOCKED原因。",
+      "CFG_and_obligation_DAG.json、independent_prefix_audit.json。"
+    ],
+    "coverage_ids": [
+      "CV-LIFE-001"
+    ],
+    "suites": [
+      "SMOKE",
+      "DIRECTED",
+      "RANDOM",
+      "REPLAY"
+    ],
+    "fixed_seed": null,
+    "timeout_policy": "GEN_BOUNDED",
+    "current_status": "NOT_RUN",
+    "current_gate": "BLOCKED_MISSING_IMPLEMENTATION"
+  },
+  {
+    "source_testpoint_id": "SIG-LIFE-002",
+    "id": "TC-LIFE-002",
+    "title": "尾部预算与失败回滚",
+    "phase": "P1_GENERATOR_UNIT",
+    "prerequisites": [
+      "固定PTX9.4清单及SM-ARCH-S0来源hash通过preflight；独立形式/资源审计器与本阶段harness已实现。",
+      "由manifest绑定精确target、capability及合法form allowlist；未解析的target/形式保持UNRESOLVED并阻止对应正向分支，不推定数字更大的target继承能力。"
+    ],
+    "config_profile": "TP-GEN-BASE",
+    "parameters": {
+      "target_binding": "MANIFEST_EXACT_TARGET_AND_FORM_ALLOWLIST_REQUIRED",
+      "unresolved_capability_policy": "BLOCK_POSITIVE_BRANCH_AND_REPORT_UNRESOLVED",
+      "IR_node_budgets": [
+        32,
+        64,
+        128
+      ],
+      "candidate_retry_limits": [
+        0,
+        1,
+        4
+      ],
+      "stop_positions": [
+        "cleanup余量刚好",
+        "再加一个recipe即不足",
+        "分支merge前",
+        "loop迭代边界"
+      ],
+      "injected_candidate_failures": [
+        "合法化拒绝",
+        "资源UNSAT",
+        "序列化候选失败"
+      ]
+    },
+    "initial_state": [
+      "已发布prefix/manifest hash固定，候选reservation尚未进入提交账本。",
+      "每recipe有有界cleanup代价与所需执行者，不把tail预算作为事后截断长度。"
+    ],
+    "steps": [
+      "在不同预算和stop位置填body，独立计算剩余tail成本。",
+      "注入有限候选失败/UNSAT并回滚仅未发布reservation，核对已提交trace不变。",
+      "预算将不足时停止扩展并产出完整尾部；零重试配置立即给定义诊断而非忙等。",
+      "重新审计所有终止路径与程序hash，保存拒绝/回滚与最终账本。"
+    ],
+    "checkpoints": [
+      "无资源/随机子流/已发布prefix被非法清空或偷偷改写。",
+      "实际输出包含必要wait/phase/dealloc，不通过截断IR伪装预算满足。"
+    ],
+    "pass_criteria": [
+      "每次成功输出均在预算内闭合；UNSAT/预算不足都有非PASS原因及有限终止。",
+      "同manifest可重放生成/拒绝路径。"
+    ],
+    "fail_criteria": [
+      "无限重试、候选回滚泄漏，或为了凑budget删关键producer/wait。",
+      "fallback静默改变目标/能力/相关性后仍冒充原case。"
+    ],
+    "expected_artifacts": [
+      "manifest.json：锁定2026-11-09测试计划、源hash、seed/子流、profile、实际target/capability及服务配置。",
+      "program.ir与data_objects.json：保留指令身份、CFG、typed对象、初始化及cleanup。",
+      "resource_audit.json与event_obligations.json：独立账本/HB/phase/单位审计。",
+      "case_result.json与coverage_delta.json：区分生成/审计/接收/完成/检查，本阶段真实执行量及NOT_RUN/BLOCKED原因。",
+      "candidate_rollback_trace.jsonl、cleanup_budget_proof.json、prefix_hash_history.json。"
+    ],
+    "coverage_ids": [
+      "CV-LIFE-002"
+    ],
+    "suites": [
+      "DIRECTED",
+      "NEGATIVE",
+      "STRESS",
+      "REPLAY"
+    ],
+    "fixed_seed": null,
+    "timeout_policy": "GEN_BOUNDED",
+    "current_status": "NOT_RUN",
+    "current_gate": "BLOCKED_MISSING_IMPLEMENTATION"
+  },
+  {
+    "source_testpoint_id": "SIG-LIFE-003",
+    "id": "TC-LIFE-003",
+    "title": "多顺序prefix验证",
+    "phase": "P2_REFERENCE_PROGRAM",
+    "prerequisites": [
+      "固定PTX9.4清单及SM-ARCH-S0来源hash通过preflight；独立形式/资源审计器与本阶段harness已实现。",
+      "由manifest绑定精确target、capability及合法form allowlist；未解析的target/形式保持UNRESOLVED并阻止对应正向分支，不推定数字更大的target继承能力。",
+      "独立语义/内存/事件模型及其允许结果集合已锁定；生成器shadow不能作为唯一oracle。"
+    ],
+    "config_profile": "TP-REF-BASE",
+    "parameters": {
+      "target_binding": "MANIFEST_EXACT_TARGET_AND_FORM_ALLOWLIST_REQUIRED",
+      "unresolved_capability_policy": "BLOCK_POSITIVE_BRANCH_AND_REPORT_UNRESOLVED",
+      "logical_operations": 3,
+      "logical_milestones_each": [
+        "partial",
+        "full"
+      ],
+      "logical_linearizations_upper_example": 90,
+      "count_note": "三个独立partial<full对的6事件排列=90；实际HB剪枝后记录全部有界状态，非全系统穷尽",
+      "families": [
+        "TMA source-read/full",
+        "Fabric local-read/full",
+        "MMA A-read/full"
+      ],
+      "notification_delivery": "规范允许时独立乱序；不强制partial通知必须先于full观察",
+      "finite_model_bounds": "3操作、固定合法对象/phase、无无界loop"
+    },
+    "initial_state": [
+      "三种服务在同一合法项目/target模型中确实可用，否则对应组合blocked。",
+      "各自barrier/group/owner及typed义务独立初始化，跨对象访问无未排序冲突。"
+    ],
+    "steps": [
+      "建立同一合法程序的固定CFG/HB，列举有界逻辑milestone可达顺序。",
+      "对notification交付再按允许规则探索，区分物理读取结束与用户观察到受限通知。",
+      "每个可达prefix独立检查use/reuse/free、phase/window与owner引用，不借generator shadow。",
+      "到达各终止状态时检查义务清零；保存探索边界/状态数和反例路径。"
+    ],
+    "checkpoints": [
+      "logical partial/full与可观察通知不被强制同序，所有accepted事件恰一次。",
+      "只在匹配wait/phase观察后更新程序可用事实，不从模型内部早事件授予消费权。"
+    ],
+    "pass_criteria": [
+      "所声明有限状态空间全部可达prefix被检查，无提前free/错复用或孤儿义务。",
+      "探索截断必须标incomplete/blocked，不能将若干随机顺序称all-schedules证明。"
+    ],
+    "fail_criteria": [
+      "只验证单一completion顺序即宣称全允许顺序安全，或忽略合法通知乱序。",
+      "有界模型结束尚有引用/phase责任，或把全系统活性当已证明。"
+    ],
+    "expected_artifacts": [
+      "manifest.json：锁定2026-11-09测试计划、源hash、seed/子流、profile、实际target/capability及服务配置。",
+      "program.ir与data_objects.json：保留指令身份、CFG、typed对象、初始化及cleanup。",
+      "resource_audit.json与event_obligations.json：独立账本/HB/phase/单位审计。",
+      "case_result.json与coverage_delta.json：区分生成/审计/接收/完成/检查，本阶段真实执行量及NOT_RUN/BLOCKED原因。",
+      "bounded_state_space_manifest.json、all_prefix_results.json、counterexample_trace.json。"
+    ],
+    "coverage_ids": [
+      "CV-LIFE-001"
+    ],
+    "suites": [
+      "DIRECTED",
+      "RANDOM",
+      "STRESS",
+      "REPLAY"
+    ],
+    "fixed_seed": null,
+    "timeout_policy": "REFERENCE_BOUNDED",
+    "current_status": "NOT_RUN",
+    "current_gate": "BLOCKED_MISSING_IMPLEMENTATION"
+  },
+  {
+    "source_testpoint_id": "SIG-LIFE-004",
+    "id": "TC-LIFE-004",
+    "title": "真实满载drain",
+    "phase": "P3_SM_RTL",
+    "prerequisites": [
+      "固定PTX9.4清单及SM-ARCH-S0来源hash通过preflight；独立形式/资源审计器与本阶段harness已实现。",
+      "由manifest绑定精确target、capability及合法form allowlist；未解析的target/形式保持UNRESOLVED并阻止对应正向分支，不推定数字更大的target继承能力。",
+      "SM、对应adapter和monitor真实可用；全部事务的owner/epoch/返回身份及服务公平合同已配置。"
+    ],
+    "config_profile": "TP-SM-STRESS",
+    "parameters": {
+      "target_binding": "MANIFEST_EXACT_TARGET_AND_FORM_ALLOWLIST_REQUIRED",
+      "unresolved_capability_policy": "BLOCK_POSITIVE_BRANCH_AND_REPORT_UNRESOLVED",
+      "pressure_levels": [
+        "1",
+        "configured_capacity-1",
+        "configured_capacity",
+        "configured_capacity+1候选受回压"
+      ],
+      "queue_capacity_source": "实际实现/锁定服务profile；v1.1数值仅显式压力配置，非ISA限制",
+      "services": [
+        "Tensor",
+        "SMEM return",
+        "barrier/control",
+        "RF writeback"
+      ],
+      "drain_modes": [
+        "正常soft-drain",
+        "明确owner abort另立子变体"
+      ],
+      "service_delay": "有限schedule，watchdog按工作量/服务公平预算，不猜固定指令周期"
+    },
+    "initial_state": [
+      "真实SM/adapter有足够monitor暴露typed返回/owner，所有请求起始都来自已审计合法程序。",
+      "cleanup指令/执行者与控制进度路径预留；环境保证最终解除有限反压。"
+    ],
+    "steps": [
+      "逐级施加已接受Tensor/SMEM/RF返回压力，超过可接收容量的候选保持未admit而非ISA非法。",
+      "停止新kernel/epoch或新增body压力，但继续当前程序必要tiles、load、commit/wait/free及barrier。",
+      "解除有限回压，记录wait-for图和最老义务；正常模式等待全部终点，abort模式取得正式取消/隔离确认。",
+      "仅在所有owner/外部引用与副作用处理闭合后回收，核对exactly-once及generation安全。"
+    ],
+    "checkpoints": [
+      "没有一刀切阻断正常收尾所需指令；escape/control/返回可在公平合同下前进。",
+      "drop旧epoch包不等于已撤销外部store，正常drain与abort结果不混。"
+    ],
+    "pass_criteria": [
+      "正常模式全部责任归还，或abort模式有正式取消/副作用记录且不宣称正常数值完成。",
+      "watchdog报告可区分模型未兑现公平、合法长延迟与内部无进度。"
+    ],
+    "fail_criteria": [
+      "满载后commit/free进不来形成环等，或正常soft drain停掉剩余tiles。",
+      "未确认外部事务就清owner、丢返回后伪造drain成功，或零accepted事务假通过。"
+    ],
+    "expected_artifacts": [
+      "manifest.json：锁定2026-11-09测试计划、源hash、seed/子流、profile、实际target/capability及服务配置。",
+      "program.ir与data_objects.json：保留指令身份、CFG、typed对象、初始化及cleanup。",
+      "resource_audit.json与event_obligations.json：独立账本/HB/phase/单位审计。",
+      "case_result.json与coverage_delta.json：区分生成/审计/接收/完成/检查，本阶段真实执行量及NOT_RUN/BLOCKED原因。",
+      "sm_wait_for_and_drain_trace.jsonl、oldest_obligation_report.json、owner_cancel_side_effect_ledger.json。"
+    ],
+    "coverage_ids": [
+      "CV-LIFE-003"
+    ],
+    "suites": [
+      "DIRECTED",
+      "STRESS",
+      "REPLAY"
+    ],
+    "fixed_seed": null,
+    "timeout_policy": "SM_PROGRESS",
+    "current_status": "NOT_RUN",
+    "current_gate": "BLOCKED_MISSING_IMPLEMENTATION"
+  }
+]

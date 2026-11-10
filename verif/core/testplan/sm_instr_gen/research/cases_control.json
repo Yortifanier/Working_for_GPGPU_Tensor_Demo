@@ -1,0 +1,849 @@
+{
+  "schema_version": "1.0",
+  "date": "2026-11-09",
+  "scope": "Execution recipes only; no dynamic tests run.",
+  "cases": [
+    {
+      "source_testpoint_id": "SIG-ENV-001",
+      "id": "TC-ENV-001",
+      "title": "launch组合边界",
+      "phase": "P1_GENERATOR_UNIT",
+      "prerequisites": [
+        "Generator/independent checker not implemented; reference or unit harness required.",
+        "锁定本用例的vPlan/source/capability/schema及独立checker版本；所需具体target/recipe未闭合则BLOCKED。",
+        "以下数值是项目测试预算或fixture，不是NVIDIA物理参数或本轮实际执行记录。"
+      ],
+      "config_profile": "TP-GEN-BASE",
+      "parameters": {
+        "threads_per_CTA": [
+          1,
+          31,
+          32,
+          33
+        ],
+        "CTA_count": [
+          1,
+          8,
+          9
+        ],
+        "S0_SMEM_pool_bytes": 262144,
+        "shared_budget_witnesses": [
+          {
+            "CTA_count": 8,
+            "bytes_per_CTA": 32768,
+            "reserved_bytes_per_CTA": 0,
+            "expected": "pool_exactly_full_if_target_and_RF_allow"
+          },
+          {
+            "CTA_count": 8,
+            "bytes_per_CTA": 65536,
+            "expected": "reject_shared_overcommit"
+          },
+          {
+            "CTA_count": 9,
+            "threads_each": 32,
+            "expected": "reject_CTA_slots"
+          }
+        ],
+        "RF_budget_edges": [
+          "R_SM-resolved_allocation_unit",
+          "R_SM",
+          "R_SM+resolved_allocation_unit"
+        ],
+        "resource_constants_status": "S0 project configuration; target/ABI, R_SM and allocation units must be independently resolved"
+      },
+      "initial_state": [
+        "初始化独立launch预算表与各CTA私有owner，total reservation为0。",
+        "不把尾warp的padding lane加入live mask；每CTA静态/动态/reserved对象分别计数。"
+      ],
+      "steps": [
+        "枚举thread边界和CTA/shared witness，以ceil(threads/32)计算warp reservation并声明目标单CTA limits。",
+        "使用独立预算模型依次判断CTA/warp/RF/SMEM以及target/ABI；未知R_SM或granularity保持unresolved。",
+        "让发生器构造相同launch包，比较admit/reject分类和每项reservation，不启动任何SM。",
+        "撤回被拒候选，检查账本恢复；把正常/拒绝记录及gate状态写入seed manifest。"
+      ],
+      "checkpoints": [
+        "8×32KiB仅在其余资源与target也允许时可admit；不能只因等于pool就强制通过。",
+        "9CTA和8×64KiB witness分别因槽/容量拒绝，拒绝不得分配部分owner或计DUT事件。"
+      ],
+      "pass_criteria": [
+        "所有已解析组合与独立预算判定一致，padding lane无副作用，拒绝后资源守恒。"
+      ],
+      "fail_criteria": [
+        "将SMEM池容量当单CTA保证；R_SM未配置仍声称成功；部分launch占基本资源后等待。"
+      ],
+      "expected_artifacts": [
+        "launch_matrix.json",
+        "joint_budget_audit.json",
+        "candidate_rollback_log.json",
+        "manifest.json"
+      ],
+      "coverage_ids": [
+        "CV-ENV-001"
+      ],
+      "suites": [
+        "SMOKE",
+        "DIRECTED",
+        "NEGATIVE",
+        "RANDOM"
+      ],
+      "fixed_seed": null,
+      "timeout_policy": "GEN_BOUNDED",
+      "current_status": "NOT_RUN",
+      "current_gate": "BLOCKED_MISSING_IMPLEMENTATION"
+    },
+    {
+      "source_testpoint_id": "SIG-ENV-002",
+      "id": "TC-ENV-002",
+      "title": "服务schedule记录",
+      "phase": "P1_GENERATOR_UNIT",
+      "prerequisites": [
+        "Generator/independent checker not implemented; reference or unit harness required.",
+        "锁定本用例的vPlan/source/capability/schema及独立checker版本；所需具体target/recipe未闭合则BLOCKED。",
+        "以下数值是项目测试预算或fixture，不是NVIDIA物理参数或本轮实际执行记录。"
+      ],
+      "config_profile": "TP-GEN-BASE",
+      "parameters": {
+        "event_fixture_count": 16,
+        "RNG_streams": [
+          "opcode",
+          "operand",
+          "CFG",
+          "resource",
+          "timing",
+          "fault"
+        ],
+        "schedule_variants": [
+          "READY_ALWAYS",
+          "STALL_ON_ODD_ACCEPT_OPPORTUNITIES",
+          "PERMITTED_INDEPENDENT_RETURNS_REVERSED",
+          "DELAYED_OLD_EPOCH"
+        ],
+        "schedule_unit": "logical events; not fixed hardware cycles",
+        "record_all_sampler_retries": true
+      },
+      "initial_state": [
+        "unit-harness创建16个明确类型和owner/generation的SYNTHETIC事务；异步依赖图来自审计fixture。",
+        "每条随机子流由run seed和stream name确定，环境调度完全物化为JSON。"
+      ],
+      "steps": [
+        "按同一manifest生成两份环境schedule，再按不同worker顺序重新生成。",
+        "独立schedule validator检查return仅对应已发起事务，反序只作用于允许并发的独立返回。",
+        "对晚到旧epoch和backpressure场景验证预期过滤/阻塞事件，不模拟未知DUT成功响应。",
+        "比较各流hash及完整schedule；改一个timing子流时检查未声明受影响的operand等子流不变。"
+      ],
+      "checkpoints": [
+        "schedule记录每个logical_event_id、source transaction、ready/return/fault及fairness contract。",
+        "同case同manifest不受worker遍历顺序影响；仅输入子流变化的影响范围符合合同。"
+      ],
+      "pass_criteria": [
+        "schedule字节/语义按确定性合同可重现且所有事件可追踪；不增加DUT运行计数。"
+      ],
+      "fail_criteria": [
+        "用wall clock播种或依赖全局worker RNG；凭空返回成功；重排违反依赖/接口合同。"
+      ],
+      "expected_artifacts": [
+        "environment_schedule.json",
+        "stream_digests.json",
+        "schedule_audit.json",
+        "manifest.json"
+      ],
+      "coverage_ids": [
+        "CV-ENV-002"
+      ],
+      "suites": [
+        "DIRECTED",
+        "RANDOM",
+        "REPLAY"
+      ],
+      "fixed_seed": null,
+      "timeout_policy": "GEN_BOUNDED",
+      "current_status": "NOT_RUN",
+      "current_gate": "BLOCKED_MISSING_IMPLEMENTATION"
+    },
+    {
+      "source_testpoint_id": "SIG-ENV-003",
+      "id": "TC-ENV-003",
+      "title": "公平与deadlock模板",
+      "phase": "P2_REFERENCE_PROGRAM",
+      "prerequisites": [
+        "Generator/independent checker not implemented; reference or unit harness required.",
+        "锁定本用例的vPlan/source/capability/schema及独立checker版本；所需具体target/recipe未闭合则BLOCKED。",
+        "以下数值是项目测试预算或fixture，不是NVIDIA物理参数或本轮实际执行记录。"
+      ],
+      "config_profile": "TP-REF-BASE",
+      "parameters": {
+        "reference_fixture_kind": "SYNTHETIC_REFERENCE",
+        "wait_graph_scenarios": [
+          "FAIR_CHAIN_DRAINS",
+          "EXTERNAL_SERVICE_WITHHOLDS_RETURN",
+          "INJECTED_INTERNAL_CREDIT_CYCLE"
+        ],
+        "logical_progress_watch_window_events": 64,
+        "service_contract": "explicit eventual-service assumption; no universal per-instruction cycle limit"
+      },
+      "initial_state": [
+        "为三种fixture分别记录相同有效程序的资源图和可见事件；内部cycle为reference fault injection，不是合法程序主动制造ISA UB。",
+        "独立reference scheduler初始化所有owner与待服务节点，关闭真实DUT coverage sink。"
+      ],
+      "steps": [
+        "在公平服务fixture推进事件直到全部义务关闭，记录最小进度链。",
+        "在外部服务不回应fixture保留未履行assumption，不把停滞自动标DUT死锁。",
+        "在注入内部credit环的reference模型中导出wait-for strongly-connected components与责任归属。",
+        "由独立diagnostic checker比较三种分类；timeout只终止实验，不能代替根因证据。"
+      ],
+      "checkpoints": [
+        "FAIR与STARVATION的区别来自服务assumption被满足/违反，不靠同一固定周期阈值。",
+        "内部fault产生的cycle有可重放wait graph；负例不进入正常合法DUT程序。"
+      ],
+      "pass_criteria": [
+        "三fixture被分别归类为完成、外部阻塞、模型内部环等待，并保留完整事件/假设证据。"
+      ],
+      "fail_criteria": [
+        "全部非完成都标同一deadlock；无限等待；合成reference日志填入真实SM coverage。"
+      ],
+      "expected_artifacts": [
+        "wait_graph.json",
+        "assumption_status.json",
+        "progress_classification.json",
+        "reference_events.jsonl",
+        "manifest.json"
+      ],
+      "coverage_ids": [
+        "CV-ENV-001"
+      ],
+      "suites": [
+        "DIRECTED",
+        "STRESS"
+      ],
+      "fixed_seed": null,
+      "timeout_policy": "REFERENCE_BOUNDED",
+      "current_status": "NOT_RUN",
+      "current_gate": "BLOCKED_MISSING_IMPLEMENTATION"
+    },
+    {
+      "source_testpoint_id": "SIG-ENV-004",
+      "id": "TC-ENV-004",
+      "title": "reset与迟到返回",
+      "phase": "P3_SM_RTL",
+      "prerequisites": [
+        "Generator/independent checker not implemented; SM RTL and corresponding service/adapter required.",
+        "锁定本用例的vPlan/source/capability/schema及独立checker版本；所需具体target/recipe未闭合则BLOCKED。",
+        "以下数值是项目测试预算或fixture，不是NVIDIA物理参数或本轮实际执行记录。"
+      ],
+      "config_profile": "TP-SM-BASE",
+      "parameters": {
+        "actions": [
+          "SAFE_DRAIN",
+          "PROJECT_ABORT",
+          "RESET_EPOCH"
+        ],
+        "action_cutpoints": [
+          "AFTER_ADMIT",
+          "AFTER_SOURCE_CAPTURE",
+          "BEFORE_RESPONSE",
+          "AFTER_EXTERNAL_STORE_COMMIT"
+        ],
+        "old_new_generations": [
+          10,
+          11
+        ],
+        "late_response_repetitions": [
+          1,
+          2
+        ],
+        "reset_semantics": "requires explicit project/SOC cancellation contract; no arbitrary-cycle preemption promise"
+      },
+      "initial_state": [
+        "初始化旧epoch/owner与新epoch可复用资源，创建带明确合法源/目的的一组在途事务。",
+        "独立ledger记录哪些外部store已commit、哪些仍可取消，以及返回引用。"
+      ],
+      "steps": [
+        "以真实adapter提交合法程序并等monitor确认指定cutpoint后发出选定project action。",
+        "SAFE_DRAIN停止新body但保留commit/wait/load/free等必要收尾；ABORT/RESET按已冻结取消/隔离协议执行。",
+        "在新epoch建立后送达旧generation迟到返回/重发fixture，监测是否写入新owner。",
+        "等待所有旧责任drain或取得正式cancel ack；核对已commit外部副作用保持真实，再结束新context。"
+      ],
+      "checkpoints": [
+        "旧包过滤与外部副作用撤销是不同事实，必须独立记录commit/cancel。",
+        "新owner字节、RF目的和barrier phase不被旧response污染；安全drain路径仍有进度。"
+      ],
+      "pass_criteria": [
+        "所有project动作按其合同结束，旧责任无孤儿，新context无污染，外部已commit状态正确。"
+      ],
+      "fail_criteria": [
+        "无取消确认就回收owner；过滤旧包即声称撤销store；一刀切阻断必要cleanup。"
+      ],
+      "expected_artifacts": [
+        "epoch_owner_events.jsonl",
+        "external_side_effect_ledger.json",
+        "cancel_ack_log.json",
+        "scoreboard.json",
+        "manifest.json"
+      ],
+      "coverage_ids": [
+        "CV-ENV-003"
+      ],
+      "suites": [
+        "DIRECTED",
+        "NEGATIVE",
+        "STRESS"
+      ],
+      "fixed_seed": null,
+      "timeout_policy": "SM_PROGRESS",
+      "current_status": "NOT_RUN",
+      "current_gate": "BLOCKED_MISSING_IMPLEMENTATION"
+    },
+    {
+      "source_testpoint_id": "SIG-COV-001",
+      "id": "TC-COV-001",
+      "title": "采样阶段分账",
+      "phase": "P1_GENERATOR_UNIT",
+      "prerequisites": [
+        "Generator/independent checker not implemented; reference or unit harness required.",
+        "锁定本用例的vPlan/source/capability/schema及独立checker版本；所需具体target/recipe未闭合则BLOCKED。",
+        "以下数值是项目测试预算或fixture，不是NVIDIA物理参数或本轮实际执行记录。"
+      ],
+      "config_profile": "TP-GEN-BASE",
+      "parameters": {
+        "log_origin": "SYNTHETIC_UNIT",
+        "logical_candidates": 4,
+        "fixture_classes": [
+          "REJECTED_PREFLIGHT",
+          "LEGALIZED_NOT_SENT",
+          "ADMITTED_NOT_COMPLETED",
+          "COMPLETED_NOT_CHECKED"
+        ],
+        "real_DUT_event_sink_enabled": false,
+        "real_dynamic_runs_expected": 0
+      },
+      "initial_state": [
+        "创建隔离的unit coverage数据库，所有fixture加SYNTHETIC标志且分离run命名空间。",
+        "参考计数表由独立人工可重算的四个fixture建立，不读取aggregator内部状态作golden。"
+      ],
+      "steps": [
+        "依次送入四类fixture并在每个阶段独立导出unit counters。",
+        "核对candidate/legalized/reject/admit/complete/checked各计数的身份与前置事件。",
+        "尝试把SYNTHETIC日志合并到真实DUT_SCENARIO数据库，预期合并边界拒绝。",
+        "清空fixture并重放同一记录，核对reset/去重不产生真实run或DUT coverage增量。"
+      ],
+      "checkpoints": [
+        "COMPLETED_NOT_CHECKED不增加CHECKED；preflight reject不增加实际admitted。",
+        "real_DUT_event_sink始终0，unit fixture命中与真实执行记录严格隔离。"
+      ],
+      "pass_criteria": [
+        "独立重算计数完全一致，全部synthetic标志与来源保留，误合并被具体规则拒绝。"
+      ],
+      "fail_criteria": [
+        "仅程序文本存在就记执行；将P1日志当真实DUT；无checked却报功能通过。"
+      ],
+      "expected_artifacts": [
+        "synthetic_unit_events.jsonl",
+        "unit_counter_expected.json",
+        "coverage_aggregator_diff.json",
+        "manifest.json"
+      ],
+      "coverage_ids": [
+        "CV-COV-001"
+      ],
+      "suites": [
+        "SMOKE",
+        "DIRECTED",
+        "NEGATIVE"
+      ],
+      "fixed_seed": null,
+      "timeout_policy": "GEN_BOUNDED",
+      "current_status": "NOT_RUN",
+      "current_gate": "BLOCKED_MISSING_IMPLEMENTATION"
+    },
+    {
+      "source_testpoint_id": "SIG-COV-002",
+      "id": "TC-COV-002",
+      "title": "分母和交叉bin",
+      "phase": "P1_GENERATOR_UNIT",
+      "prerequisites": [
+        "Generator/independent checker not implemented; reference or unit harness required.",
+        "锁定本用例的vPlan/source/capability/schema及独立checker版本；所需具体target/recipe未闭合则BLOCKED。",
+        "以下数值是项目测试预算或fixture，不是NVIDIA物理参数或本轮实际执行记录。"
+      ],
+      "config_profile": "TP-GEN-BASE",
+      "parameters": {
+        "registry_fixture_kind": "SYNTHETIC_BIN_REGISTRY",
+        "bin_states": [
+          "ELIGIBLE",
+          "ILLEGAL",
+          "DISABLED",
+          "UNRESOLVED",
+          "PROVED_UNREACHABLE",
+          "REVIEWED_WAIVER"
+        ],
+        "cross_axes": [
+          "fixture_form",
+          "fixture_profile",
+          "value_class"
+        ],
+        "waiver_fields": [
+          "rule",
+          "evidence",
+          "review",
+          "version"
+        ],
+        "UNRESOLVED_blocks_closure": true
+      },
+      "initial_state": [
+        "建立不冒充PTX合法形式的有限fixture bin表，记录baseline分母和hash。",
+        "实际target/form registry若未冻结则相应闭合gate未满足，不从217节数估算tuple数量。"
+      ],
+      "steps": [
+        "枚举六种bin状态及各状态合法/非法转换，逐项计算eligible集合。",
+        "对每个排除项要求独立rule/evidence，UNRESOLVED仍阻止关闭而不是静默删去。",
+        "用缺证据waiver、source hash变化和非法cross作单因素mutation。",
+        "比较registry版本/hash、可达性证明、mandatory目标与审计预期，导出未闭合原因。"
+      ],
+      "checkpoints": [
+        "ILLEGAL不属于正向分母；DISABLED/WAIVERED按预先冻结政策显式记录，不等同已覆盖。",
+        "未知rule或UNSAT频繁不能被当不可达证明。"
+      ],
+      "pass_criteria": [
+        "分母集合/hash与独立registry一致，缺证据或未解析项按策略BLOCKED，不能用低百分比掩盖。"
+      ],
+      "fail_criteria": [
+        "删除未命中bin以凑100%；未经评审waiver；把全部格式做笛卡尔积当合法cross。"
+      ],
+      "expected_artifacts": [
+        "bin_registry.json",
+        "denominator_audit.json",
+        "waiver_review.json",
+        "manifest.json"
+      ],
+      "coverage_ids": [
+        "CV-COV-002"
+      ],
+      "suites": [
+        "DIRECTED",
+        "NEGATIVE"
+      ],
+      "fixed_seed": null,
+      "timeout_policy": "GEN_BOUNDED",
+      "current_status": "NOT_RUN",
+      "current_gate": "BLOCKED_MISSING_IMPLEMENTATION"
+    },
+    {
+      "source_testpoint_id": "SIG-COV-003",
+      "id": "TC-COV-003",
+      "title": "覆盖合并与零用例",
+      "phase": "P2_REFERENCE_PROGRAM",
+      "prerequisites": [
+        "Generator/independent checker not implemented; reference or unit harness required.",
+        "锁定本用例的vPlan/source/capability/schema及独立checker版本；所需具体target/recipe未闭合则BLOCKED。",
+        "以下数值是项目测试预算或fixture，不是NVIDIA物理参数或本轮实际执行记录。"
+      ],
+      "config_profile": "TP-REF-BASE",
+      "parameters": {
+        "reference_log_origin": "SYNTHETIC_REFERENCE",
+        "merge_variants": [
+          "IDENTICAL_COMPATIBLE",
+          "DUPLICATE_INSTANCE",
+          "DIFFERENT_SOURCE_HASH",
+          "DIFFERENT_PROFILE",
+          "DIFFERENT_SCHEMA",
+          "ZERO_CHECKED",
+          "CONFLICTING_DUPLICATE_RESULT"
+        ],
+        "compatibility_key": [
+          "source",
+          "capability",
+          "profile",
+          "schema",
+          "backend",
+          "bin_registry"
+        ],
+        "logical_instances": 8
+      },
+      "initial_state": [
+        "物化8个固定reference事件实例以及独立expected aggregate；不访问真实DUT数据库。",
+        "每条log附完整compatibility key和稳定instance/phase/fragment身份。"
+      ],
+      "steps": [
+        "合并同key正常记录与重复相同实例，独立重算唯一checked集合。",
+        "分别变异source/profile/schema/bin registry并请求合并，检查拒绝的具体兼容键。",
+        "输入空日志、只有complete无check、以及同identity不同结果的冲突记录。",
+        "重放合并过程并核对aggregate hash、去重及状态：无实际checked不能PASS。"
+      ],
+      "checkpoints": [
+        "重复回放不重复增加实例计数；冲突duplicate是证据完整性失败而非静默覆盖。",
+        "不兼容数据库保持分开，零checked归类NO_TEST/NOT_RUN而非功能成功。"
+      ],
+      "pass_criteria": [
+        "所有merge/拒绝/去重和状态分类与独立事件集合一致，fixture只计参考层。"
+      ],
+      "fail_criteria": [
+        "无条件合并跨profile/source覆盖；重复膨胀；空结果PASS；把冲突当正常重发。"
+      ],
+      "expected_artifacts": [
+        "reference_logs.jsonl",
+        "merge_expected.json",
+        "merge_report.json",
+        "manifest.json"
+      ],
+      "coverage_ids": [
+        "CV-COV-003"
+      ],
+      "suites": [
+        "DIRECTED",
+        "NEGATIVE",
+        "REPLAY"
+      ],
+      "fixed_seed": null,
+      "timeout_policy": "REFERENCE_BOUNDED",
+      "current_status": "NOT_RUN",
+      "current_gate": "BLOCKED_MISSING_IMPLEMENTATION"
+    },
+    {
+      "source_testpoint_id": "SIG-COV-004",
+      "id": "TC-COV-004",
+      "title": "SM事件采样一致",
+      "phase": "P3_SM_RTL",
+      "prerequisites": [
+        "Generator/independent checker not implemented; SM RTL and corresponding service/adapter required.",
+        "锁定本用例的vPlan/source/capability/schema及独立checker版本；所需具体target/recipe未闭合则BLOCKED。",
+        "以下数值是项目测试预算或fixture，不是NVIDIA物理参数或本轮实际执行记录。"
+      ],
+      "config_profile": "TP-SM-BASE",
+      "parameters": {
+        "program_recipe": "20 accepted dynamic instructions plus 4 preflight-rejected candidates, conditional on frozen legal recipe",
+        "event_identity": [
+          "epoch",
+          "owner",
+          "warp_thread_or_collective",
+          "instruction_instance",
+          "fragment",
+          "completion_kind"
+        ],
+        "sidecopy_mutations": [
+          "DROP_ADMIT",
+          "DUPLICATE_FULL",
+          "A_READ_MISLABELED_FULL",
+          "DROP_CHECK_RESULT"
+        ],
+        "mutated_evidence_origin": "CORRUPTED_SIDECOPY_ONLY"
+      },
+      "initial_state": [
+        "锁定可实现的合法recipe与真实event monitors；recipe不能落实则BLOCKED。",
+        "初始化真实run日志和隔离的损坏侧拷贝目录，禁止侧拷贝回流真实coverage库。"
+      ],
+      "steps": [
+        "生成/独立审计候选后执行获准程序，收集driver、SM admit、typed partial/full及checker事件。",
+        "按稳定identity逐项关联，检查真实checked集合不超过对应已完成且已验证集合。",
+        "从真实日志复制只读副本，分别注入丢admit/重复full/Aread误标/丢checker结果并要求correlator拒绝。",
+        "比较原始真实run与独立counter结果，保存损坏副本失败原因，原始coverage不被mutation改写。"
+      ],
+      "checkpoints": [
+        "只能真实admit/complete/check事件填DUT覆盖，Aread与fragment不替full。",
+        "sidecopy故障验证correlator本身，不算DUT执行失败或新的coverage。"
+      ],
+      "pass_criteria": [
+        "原始run事件与独立counter一致，四类损坏侧拷贝被定位拒绝，真实数据库无污染。"
+      ],
+      "fail_criteria": [
+        "preflight reject记admit；complete自动记checked；Aread误作full；侧拷贝数据混入实际结果。"
+      ],
+      "expected_artifacts": [
+        "actual_driver_SM_checker_events.jsonl",
+        "identity_correlation.json",
+        "coverage_recompute.json",
+        "corrupted_sidecopy_diagnostics.json",
+        "manifest.json"
+      ],
+      "coverage_ids": [
+        "CV-COV-003"
+      ],
+      "suites": [
+        "DIRECTED",
+        "STRESS"
+      ],
+      "fixed_seed": null,
+      "timeout_policy": "SM_PROGRESS",
+      "current_status": "NOT_RUN",
+      "current_gate": "BLOCKED_MISSING_IMPLEMENTATION"
+    },
+    {
+      "source_testpoint_id": "SIG-REGRESS-001",
+      "id": "TC-REGRESS-001",
+      "title": "计划/状态完整性",
+      "phase": "P1_GENERATOR_UNIT",
+      "prerequisites": [
+        "Generator/independent checker not implemented; reference or unit harness required.",
+        "锁定本用例的vPlan/source/capability/schema及独立checker版本；所需具体target/recipe未闭合则BLOCKED。",
+        "以下数值是项目测试预算或fixture，不是NVIDIA物理参数或本轮实际执行记录。"
+      ],
+      "config_profile": "TP-GEN-BASE",
+      "parameters": {
+        "planned_source_counts": {
+          "features": 25,
+          "testpoints": 106,
+          "coverage_points": 75,
+          "instruction_topics": 217,
+          "special_register_topics": 35
+        },
+        "unit_fixture_mutations": [
+          "SOURCE_HASH",
+          "REVERSE_LINK",
+          "UNKNOWN_CV",
+          "FALSE_EXECUTION_CLAIM"
+        ],
+        "case_scope": "future P1 pipeline-unit test; current standalone P0 tool invocation is reported separately"
+      },
+      "initial_state": [
+        "冻结vPlan与本testplan源hash，准备future generator/unit pipeline的未执行结果目录。",
+        "所有106源case初始状态NOT_RUN，不把独立P0校验的PASS写回case执行状态。"
+      ],
+      "steps": [
+        "通过P1 unit harness载入完整source→TC→suite映射，调用独立schema/association审计接口。",
+        "对正常fixture验证计数、双向关联、scope和source hash。",
+        "逐一注入四种metadata故障并检查具体拒绝诊断，再恢复fixture。",
+        "核对未来unit结果与独立P0报告分离、动态执行数的来源和manifest绑定。"
+      ],
+      "checkpoints": [
+        "缺映射/未知CV/错hash/伪造执行均不能静默接受。",
+        "当前只运行check_testplan.py不等同本TC已执行。"
+      ],
+      "pass_criteria": [
+        "P1实际实施后正常fixture通过、故障fixture对应拒绝且状态/证据分类准确。"
+      ],
+      "fail_criteria": [
+        "将静态P0 PASS当106动态case完成；反向关联丢失；源变化仍合并旧覆盖。"
+      ],
+      "expected_artifacts": [
+        "pipeline_unit_association_report.json",
+        "metadata_mutation_diagnostics.json",
+        "manifest.json"
+      ],
+      "coverage_ids": [
+        "CV-REGRESS-001"
+      ],
+      "suites": [
+        "SMOKE",
+        "DIRECTED",
+        "NEGATIVE"
+      ],
+      "fixed_seed": null,
+      "timeout_policy": "GEN_BOUNDED",
+      "current_status": "NOT_RUN",
+      "current_gate": "BLOCKED_MISSING_IMPLEMENTATION"
+    },
+    {
+      "source_testpoint_id": "SIG-REGRESS-002",
+      "id": "TC-REGRESS-002",
+      "title": "随机分布与稀有事件",
+      "phase": "P1_GENERATOR_UNIT",
+      "prerequisites": [
+        "Generator/independent checker not implemented; reference or unit harness required.",
+        "锁定本用例的vPlan/source/capability/schema及独立checker版本；所需具体target/recipe未闭合则BLOCKED。",
+        "以下数值是项目测试预算或fixture，不是NVIDIA物理参数或本轮实际执行记录。"
+      ],
+      "config_profile": "TP-GEN-BASE",
+      "parameters": {
+        "draw_counts_per_feasible_state": [
+          1024,
+          4096
+        ],
+        "weight_sets": [
+          [
+            1,
+            1,
+            1
+          ],
+          [
+            0,
+            1,
+            7
+          ],
+          [
+            0,
+            0,
+            0
+          ]
+        ],
+        "rare_form_min_quota": 4,
+        "max_constraint_attempts_per_candidate": 256,
+        "statistical_policy": {
+          "alpha": 0.001,
+          "minimum_expected_bin_count": 5,
+          "multiple_testing_correction": "Bonferroni if the chosen statistical test assumptions hold; otherwise predeclare exact/merged-bin method"
+        },
+        "throughput_ratio_used_as_sampling_weight": false
+      },
+      "initial_state": [
+        "构造有限可独立重算的可行状态，明确合法项、关闭项与UNSAT原因。",
+        "锁定draw count、统计方法、RNG子流和seed；不得看到结果后调阈值。"
+      ],
+      "steps": [
+        "分别运行等权、含零权重和全零权重配置；全零应产生有界诊断，不无限重试。",
+        "为每次attempt记录条件可行集合、拒绝理由和最终emitted/checked分类。",
+        "在两个样本量下按预先冻结方法审计条件分布，同时用定向quota保证rare合法项命中。",
+        "触发最大constraint attempts并验证可解释UNSAT/fallback策略与可回放日志，不以Rubin峰值比例作为权重。"
+      ],
+      "checkpoints": [
+        "统计分布按条件可行集合比较，不能要求有限样本histogram精确等于权重。",
+        "零权重功能不被随机选中；rare定向quota与随机概率分开计。"
+      ],
+      "pass_criteria": [
+        "分布/配额满足预声明判据，全零/UNSAT有限终止，配置和拒绝偏移可解释。"
+      ],
+      "fail_criteria": [
+        "事后改alpha/seed直到通过；合法稀有项永久饥饿；全零挂死；静默取消原定hazard。"
+      ],
+      "expected_artifacts": [
+        "sampling_attempts.jsonl",
+        "conditional_histograms.json",
+        "statistical_method_and_result.json",
+        "quota_UNSAT_report.json",
+        "manifest.json"
+      ],
+      "coverage_ids": [
+        "CV-REGRESS-002"
+      ],
+      "suites": [
+        "DIRECTED",
+        "NEGATIVE",
+        "RANDOM",
+        "STRESS"
+      ],
+      "fixed_seed": null,
+      "timeout_policy": "GEN_BOUNDED",
+      "current_status": "NOT_RUN",
+      "current_gate": "BLOCKED_MISSING_IMPLEMENTATION"
+    },
+    {
+      "source_testpoint_id": "SIG-REGRESS-003",
+      "id": "TC-REGRESS-003",
+      "title": "分层失败与退出",
+      "phase": "P2_REFERENCE_PROGRAM",
+      "prerequisites": [
+        "Generator/independent checker not implemented; reference or unit harness required.",
+        "锁定本用例的vPlan/source/capability/schema及独立checker版本；所需具体target/recipe未闭合则BLOCKED。",
+        "以下数值是项目测试预算或fixture，不是NVIDIA物理参数或本轮实际执行记录。"
+      ],
+      "config_profile": "TP-REF-BASE",
+      "parameters": {
+        "status_fixture_kind": "SYNTHETIC_CAMPAIGN",
+        "fixtures": [
+          "MISSING_TOOL",
+          "NO_MODEL",
+          "ZERO_CASE",
+          "ZERO_CHECKED",
+          "UNCLOSED_BINS",
+          "UNREVIEWED_WAIVER",
+          "OLD_MALU_EVIDENCE_ONLY",
+          "VALID_CHECKED_EVIDENCE"
+        ],
+        "PASS_requires_nonempty_checked": true,
+        "dependency_closed_never_silently_skipped": true
+      },
+      "initial_state": [
+        "初始化隔离的reference campaign账本，所有fixture明确非真实执行。",
+        "VALID_CHECKED_EVIDENCE是合成状态机测试输入，不可用作SM功能验收证明。"
+      ],
+      "steps": [
+        "依次向独立campaign分类器提供八种fixture，并记录工具/gate、checked、coverage和waiver字段。",
+        "核对missing dependency为BLOCKED、未发起为NOT_RUN、真实错误为FAIL，而非统归PASS或skip。",
+        "检查零checked、未闭合mandatory和旧MALU证据不能满足generator/SM退出条件。",
+        "将fixture结论与预声明truth table比对，导出错误路径/状态转换及所有源hash。"
+      ],
+      "checkpoints": [
+        "PASS只能由非空且符合scope的实际证据成立；synthetic truth table不写真实run结果。",
+        "未审查waiver、capability未解析、缺工具保持显式未关闭状态。"
+      ],
+      "pass_criteria": [
+        "状态机与truth table一致且无虚假PASS、覆盖缩分母或旧证据替代。"
+      ],
+      "fail_criteria": [
+        "缺工具变PASS；零case通过；用10,861旧MALU结果证明本106case执行；静默skip必要项。"
+      ],
+      "expected_artifacts": [
+        "campaign_status_truth_table.json",
+        "status_transition_report.json",
+        "evidence_scope_audit.json",
+        "manifest.json"
+      ],
+      "coverage_ids": [
+        "CV-REGRESS-003"
+      ],
+      "suites": [
+        "DIRECTED",
+        "NEGATIVE"
+      ],
+      "fixed_seed": null,
+      "timeout_policy": "REFERENCE_BOUNDED",
+      "current_status": "NOT_RUN",
+      "current_gate": "BLOCKED_MISSING_IMPLEMENTATION"
+    },
+    {
+      "source_testpoint_id": "SIG-REGRESS-004",
+      "id": "TC-REGRESS-004",
+      "title": "未来SM回归关闭",
+      "phase": "P3_SM_RTL",
+      "prerequisites": [
+        "Generator/independent checker not implemented; SM RTL and corresponding service/adapter required.",
+        "锁定本用例的vPlan/source/capability/schema及独立checker版本；所需具体target/recipe未闭合则BLOCKED。",
+        "以下数值是项目测试预算或fixture，不是NVIDIA物理参数或本轮实际执行记录。"
+      ],
+      "config_profile": "TP-SM-BASE",
+      "parameters": {
+        "required_phase": "P3_SM_RTL",
+        "SM_case_count_in_source": 23,
+        "regression_stages": [
+          "P1_P2_ENTRY_GATES",
+          "P3_SMOKE_RECIPE",
+          "P3_DIRECTED",
+          "P3_RANDOM",
+          "P3_STRESS",
+          "TRIAGE_CLOSURE"
+        ],
+        "P4_closed_separately": true,
+        "mandatory_bins": "frozen eligible P3 bins, unresolved keeps gate closed",
+        "cleanup_may_not_be_truncated": true
+      },
+      "initial_state": [
+        "先证明P1/P2前置实现和已启用P3 capability/recipe/model就绪，否则不启动本case。",
+        "冻结本次P3 eligible case/bin集合，P4仍独立blocked，不宣称全SoC关闭。"
+      ],
+      "steps": [
+        "以P3合法smoke recipe验证真实driver/admit/complete/check责任链，失败即停止更大回归。",
+        "按本testplan的P3 case名单运行定向、seed sweep与合法压力变体，保留不可用项和原因。",
+        "汇总独立checker、typed completion/owner cleanup、实际coverage和failure replay包。",
+        "只对冻结的启用P3范围判G3退出；所有mandatory可达bin有证据、未归类缺陷清零，P4不借此通过。"
+      ],
+      "checkpoints": [
+        "实际checked非空，stage/provenance可追踪；timeout有wait graph和公平假设分类。",
+        "每个run结束资源闭合或有正式abort确认，未triage失败不被重跑成功覆盖。"
+      ],
+      "pass_criteria": [
+        "P3启用范围满足冻结退出标准，证据包完整可重放，无零用例/未归类失败假通过。"
+      ],
+      "fail_criteria": [
+        "P3 smoke失败仍跑压力；P4缺服务却宣称全SoC通过；删除未命中bin；缺正式收尾。"
+      ],
+      "expected_artifacts": [
+        "SM_campaign_summary.json",
+        "enabled_case_bin_registry.json",
+        "actual_checker_and_coverage.json",
+        "triage_and_replay_index.json",
+        "manifest.json"
+      ],
+      "coverage_ids": [
+        "CV-REGRESS-003"
+      ],
+      "suites": [
+        "DIRECTED",
+        "RANDOM",
+        "STRESS"
+      ],
+      "fixed_seed": null,
+      "timeout_policy": "SM_PROGRESS",
+      "current_status": "NOT_RUN",
+      "current_gate": "BLOCKED_MISSING_IMPLEMENTATION"
+    }
+  ]
+}

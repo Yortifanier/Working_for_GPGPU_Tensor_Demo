@@ -1,0 +1,24 @@
+{
+  "schema_version": "1.0",
+  "plan_id": "SM-INSTR-GEN-TESTPLAN",
+  "version": "1.0",
+  "date": "2026-11-09",
+  "source_files": {
+    "vplan_testpoints": {
+      "path": "verif/core/vplan/sm_instr_gen/testpoints.json",
+      "sha256": "9a230465115ed9e01b8edf64da32aba41af7a2da80b12275e28a8894792018c3"
+    },
+    "vplan_features": {
+      "path": "verif/core/vplan/sm_instr_gen/vplan_features.json",
+      "sha256": "8ee62fb376abac123d8704fad8d12c03b681e5736890373436b29a585f67a17d"
+    },
+    "vplan_document": {
+      "path": "verif/core/vplan/sm_instr_gen/SM_INSTR_GEN_VPLAN.md",
+      "sha256": "71cd695ebdfbba906d17233c975762cec863187d2e4e96afc723a5d4e40915c9"
+    },
+    "sm_architecture": {
+      "path": "docs/sm/SM_ARCHITECTURE.md",
+      "sha256": "b28eaee5bf381c7dbcc8387687c62bc8030eb722935e11774cf3eaecb20fb0ba"
+    }
+  }
+}

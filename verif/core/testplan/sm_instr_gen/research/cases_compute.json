@@ -1,0 +1,2267 @@
+{
+  "schema_version": "1.0",
+  "date": "2026-11-09",
+  "scope": "执行级testplan细化；七feature共28个计划case，不是generator/oracle/SM实现或已执行结果。",
+  "source_testpoints": "verif/core/vplan/sm_instr_gen/testpoints.json",
+  "source_testpoints_sha256": "9a230465115ed9e01b8edf64da32aba41af7a2da80b12275e28a8894792018c3",
+  "profile_name_note": "config_profile采用主testplan统一配置：P1=TP-GEN-BASE、P2=TP-REF-BASE、P3=TP-SM-BASE、P4=TP-SOC-BASE；不新增PTX target或native字段。",
+  "budget_note": "parameters内规模和延迟仅为待冻结测试预算；实际启用受target/capability/服务公平合同约束，零可检查variant不得PASS。",
+  "fixed_seed_note": "fixed_seed=null，由root分配稳定固定seed；完整manifest与物化制品是回放依据，seed本身不足。",
+  "case_count": 28,
+  "cases": [
+    {
+      "source_testpoint_id": "SIG-ALU-001",
+      "id": "TC-ALU-001",
+      "title": "乘加与进位边界",
+      "phase": "P1_GENERATOR_UNIT",
+      "prerequisites": [
+        "发生器/对应unit harness和独立审计器已实现；当前缺失，因此本case为NOT_RUN/BLOCKED_MISSING_IMPLEMENTATION。",
+        "锁定PTX9.4 form/target证据、项目capability、IR/schema及数值profile；缺规则的variant为BLOCKED而非PASS。",
+        "独立checker不调用generator或DUT的同一合法性、decode、rounding helper；共享常量及独立边界已评审。"
+      ],
+      "config_profile": "TP-GEN-BASE",
+      "parameters": {
+        "parameter_status": "下列规模/调度值是待冻结的测试预算建议，不是SM时延、native编码或当前运行结果。",
+        "seed_strategy": "固定seed由主testplan赋值；RNG子流和所有抽样结果写入完整manifest，边界枚举不依赖随机偶然命中。",
+        "operand_width_candidates": [
+          16,
+          32,
+          64
+        ],
+        "signedness": [
+          "signed",
+          "unsigned"
+        ],
+        "value_classes": [
+          "0",
+          "1",
+          "-1_if_signed",
+          "MIN",
+          "MAX",
+          "MAX-1",
+          "alternating_bits",
+          "single_high_bit"
+        ],
+        "form_selection": "逐form过滤add/sub/mul/mad及.cc/.hi/.lo/.wide；不把64bit carrier自动解释成合法mul.wide.u64。",
+        "carry_chain_words": [
+          2,
+          4
+        ],
+        "instruction_budget_per_program": [
+          8,
+          32,
+          128
+        ]
+      },
+      "initial_state": [
+        "每个thread的输入寄存器与CC初始化来自各自命名空间；正向链不依赖未定义CC。",
+        "枚举跨word全1进位、全0借位和signed MIN/MAX相邻边界；未启用的形式不进入正常流。"
+      ],
+      "steps": [
+        "从审计通过form实例枚举边界对，并分别构造mul高/低/宽结果及2/4word进位链的typed IR。",
+        "独立validator核对位宽、sign、合法修饰符、读取定义和CC producer；将单项错误variant留在preflight。",
+        "以任意精度整数算完整数学结果，再按该指令规定截取/扩展/wrap/sat，单独生成carry/borrow期望制品。",
+        "把generator自带期望（若有）与独立结果对照，保存每个源表达式、完整乘积与最终位串；本P1不执行SM。"
+      ],
+      "checkpoints": [
+        "独立审计后每个正常读有支配定义，.hi/.wide期望确由完整乘积取得。",
+        "每条chain的中间word与CC逐项可重算；signed/unsigned解释不共用host溢出语义。"
+      ],
+      "pass_criteria": [
+        "已启用边界variant及CC期望全部匹配独立整数模型；未启用variant明确blocked/rejected。",
+        "合法/非法审计分类、候选制品与CV-ALU-001命中清单可追溯，P1不增加DUT检查数。"
+      ],
+      "fail_criteria": [
+        "低积被当作高积、符号扩展错误、CC串thread或使用host signed overflow决定golden。",
+        "缺oracle/零variant却报PASS，或未定义CC/非法tuple进入正常流。"
+      ],
+      "expected_artifacts": [
+        "完整manifest与source/target/capability/profile/tool/IR hash（计划产物）",
+        "boundary_vectors.json",
+        "integer_full_product_and_CC_oracle.json",
+        "independent_audit.json"
+      ],
+      "coverage_ids": [
+        "CV-ALU-001"
+      ],
+      "suites": [
+        "SMOKE",
+        "DIRECTED",
+        "RANDOM"
+      ],
+      "fixed_seed": null,
+      "timeout_policy": "GEN_BOUNDED",
+      "current_status": "NOT_RUN",
+      "current_gate": "BLOCKED_MISSING_IMPLEMENTATION"
+    },
+    {
+      "source_testpoint_id": "SIG-ALU-002",
+      "id": "TC-ALU-002",
+      "title": "位处理与carryless",
+      "phase": "P1_GENERATOR_UNIT",
+      "prerequisites": [
+        "发生器/对应unit harness和独立审计器已实现；当前缺失，因此本case为NOT_RUN/BLOCKED_MISSING_IMPLEMENTATION。",
+        "锁定PTX9.4 form/target证据、项目capability、IR/schema及数值profile；缺规则的variant为BLOCKED而非PASS。",
+        "独立checker不调用generator或DUT的同一合法性、decode、rounding helper；共享常量及独立边界已评审。"
+      ],
+      "config_profile": "TP-GEN-BASE",
+      "parameters": {
+        "parameter_status": "下列规模/调度值是待冻结的测试预算建议，不是SM时延、native编码或当前运行结果。",
+        "seed_strategy": "固定seed由主testplan赋值；RNG子流和所有抽样结果写入完整manifest，边界枚举不依赖随机偶然命中。",
+        "bit_width_candidates": [
+          16,
+          32,
+          64
+        ],
+        "shift_counts": [
+          "0",
+          "1",
+          "width-1",
+          "width",
+          "width+1",
+          "0xffffffff"
+        ],
+        "bitfield_positions": [
+          "0",
+          "1",
+          "width-1",
+          "width",
+          "width+1"
+        ],
+        "bitfield_lengths": [
+          "0",
+          "1",
+          "width-1",
+          "width",
+          "width+1"
+        ],
+        "clmad_width": 64,
+        "clmad_values": [
+          "0",
+          "1",
+          "bit0",
+          "bit63",
+          "all_ones",
+          "alternating_0x55_0xaa"
+        ]
+      },
+      "initial_state": [
+        "各位处理指令使用其合法位宽与count语义，位号和bitfield边界不按host移位定义推导。",
+        "clmad的a/b/c均为u64位向量，另保留普通整数乘法结果作不等价对照而非golden。"
+      ],
+      "steps": [
+        "枚举shift/bitfield/count组合及clmad hi/lo基向量，逐form过滤已定义与实现相关输入域。",
+        "独立bit-vector解释器按规格处理超宽shift、mask、sign extension、查找失败和LUT；无合同项标UNRESOLVED。",
+        "独立GF(2)模型用XOR多项式生成128bit积，选hi/lo64再XOR c，检查generator候选期望。",
+        "将明示UB候选隔离到preflight，不为其生成唯一数值或trap期望；保存规则与拒绝原因。"
+      ],
+      "checkpoints": [
+        "bit63乘bit63等基向量的hi/lo选段能由GF(2)多项式重算。",
+        "width及width+1的处理由每条原生语义/已审查profile决定，不触发host语言未定义移位。"
+      ],
+      "pass_criteria": [
+        "所有有定义或profile化variant的期望符合独立位模型；UB隔离与oracle缺失blocked均有记录。",
+        "clmad不复用普通有进位乘加模型，P1审计不计真实DUT覆盖。"
+      ],
+      "fail_criteria": [
+        "GF(2)被普通乘法替代、移位边界按host编译器偶然值比较、UB值被判功能不一致。",
+        "明示非法输入混入正常流或全部边界被静默过滤。"
+      ],
+      "expected_artifacts": [
+        "完整manifest与source/target/capability/profile/tool/IR hash（计划产物）",
+        "bitvector_boundary_manifest.json",
+        "gf2_hi_lo_oracle.json",
+        "undefined_vs_profile_classification.json"
+      ],
+      "coverage_ids": [
+        "CV-ALU-002"
+      ],
+      "suites": [
+        "DIRECTED",
+        "NEGATIVE",
+        "RANDOM"
+      ],
+      "fixed_seed": null,
+      "timeout_policy": "GEN_BOUNDED",
+      "current_status": "NOT_RUN",
+      "current_gate": "BLOCKED_MISSING_IMPLEMENTATION"
+    },
+    {
+      "source_testpoint_id": "SIG-ALU-003",
+      "id": "TC-ALU-003",
+      "title": "packed与video语义",
+      "phase": "P2_REFERENCE_PROGRAM",
+      "prerequisites": [
+        "发生器/对应unit harness和独立审计器已实现；当前缺失，因此本case为NOT_RUN/BLOCKED_MISSING_IMPLEMENTATION。",
+        "锁定PTX9.4 form/target证据、项目capability、IR/schema及数值profile；缺规则的variant为BLOCKED而非PASS。",
+        "独立checker不调用generator或DUT的同一合法性、decode、rounding helper；共享常量及独立边界已评审。",
+        "参考程序解释/编译路线及独立oracle均存在并版本锁定；结果只作P2证据，不填SM RTL覆盖。"
+      ],
+      "config_profile": "TP-REF-BASE",
+      "parameters": {
+        "parameter_status": "下列规模/调度值是待冻结的测试预算建议，不是SM时延、native编码或当前运行结果。",
+        "seed_strategy": "固定seed由主testplan赋值；RNG子流和所有抽样结果写入完整manifest，边界枚举不依赖随机偶然命中。",
+        "families": [
+          "dp2a",
+          "dp4a",
+          "enabled_scalar_video",
+          "enabled_SIMD_video"
+        ],
+        "element_classes": [
+          "zero",
+          "one",
+          "signed_min",
+          "signed_max",
+          "unsigned_max",
+          "alternating_sign",
+          "one_hot_element"
+        ],
+        "accumulator_classes": [
+          "0",
+          "-1",
+          "S32_MIN",
+          "S32_MAX"
+        ],
+        "program_lengths": [
+          4,
+          32,
+          128
+        ]
+      },
+      "initial_state": [
+        "用逐element独特标记构造packed载体，C/merge operand初始化为可区分旧位与新位的pattern。",
+        "冻结每条video的extract/sign/clamp/secondary-op/merge表以及dp2a/dp4a合法输入sign组合。"
+      ],
+      "steps": [
+        "生成单element激活、全element极值及混合符号的参考程序；所有carrier/padding经独立审计。",
+        "参考程序执行器运行各启用形式，输出逐thread结果和最终载体；记录操作身份及源tuple。",
+        "独立标量化模型逐element extract/extend计算数学结果，再依原文clamp/merge或S32结果规则打包。",
+        "逐位置比较参考结果、未写入的merge位和C累加；不能调用DUT decoder或用matrix dot模型代替全部语义。"
+      ],
+      "checkpoints": [
+        "单element激活只改变规定输出位置，符号扩展与高/低片段选择独立核对。",
+        "饱和边界、C极值和secondary op先后顺序的中间值可重算。"
+      ],
+      "pass_criteria": [
+        "参考程序结果与独立逐元素模型一致，未指定写入位置保持初始merge位。",
+        "每个启用form至少有非零边界样本；无DUT执行覆盖声明。"
+      ],
+      "fail_criteria": [
+        "跨element串位、packed被归约为错误单标量、饱和/merge顺序错或C重复加入。",
+        "只检查载体低位而遗漏其余element，或oracle调用了被测解释器同一helper。"
+      ],
+      "expected_artifacts": [
+        "完整manifest与source/target/capability/profile/tool/IR hash（计划产物）",
+        "reference_program_and_trace.json",
+        "scalarized_element_oracle.json",
+        "packed_merge_diffs.json"
+      ],
+      "coverage_ids": [
+        "CV-ALU-001"
+      ],
+      "suites": [
+        "DIRECTED",
+        "RANDOM"
+      ],
+      "fixed_seed": null,
+      "timeout_policy": "REFERENCE_BOUNDED",
+      "current_status": "NOT_RUN",
+      "current_gate": "BLOCKED_MISSING_IMPLEMENTATION"
+    },
+    {
+      "source_testpoint_id": "SIG-ALU-004",
+      "id": "TC-ALU-004",
+      "title": "算术与CC压力",
+      "phase": "P3_SM_RTL",
+      "prerequisites": [
+        "发生器/对应unit harness和独立审计器已实现；当前缺失，因此本case为NOT_RUN/BLOCKED_MISSING_IMPLEMENTATION。",
+        "锁定PTX9.4 form/target证据、项目capability、IR/schema及数值profile；缺规则的variant为BLOCKED而非PASS。",
+        "独立checker不调用generator或DUT的同一合法性、decode、rounding helper；共享常量及独立边界已评审。",
+        "真实SM RTL、已冻结项目机器入口/IR adapter及正式驱动协议可用；不使用PTX文本字节冒充native编码。",
+        "实际admit/writeback/completion与lane/fragment/producer monitor可用，外部服务的公平/延迟合同已配置。"
+      ],
+      "config_profile": "TP-SM-BASE",
+      "parameters": {
+        "parameter_status": "下列规模/调度值是待冻结的测试预算建议，不是SM时延、native编码或当前运行结果。",
+        "seed_strategy": "固定seed由主testplan赋值；RNG子流和所有抽样结果写入完整manifest，边界枚举不依赖随机偶然命中。",
+        "resident_warp_candidates": [
+          1,
+          2,
+          4,
+          8
+        ],
+        "instructions_per_warp": [
+          64,
+          512,
+          4096
+        ],
+        "stream_mix": [
+          "integer_add_shift",
+          "multiply_hi_wide",
+          "CC_chain",
+          "packed_dot_video"
+        ],
+        "planned_external_stall_cycles": [
+          0,
+          1,
+          7,
+          31
+        ],
+        "delay_guard": "仅在正式返回/反压协议允许处施加有限stall；SM_PROGRESS上限由服务公平合同和工作量派生。"
+      },
+      "initial_state": [
+        "每warp/thread使用不同输入指纹与独立CC链；跨call使用CC前重新定义。",
+        "初始化完整RF/数据和预期结果表；冻结真实capability、服务配置和admit/complete/check计数。"
+      ],
+      "steps": [
+        "生成边界与随机混合程序，独立审计并保留source→lowered→实际DUT操作的映射。",
+        "通过正式adapter发送，分别记录握手/admit、source capture、结果片段与CC相关事件。",
+        "用独立timing子流对合法返回/ready施加有限stall，交错同目的/依赖流与无关流。",
+        "scoreboard按thread和动态producer比较完整值/CC，drain全部责任后封存真实覆盖与manifest。"
+      ],
+      "checkpoints": [
+        "未捕获source保持保护；CC与普通结果的每个consumer引用正确producer。",
+        "admitted/completed/checked可关联，stall不使同一指令重复计数或丢失。"
+      ],
+      "pass_criteria": [
+        "全部启用合法指令结果/CC一致且无跨thread串扰，实际checked数量非零并匹配动态流。",
+        "在配置公平假设下drain闭合，无将吞吐峰值/固定产品时延当通过条件。"
+      ],
+      "fail_criteria": [
+        "错forward、过早ready、旧写覆盖新结果、CC串扰、重复副作用或orphan指令。",
+        "在公平前提有效时持续无进度；外部永久stall须另归类而非直接报DUT deadlock。"
+      ],
+      "expected_artifacts": [
+        "完整manifest与source/target/capability/profile/tool/IR hash（计划产物）",
+        "admit_writeback_CC_trace.jsonl",
+        "integer_scoreboard_results.json",
+        "progress_wait_graph.json",
+        "materialized_timing_schedule.json"
+      ],
+      "coverage_ids": [
+        "CV-ALU-003"
+      ],
+      "suites": [
+        "DIRECTED",
+        "RANDOM",
+        "STRESS"
+      ],
+      "fixed_seed": null,
+      "timeout_policy": "SM_PROGRESS",
+      "current_status": "NOT_RUN",
+      "current_gate": "BLOCKED_MISSING_IMPLEMENTATION"
+    },
+    {
+      "source_testpoint_id": "SIG-FP-001",
+      "id": "TC-FP-001",
+      "title": "舍入与特殊值分桶",
+      "phase": "P1_GENERATOR_UNIT",
+      "prerequisites": [
+        "发生器/对应unit harness和独立审计器已实现；当前缺失，因此本case为NOT_RUN/BLOCKED_MISSING_IMPLEMENTATION。",
+        "锁定PTX9.4 form/target证据、项目capability、IR/schema及数值profile；缺规则的variant为BLOCKED而非PASS。",
+        "独立checker不调用generator或DUT的同一合法性、decode、rounding helper；共享常量及独立边界已评审。"
+      ],
+      "config_profile": "TP-GEN-BASE",
+      "parameters": {
+        "parameter_status": "下列规模/调度值是待冻结的测试预算建议，不是SM时延、native编码或当前运行结果。",
+        "seed_strategy": "固定seed由主testplan赋值；RNG子流和所有抽样结果写入完整manifest，边界枚举不依赖随机偶然命中。",
+        "format_candidates": [
+          "F16",
+          "BF16",
+          "F32",
+          "F64"
+        ],
+        "operation_candidates": [
+          "add",
+          "sub",
+          "mul",
+          "fma",
+          "mad",
+          "min",
+          "max",
+          "testp",
+          "copysign"
+        ],
+        "rounding_candidates": [
+          "rn",
+          "rz",
+          "rm",
+          "rp"
+        ],
+        "value_classes": [
+          "+0",
+          "-0",
+          "min_subnormal",
+          "max_subnormal",
+          "min_normal",
+          "max_finite",
+          "+Inf",
+          "-Inf",
+          "qNaN",
+          "sNaN_if_defined",
+          "half_ULP_ties",
+          "cancellation"
+        ],
+        "F32_example_input_bits": [
+          "00000000",
+          "80000000",
+          "00000001",
+          "007fffff",
+          "00800000",
+          "7f7fffff",
+          "7f800000",
+          "ff800000",
+          "7fc00001",
+          "7f800001"
+        ],
+        "modifier_selection": "逐form过滤FTZ/noFTZ/sat/satfinite/relu，不能对F64等未允许形式强加修饰符。"
+      },
+      "initial_state": [
+        "锁定独立FP oracle版本和NaN/zero/FTZ规则，generator golden与oracle来源不相同。",
+        "每种启用format枚举正负临界值与每个允许rounding；未规定NaN payload不建立唯一位模式。"
+      ],
+      "steps": [
+        "从原始格式编码与精确有理/整数表示生成边界向量和相邻ULP样本，不靠host float cast产生golden。",
+        "独立validator检查tuple、carrier、rounding与modifier；建立可检查位mask/允许NaN集合。",
+        "独立oracle输出逐形式正确舍入值或允许集合，特殊值走显式分类；普通fma按融合语义。",
+        "核对候选分桶、generator期望制品和可序列化位串；本P1只检查激励/期望，不声称FP执行通过。"
+      ],
+      "checkpoints": [
+        "半ULP的even/odd尾数、进位跨指数、subnormal/normal切换及overflow方向均有非空样本。",
+        "NaN payload、±0和FTZ比较mask来自规则；0×Inf等特殊组合不被有限Fraction模型吞掉。"
+      ],
+      "pass_criteria": [
+        "边界类别与独立oracle一致；没有规定的payload仅按允许集合检查。",
+        "未审查的tuple/oracle为blocked，P1不填DUT浮点覆盖。"
+      ],
+      "fail_criteria": [
+        "把double运算无条件当FP32/FP64精确FMA、NaN全部逐bit比对或错误清除负零。",
+        "为了凑覆盖对不存在的modifier/格式组合给出golden。"
+      ],
+      "expected_artifacts": [
+        "完整manifest与source/target/capability/profile/tool/IR hash（计划产物）",
+        "FP_input_bits_and_classes.json",
+        "rounding_and_specialvalue_oracle.json",
+        "NaN_allowed_masks.json"
+      ],
+      "coverage_ids": [
+        "CV-FP-001"
+      ],
+      "suites": [
+        "SMOKE",
+        "DIRECTED",
+        "RANDOM"
+      ],
+      "fixed_seed": null,
+      "timeout_policy": "GEN_BOUNDED",
+      "current_status": "NOT_RUN",
+      "current_gate": "BLOCKED_MISSING_IMPLEMENTATION"
+    },
+    {
+      "source_testpoint_id": "SIG-FP-002",
+      "id": "TC-FP-002",
+      "title": "packed/mixed target联合约束",
+      "phase": "P1_GENERATOR_UNIT",
+      "prerequisites": [
+        "发生器/对应unit harness和独立审计器已实现；当前缺失，因此本case为NOT_RUN/BLOCKED_MISSING_IMPLEMENTATION。",
+        "锁定PTX9.4 form/target证据、项目capability、IR/schema及数值profile；缺规则的variant为BLOCKED而非PASS。",
+        "独立checker不调用generator或DUT的同一合法性、decode、rounding helper；共享常量及独立边界已评审。"
+      ],
+      "config_profile": "TP-GEN-BASE",
+      "parameters": {
+        "parameter_status": "下列规模/调度值是待冻结的测试预算建议，不是SM时延、native编码或当前运行结果。",
+        "seed_strategy": "固定seed由主testplan赋值；RNG子流和所有抽样结果写入完整manifest，边界枚举不依赖随机偶然命中。",
+        "tuple_groups": [
+          "mixed_F16x2_BF16x2_F32x2",
+          "alternate_FP8_FP6_FP4_UE8M0_x4"
+        ],
+        "target_candidates": [
+          "sm_90a",
+          "sm_100a",
+          "sm_103a",
+          "sm_107f"
+        ],
+        "element_markers": [
+          "all_distinct",
+          "one_element_nonzero",
+          "alternating_sign",
+          "one_special_element"
+        ],
+        "carrier_variants": [
+          "E2M1x4_b16",
+          "E2M1p4x4_b32",
+          "FP6_byte_padded_b32",
+          "F32x2_b64"
+        ],
+        "mutations": [
+          "target_only",
+          "carrier_width_only",
+          "documented_required_padding_only",
+          "one_type_role_only"
+        ]
+      },
+      "initial_state": [
+        "正向基线逐form源规则已审查；不把9.4新增推成sm107自动支持。",
+        "每element值可独立辨认；NaN/Inf只用于该格式实际支持的编码。"
+      ],
+      "steps": [
+        "构造每个启用mixed/alternate tuple，检查其载体、padding和逐element角色。",
+        "独立validator分别重算正向合法性以及单因素target/carrier mutation的拒绝层/理由。",
+        "独立逐element oracle计算期望；用单element非零样本证明四项输出不能被合并为dot。",
+        "保存正/负基线、mutation diff与允许输出；非法与UB只在preflight隔离，不生成硬件trap期望。"
+      ],
+      "checkpoints": [
+        "mixedpacked的sm107f family与alternate x4专属target依据分别定位，未按SM数字统一继承。",
+        "修改一个element只影响其规定结果位置；E2M1紧凑与padded载体转换不串位。"
+      ],
+      "pass_criteria": [
+        "正例与独立tuple/element模型一致，负例命中指定规则，未静默改写后算负例成功。",
+        "oracle缺失的variant明确blocked；P1结果不计真实packed硬件覆盖。"
+      ],
+      "fail_criteria": [
+        "把x4当K=4归约、强行允许非法target、忽略禁止padding或错误NaN编码。",
+        "任何非零退出码均算mutation命中，缺工具被报成正确拒绝。"
+      ],
+      "expected_artifacts": [
+        "完整manifest与source/target/capability/profile/tool/IR hash（计划产物）",
+        "packed_tuple_baselines.json",
+        "single_fault_mutations.json",
+        "per_element_expected_results.json",
+        "independent_target_audit.json"
+      ],
+      "coverage_ids": [
+        "CV-FP-002"
+      ],
+      "suites": [
+        "DIRECTED",
+        "NEGATIVE",
+        "RANDOM"
+      ],
+      "fixed_seed": null,
+      "timeout_policy": "GEN_BOUNDED",
+      "current_status": "NOT_RUN",
+      "current_gate": "BLOCKED_MISSING_IMPLEMENTATION"
+    },
+    {
+      "source_testpoint_id": "SIG-FP-003",
+      "id": "TC-FP-003",
+      "title": "SFU误差与FMA对照",
+      "phase": "P2_REFERENCE_PROGRAM",
+      "prerequisites": [
+        "发生器/对应unit harness和独立审计器已实现；当前缺失，因此本case为NOT_RUN/BLOCKED_MISSING_IMPLEMENTATION。",
+        "锁定PTX9.4 form/target证据、项目capability、IR/schema及数值profile；缺规则的variant为BLOCKED而非PASS。",
+        "独立checker不调用generator或DUT的同一合法性、decode、rounding helper；共享常量及独立边界已评审。",
+        "参考程序解释/编译路线及独立oracle均存在并版本锁定；结果只作P2证据，不填SM RTL覆盖。"
+      ],
+      "config_profile": "TP-REF-BASE",
+      "parameters": {
+        "parameter_status": "下列规模/调度值是待冻结的测试预算建议，不是SM时延、native编码或当前运行结果。",
+        "seed_strategy": "固定seed由主testplan赋值；RNG子流和所有抽样结果写入完整manifest，边界枚举不依赖随机偶然命中。",
+        "F32_fma_witness": {
+          "a": "1+2^-23",
+          "b": "1-2^-23",
+          "c": "-1",
+          "rounding": "rn",
+          "ftz": false,
+          "fused_math": "-2^-46",
+          "separate_mul_add_result": "+0"
+        },
+        "SFU_candidates": [
+          "sin",
+          "cos",
+          "lg2",
+          "ex2",
+          "div",
+          "rcp",
+          "rsqrt"
+        ],
+        "domain_sampling": [
+          "source_defined_endpoints",
+          "adjacent_representable_values",
+          "zero",
+          "signed_zero",
+          "powers_of_two",
+          "minmax_exponents",
+          "Inf_NaN_if_defined"
+        ],
+        "error_policy": "每form从固定规则读取ULP/relative/absolute界与适用区间；无规则不使用统一epsilon。"
+      },
+      "initial_state": [
+        "参考程序执行器与独立高精度oracle可分别提供结果，不共用被测数值helper。",
+        "精确、full、approx及ftz forms的域/误差/特殊值规则已版本锁定。"
+      ],
+      "steps": [
+        "生成明确融合与先乘后加不同的F32 witness及邻域值，另建立SFU分段边界集合。",
+        "独立模型先证明witness的两个精确关系，再让参考解释/编译路线执行对应合法程序。",
+        "对正确舍入形式逐位或允许NaN集合比较，对approx形式按各自区间和误差公式检查。",
+        "记录输入编码、参考输出、高精度值、误差计算及被采用规则；缺规则variant为blocked。"
+      ],
+      "checkpoints": [
+        "rn且非FTZ的F32 witness产生融合-2^-46而独立mul后add为+0，足以区分两条语义。",
+        "SFU域边界/特殊输入不沿用普通有限数epsilon；精确与approx判据互不替代。"
+      ],
+      "pass_criteria": [
+        "所有启用参考执行结果落入对应允许集合/误差界，规则ID与计算过程可重算。",
+        "非空FMA witness被检查；仅P2 reference证据，不声称SM SFU/FP已实现。"
+      ],
+      "fail_criteria": [
+        "FMA被错误拆分、approx套单一epsilon、超定义区间仍使用不适用误差公式。",
+        "oracle实际调用同一被测libm函数或将设备未公开数值假装精确bitfit。"
+      ],
+      "expected_artifacts": [
+        "完整manifest与source/target/capability/profile/tool/IR hash（计划产物）",
+        "fused_vs_split_witness.json",
+        "reference_execution_trace.jsonl",
+        "SFU_error_domain_report.json"
+      ],
+      "coverage_ids": [
+        "CV-FP-001"
+      ],
+      "suites": [
+        "SMOKE",
+        "DIRECTED",
+        "RANDOM"
+      ],
+      "fixed_seed": null,
+      "timeout_policy": "REFERENCE_BOUNDED",
+      "current_status": "NOT_RUN",
+      "current_gate": "BLOCKED_MISSING_IMPLEMENTATION"
+    },
+    {
+      "source_testpoint_id": "SIG-FP-004",
+      "id": "TC-FP-004",
+      "title": "混合执行域",
+      "phase": "P3_SM_RTL",
+      "prerequisites": [
+        "发生器/对应unit harness和独立审计器已实现；当前缺失，因此本case为NOT_RUN/BLOCKED_MISSING_IMPLEMENTATION。",
+        "锁定PTX9.4 form/target证据、项目capability、IR/schema及数值profile；缺规则的variant为BLOCKED而非PASS。",
+        "独立checker不调用generator或DUT的同一合法性、decode、rounding helper；共享常量及独立边界已评审。",
+        "真实SM RTL、已冻结项目机器入口/IR adapter及正式驱动协议可用；不使用PTX文本字节冒充native编码。",
+        "实际admit/writeback/completion与lane/fragment/producer monitor可用，外部服务的公平/延迟合同已配置。"
+      ],
+      "config_profile": "TP-SM-BASE",
+      "parameters": {
+        "parameter_status": "下列规模/调度值是待冻结的测试预算建议，不是SM时延、native编码或当前运行结果。",
+        "seed_strategy": "固定seed由主testplan赋值；RNG子流和所有抽样结果写入完整manifest，边界枚举不依赖随机偶然命中。",
+        "resident_warp_candidates": [
+          1,
+          2,
+          4,
+          8
+        ],
+        "operations_per_warp": [
+          64,
+          512,
+          2048
+        ],
+        "domain_candidates": [
+          "F32",
+          "F64",
+          "half_BF16_packed",
+          "mixed_alternate_packed",
+          "SFU"
+        ],
+        "dependent_consumer_distances": [
+          0,
+          1,
+          7,
+          31
+        ],
+        "planned_stall_windows": [
+          0,
+          1,
+          8,
+          32
+        ]
+      },
+      "initial_state": [
+        "每operation携带允许的类型/rounding/FTZ/profile身份，初始化含非对称element值与特殊值。",
+        "真实capability不支持的domain显式记录blocked，不静默删去后声称跨域全通过。"
+      ],
+      "steps": [
+        "独立审计混合程序并生成各operation的精确/允许集合/误差oracle，冻结完整manifest。",
+        "经真实adapter发射并用合法反压切换高/低精度、长短时延及不同warp。",
+        "记录admit、完整writeback、consumer与mode/profile关联；每个DUT实际形成的依赖单独确认。",
+        "scoreboard按每operation的规则检查结果并drain；比较不以吞吐目标或统一固定时延为条件。"
+      ],
+      "checkpoints": [
+        "前后两种mode的特殊值/舍入/profile未串用，packed各element保持独立。",
+        "dependent consumer不得提前使用部分/旧结果；实际CHECKED与完整返回一一关联。"
+      ],
+      "pass_criteria": [
+        "所有实际启用操作满足各自数值判据且完成义务闭合，真实checked样本非零。",
+        "合法stall不改变结果/身份；资源压力下在公平合同内持续前进。"
+      ],
+      "fail_criteria": [
+        "mode切换使rounding/FTZ/NaN规则污染其他指令，或者共享SFU只提供错误统一近似值。",
+        "零实际执行、缺失oracle或仅数admit便宣称FP通过。"
+      ],
+      "expected_artifacts": [
+        "完整manifest与source/target/capability/profile/tool/IR hash（计划产物）",
+        "FP_domain_operation_manifest.json",
+        "DUT_value_profile_trace.jsonl",
+        "per_operation_numeric_check.json",
+        "progress_and_actual_hazards.json"
+      ],
+      "coverage_ids": [
+        "CV-FP-003"
+      ],
+      "suites": [
+        "DIRECTED",
+        "RANDOM",
+        "STRESS"
+      ],
+      "fixed_seed": null,
+      "timeout_policy": "SM_PROGRESS",
+      "current_status": "NOT_RUN",
+      "current_gate": "BLOCKED_MISSING_IMPLEMENTATION"
+    },
+    {
+      "source_testpoint_id": "SIG-DEP-001",
+      "id": "TC-DEP-001",
+      "title": "依赖链与无关流混合",
+      "phase": "P1_GENERATOR_UNIT",
+      "prerequisites": [
+        "发生器/对应unit harness和独立审计器已实现；当前缺失，因此本case为NOT_RUN/BLOCKED_MISSING_IMPLEMENTATION。",
+        "锁定PTX9.4 form/target证据、项目capability、IR/schema及数值profile；缺规则的variant为BLOCKED而非PASS。",
+        "独立checker不调用generator或DUT的同一合法性、decode、rounding helper；共享常量及独立边界已评审。"
+      ],
+      "config_profile": "TP-GEN-BASE",
+      "parameters": {
+        "parameter_status": "下列规模/调度值是待冻结的测试预算建议，不是SM时延、native编码或当前运行结果。",
+        "seed_strategy": "固定seed由主testplan赋值；RNG子流和所有抽样结果写入完整manifest，边界枚举不依赖随机偶然命中。",
+        "dependency_shapes": [
+          "RAW",
+          "WAR",
+          "WAW",
+          "independent",
+          "partial_write",
+          "predicate",
+          "CC"
+        ],
+        "planned_instruction_counts": [
+          8,
+          64,
+          256
+        ],
+        "dependency_distances": [
+          0,
+          1,
+          2,
+          7,
+          31
+        ],
+        "carrier_widths": [
+          32,
+          64,
+          128
+        ],
+        "wide_rule": "64/128为载体/片段，不据此发明128bit ALU opcode；仅已定义IR别名关系建重叠。"
+      },
+      "initial_state": [
+        "输入和旧目的均初始化，thread/warp命名空间隔离。",
+        "每个模板记录期望依赖边与所选合法操作，不以相同字符串寄存器名代替别名模型。"
+      ],
+      "steps": [
+        "合成每类依赖与无关流的边界距离程序，给每次定义分配稳定source ID。",
+        "独立分析器从最终IR重建path-sensitive def-use/live range和合法alias图，不读取generator预填边作为真值。",
+        "将重建图与目标模板比较，记录修复/重命名/优化前后哪些hazard消失。",
+        "验证所有读有定义，保存source到lowered映射契约；本P1只关闭生成形状bin，不计实际SM hazard。"
+      ],
+      "checkpoints": [
+        "每个目标依赖边真实存在，合法宽片段关系已明确；未定义读不被默认0掩盖。",
+        "无关流与不同thread同编号寄存器未被错误合并成依赖。"
+      ],
+      "pass_criteria": [
+        "全部枚举形状/距离有独立图证据；合法化修复后消失的目标形状不算命中。",
+        "P1边/图覆盖与DUT hazard覆盖分账，源信息可复现。"
+      ],
+      "fail_criteria": [
+        "checker复用generator边集自证、误认跨thread别名或假造宽度重叠。",
+        "缺定义/错误live range进入正常样本，或重命名消除依赖后仍算DUT hazard。"
+      ],
+      "expected_artifacts": [
+        "完整manifest与source/target/capability/profile/tool/IR hash（计划产物）",
+        "generated_IR_and_expected_edges.json",
+        "independently_rebuilt_defuse_graph.json",
+        "source_lowered_provenance.json"
+      ],
+      "coverage_ids": [
+        "CV-DEP-001"
+      ],
+      "suites": [
+        "SMOKE",
+        "DIRECTED",
+        "RANDOM"
+      ],
+      "fixed_seed": null,
+      "timeout_policy": "GEN_BOUNDED",
+      "current_status": "NOT_RUN",
+      "current_gate": "BLOCKED_MISSING_IMPLEMENTATION"
+    },
+    {
+      "source_testpoint_id": "SIG-DEP-002",
+      "id": "TC-DEP-002",
+      "title": "隐式状态与分歧定义",
+      "phase": "P1_GENERATOR_UNIT",
+      "prerequisites": [
+        "发生器/对应unit harness和独立审计器已实现；当前缺失，因此本case为NOT_RUN/BLOCKED_MISSING_IMPLEMENTATION。",
+        "锁定PTX9.4 form/target证据、项目capability、IR/schema及数值profile；缺规则的variant为BLOCKED而非PASS。",
+        "独立checker不调用generator或DUT的同一合法性、decode、rounding helper；共享常量及独立边界已评审。"
+      ],
+      "config_profile": "TP-GEN-BASE",
+      "parameters": {
+        "parameter_status": "下列规模/调度值是待冻结的测试预算建议，不是SM时延、native编码或当前运行结果。",
+        "seed_strategy": "固定seed由主testplan赋值；RNG子流和所有抽样结果写入完整manifest，边界枚举不依赖随机偶然命中。",
+        "branch_shapes": [
+          "diamond",
+          "nested_diamond"
+        ],
+        "guard_masks": [
+          "all_true",
+          "all_false",
+          "even_lanes",
+          "odd_lanes",
+          "upper_half"
+        ],
+        "CC_chain_words": [
+          2,
+          4
+        ],
+        "single_fault_variants": [
+          "remove_dominating_init",
+          "helper_temp_alias",
+          "CC_clobber_between_producer_consumer",
+          "call_then_unredefined_CC_read"
+        ],
+        "repair_policy": "仅显式允许时插入支配定义/替换临时寄存器，并另存修复后正例；原负例不计通过。"
+      },
+      "initial_state": [
+        "正向基线中masked写之前有旧值，所有启用线程的CC与predicate有可证明producer。",
+        "call/helper clobber规则来自冻结ABI；不要求CC跨call保存。"
+      ],
+      "steps": [
+        "创建CC/双predicate/masked定义跨分支使用的合法程序，独立审计所有可到达路径。",
+        "对每个基线只注入一个定义缺失或helper alias/clobber故障，保留mutation位置与规则ID。",
+        "由独立分析器判定哪条路径/哪个lane缺定义；按配置拒绝或显式修复并重新全路径审计。",
+        "比较修复前后IR、clobber/live-range和目标覆盖；非法候选不得发给DUT。"
+      ],
+      "checkpoints": [
+        "predicated-off定义未制造虚假producer；分支merge保守保留每lane定义来源。",
+        "CC活链与helper/call边界的处理符合ABI，不将未初始化CC当恒零。"
+      ],
+      "pass_criteria": [
+        "正常链通过、单因素错误被独立定位；允许修复的产物有新身份与复审记录。",
+        "CV-DEP-002只由独立generator侧审计CHECKED采样，拒绝与接受分开。"
+      ],
+      "fail_criteria": [
+        "只模拟一次随机路径便认定全路径有定义、把CC当warp共享状态或任意保留过call。",
+        "静默修复并仍算原负例命中、错误候选进入functional stream。"
+      ],
+      "expected_artifacts": [
+        "完整manifest与source/target/capability/profile/tool/IR hash（计划产物）",
+        "baseline_mutation_repair_triples.json",
+        "lane_path_definition_report.json",
+        "CC_predicate_clobber_report.json"
+      ],
+      "coverage_ids": [
+        "CV-DEP-002"
+      ],
+      "suites": [
+        "DIRECTED",
+        "NEGATIVE",
+        "RANDOM"
+      ],
+      "fixed_seed": null,
+      "timeout_policy": "GEN_BOUNDED",
+      "current_status": "NOT_RUN",
+      "current_gate": "BLOCKED_MISSING_IMPLEMENTATION"
+    },
+    {
+      "source_testpoint_id": "SIG-DEP-003",
+      "id": "TC-DEP-003",
+      "title": "别名相关性",
+      "phase": "P2_REFERENCE_PROGRAM",
+      "prerequisites": [
+        "发生器/对应unit harness和独立审计器已实现；当前缺失，因此本case为NOT_RUN/BLOCKED_MISSING_IMPLEMENTATION。",
+        "锁定PTX9.4 form/target证据、项目capability、IR/schema及数值profile；缺规则的variant为BLOCKED而非PASS。",
+        "独立checker不调用generator或DUT的同一合法性、decode、rounding helper；共享常量及独立边界已评审。",
+        "参考程序解释/编译路线及独立oracle均存在并版本锁定；结果只作P2证据，不填SM RTL覆盖。"
+      ],
+      "config_profile": "TP-REF-BASE",
+      "parameters": {
+        "parameter_status": "下列规模/调度值是待冻结的测试预算建议，不是SM时延、native编码或当前运行结果。",
+        "seed_strategy": "固定seed由主testplan赋值；RNG子流和所有抽样结果写入完整manifest，边界枚举不依赖随机偶然命中。",
+        "spaces": [
+          "global",
+          "shared",
+          "local"
+        ],
+        "access_sizes_bytes": [
+          1,
+          2,
+          4,
+          8,
+          16
+        ],
+        "object_bytes": 128,
+        "overlap_classes": [
+          "same_range",
+          "contained",
+          "one_byte_overlap",
+          "adjacent",
+          "disjoint"
+        ],
+        "owner_classes": [
+          "same_CTA",
+          "different_CTA_same_shared_offset",
+          "different_thread_local",
+          "same_global_via_alias"
+        ],
+        "ordering": [
+          "single_thread_program_order",
+          "defined_release_acquire_HB",
+          "alias_proxy_fence_when_required"
+        ]
+      },
+      "initial_state": [
+        "每个typed对象有symbolic owner/base/长度、初始化byte内容和canary；不同CTA/shared offset0独立。",
+        "别名映射表和对应proxy/HB合同冻结；无同步竞争不生成单一顺序golden。"
+      ],
+      "steps": [
+        "按实际对象构造重叠/相邻/不相交访问并建立必要HB，另构造整数地址相等但owner不同的反例对。",
+        "独立range checker规范化为(owner, physical-object, byte interval)并重算依赖，不只看原始整数地址。",
+        "参考程序模型执行允许顺序，独立内存模型验证边和最终bytes/允许集合。",
+        "保存实际byte写mask、alias/proxy映射与HB证明，检查canary和未写字节。"
+      ],
+      "checkpoints": [
+        "区间交集与依赖图一致；不同owner/local thread即使offset相同也不别名。",
+        "逐值比较只用于允许集合已证明单例的观察；其他情况按合法顺序/集合检查。"
+      ],
+      "pass_criteria": [
+        "range/alias/HB关系一致，参考观察不出现模型禁止结果。",
+        "byte/half/wide交叠保持定义的mask，不依赖cache命中决定正确性。"
+      ],
+      "fail_criteria": [
+        "shared/local owner错误、地址别名漏fence、无HB竞争被误写成唯一golden。",
+        "race-free被无条件当唯一结果、partial byte写破坏邻接canary。"
+      ],
+      "expected_artifacts": [
+        "完整manifest与source/target/capability/profile/tool/IR hash（计划产物）",
+        "typed_object_alias_map.json",
+        "byte_range_dependency_graph.json",
+        "HB_and_allowed_outcomes.json",
+        "memory_byte_diffs.json"
+      ],
+      "coverage_ids": [
+        "CV-DEP-001"
+      ],
+      "suites": [
+        "DIRECTED",
+        "RANDOM"
+      ],
+      "fixed_seed": null,
+      "timeout_policy": "REFERENCE_BOUNDED",
+      "current_status": "NOT_RUN",
+      "current_gate": "BLOCKED_MISSING_IMPLEMENTATION"
+    },
+    {
+      "source_testpoint_id": "SIG-DEP-004",
+      "id": "TC-DEP-004",
+      "title": "乱序/分片结果",
+      "phase": "P3_SM_RTL",
+      "prerequisites": [
+        "发生器/对应unit harness和独立审计器已实现；当前缺失，因此本case为NOT_RUN/BLOCKED_MISSING_IMPLEMENTATION。",
+        "锁定PTX9.4 form/target证据、项目capability、IR/schema及数值profile；缺规则的variant为BLOCKED而非PASS。",
+        "独立checker不调用generator或DUT的同一合法性、decode、rounding helper；共享常量及独立边界已评审。",
+        "真实SM RTL、已冻结项目机器入口/IR adapter及正式驱动协议可用；不使用PTX文本字节冒充native编码。",
+        "实际admit/writeback/completion与lane/fragment/producer monitor可用，外部服务的公平/延迟合同已配置。"
+      ],
+      "config_profile": "TP-SM-BASE",
+      "parameters": {
+        "parameter_status": "下列规模/调度值是待冻结的测试预算建议，不是SM时延、native编码或当前运行结果。",
+        "seed_strategy": "固定seed由主testplan赋值；RNG子流和所有抽样结果写入完整manifest，边界枚举不依赖随机偶然命中。",
+        "result_width_bits": [
+          64,
+          128
+        ],
+        "fragment_count_candidates": [
+          2,
+          4
+        ],
+        "fragment_delivery_orders": [
+          "in_order",
+          "last_first",
+          "interleaved_two_producers"
+        ],
+        "planned_delays_cycles": [
+          0,
+          1,
+          7,
+          31
+        ],
+        "consumer_distances": [
+          0,
+          1,
+          8
+        ],
+        "stale_return_variant": "仅正式generation/abort协议允许时注入旧返回；缺该合同则variant BLOCKED，不伪造合法接口事件。"
+      },
+      "initial_state": [
+        "宽结果与消费者、短算术、CC流使用独特thread/producer标识；所有旧目的初值已知。",
+        "返回fragment编号和整体ready的正式观测点冻结；允许乱序的接口才重排返回。"
+      ],
+      "steps": [
+        "构造宽load/move等合法长延迟producer，后跟依赖consumer及同名后写，独立审计实际lowered hazard。",
+        "通过真实adapter执行，在允许处重排/延迟fragment并交错短算术/其他thread。",
+        "逐片记录capture/writeback/ready与consumer读值，独立scoreboard关联完整producer。",
+        "在有正式旧generation注入合同的variant观察late return隔离，最后drain并核对全部动态义务。"
+      ],
+      "checkpoints": [
+        "第一片或最后编号片先到均不能在缺片时发布整体ready。",
+        "源捕获、WAW最终值与旧generation唤醒都按正确动态身份，不靠寄存器号猜producer。"
+      ],
+      "pass_criteria": [
+        "真实形成的hazard及完整结果被检查，consumer从不读取部分/旧值，所有责任结清。",
+        "迟到返回variant若启用，旧包不覆盖/唤醒新producer；不支持时显式blocked而非伪PASS。"
+      ],
+      "fail_criteria": [
+        "首片ready、漏片、重复writeback、跨generation唤醒、WAR源被后写污染。",
+        "驱动违反返回协议却把DUT反应当正常功能失败，或没有实际hazard仍计覆盖。"
+      ],
+      "expected_artifacts": [
+        "完整manifest与source/target/capability/profile/tool/IR hash（计划产物）",
+        "fragment_and_ready_event_trace.jsonl",
+        "actual_hazard_provenance.json",
+        "producer_scoreboard.json",
+        "late_generation_classification.json"
+      ],
+      "coverage_ids": [
+        "CV-DEP-003"
+      ],
+      "suites": [
+        "DIRECTED",
+        "RANDOM",
+        "STRESS"
+      ],
+      "fixed_seed": null,
+      "timeout_policy": "SM_PROGRESS",
+      "current_status": "NOT_RUN",
+      "current_gate": "BLOCKED_MISSING_IMPLEMENTATION"
+    },
+    {
+      "source_testpoint_id": "SIG-CTRL-001",
+      "id": "TC-CTRL-001",
+      "title": "有界控制图",
+      "phase": "P1_GENERATOR_UNIT",
+      "prerequisites": [
+        "发生器/对应unit harness和独立审计器已实现；当前缺失，因此本case为NOT_RUN/BLOCKED_MISSING_IMPLEMENTATION。",
+        "锁定PTX9.4 form/target证据、项目capability、IR/schema及数值profile；缺规则的variant为BLOCKED而非PASS。",
+        "独立checker不调用generator或DUT的同一合法性、decode、rounding helper；共享常量及独立边界已评审。"
+      ],
+      "config_profile": "TP-GEN-BASE",
+      "parameters": {
+        "parameter_status": "下列规模/调度值是待冻结的测试预算建议，不是SM时延、native编码或当前运行结果。",
+        "seed_strategy": "固定seed由主testplan赋值；RNG子流和所有抽样结果写入完整manifest，边界枚举不依赖随机偶然命中。",
+        "basic_block_counts": [
+          4,
+          8,
+          16
+        ],
+        "branch_nesting_depths": [
+          0,
+          1,
+          2,
+          3
+        ],
+        "loop_trip_counts": [
+          0,
+          1,
+          2,
+          8
+        ],
+        "maximum_call_depth_candidates": [
+          0,
+          1,
+          3
+        ],
+        "indirect_target_set_sizes": [
+          1,
+          2,
+          4
+        ],
+        "instruction_budget_including_cleanup": [
+          32,
+          128,
+          512
+        ]
+      },
+      "initial_state": [
+        "每thread入口PC、输入、guard、call frame和初始化集合明确；控制预算含收尾。",
+        "每个循环有独立检查的ranking/有限trip count，间接目标表只含合法同型目标。"
+      ],
+      "steps": [
+        "按diamond/嵌套分支/loop/call模板合成CFG，枚举0/1/边界迭代和可到达边。",
+        "独立CFG分析器重算目标合法性、支配/后支配、可达性、每lane def-use与loop ranking。",
+        "在全部可到达路径检查对象/调用/cleanup闭合；预算不足时拒绝扩展body而非截断尾部。",
+        "输出静态边/路径证明及候选分布；本P1只确认生成程序合法与有界。"
+      ],
+      "checkpoints": [
+        "0次循环不读取body才定义的值，分支merge之后每个正常读均有合法来源。",
+        "每个backedge有ranking证据，间接目标与返回/ABI匹配。"
+      ],
+      "pass_criteria": [
+        "所有正向CFG有终止与全路径合法性证据，实际未生成的edge不算命中。",
+        "UNSAT/预算不足在有界时间内明确诊断，零程序不能PASS。"
+      ],
+      "fail_criteria": [
+        "只模拟一条随机路径替代全路径审计、非法间接目标或用watchdog超时证明循环正确。",
+        "截断指令流遗留call frame/异步cleanup或未初始化读取。"
+      ],
+      "expected_artifacts": [
+        "完整manifest与source/target/capability/profile/tool/IR hash（计划产物）",
+        "CFG_and_source_IR.json",
+        "dominance_reachability_ranking.json",
+        "path_definition_and_cleanup_report.json"
+      ],
+      "coverage_ids": [
+        "CV-CTRL-001"
+      ],
+      "suites": [
+        "SMOKE",
+        "DIRECTED",
+        "RANDOM"
+      ],
+      "fixed_seed": null,
+      "timeout_policy": "GEN_BOUNDED",
+      "current_status": "NOT_RUN",
+      "current_gate": "BLOCKED_MISSING_IMPLEMENTATION"
+    },
+    {
+      "source_testpoint_id": "SIG-CTRL-002",
+      "id": "TC-CTRL-002",
+      "title": "谓词与uniform证明",
+      "phase": "P1_GENERATOR_UNIT",
+      "prerequisites": [
+        "发生器/对应unit harness和独立审计器已实现；当前缺失，因此本case为NOT_RUN/BLOCKED_MISSING_IMPLEMENTATION。",
+        "锁定PTX9.4 form/target证据、项目capability、IR/schema及数值profile；缺规则的variant为BLOCKED而非PASS。",
+        "独立checker不调用generator或DUT的同一合法性、decode、rounding helper；共享常量及独立边界已评审。"
+      ],
+      "config_profile": "TP-GEN-BASE",
+      "parameters": {
+        "parameter_status": "下列规模/调度值是待冻结的测试预算建议，不是SM时延、native编码或当前运行结果。",
+        "seed_strategy": "固定seed由主testplan赋值；RNG子流和所有抽样结果写入完整manifest，边界枚举不依赖随机偶然命中。",
+        "guard_patterns": [
+          "all_true",
+          "all_false",
+          "even_lanes",
+          "odd_lanes",
+          "lower_half",
+          "single_lane"
+        ],
+        "guarded_effect_candidates": [
+          "register_write",
+          "store",
+          "atomic",
+          "async_issue_if_enabled"
+        ],
+        "uniform_sites": [
+          "branch_guard_and_target",
+          "indirect_index_or_call_target"
+        ],
+        "negative_mutation": "仅改变一个lane的guard/target以破坏相应.uni合同，单独preflight拒绝。"
+      },
+      "initial_state": [
+        "旧目的值、存储canary与副作用计数期望初始化；predication与active/membermask分开。",
+        "uniform证明使用可到达动态active group的符号值关系，不凭某个seed碰巧相等。"
+      ],
+      "steps": [
+        "生成各guard模式与guarded effect候选，并在有符号一致证明的site选择.uni。",
+        "独立lane symbolic分析重算有效执行mask和guard/target一致性，审计副作用期望制品。",
+        "对单因素违反.uni的候选独立拒绝，保留合法baseline和准确破坏关系。",
+        "在unit参考语义中验证被屏蔽操作不创建write/store/atomic/async义务，保存审计trace；不冒充真实DUT事件。"
+      ],
+      "checkpoints": [
+        "all_false不制造新producer或副作用，mixed mask只更新允许lane。",
+        ".uni仅证明该控制site合同，不给其他数据指令统一广播许可。"
+      ],
+      "pass_criteria": [
+        "合法proof被复算，负例精确拒绝，candidate副作用集合符合per-lane guard。",
+        "P1 synthetic/unit事件不增加真实admitted/checked计数。"
+      ],
+      "fail_criteria": [
+        "mask语义混淆、随机数据碰巧相等被当证明、被屏蔽side effect仍进入正常trace。",
+        "非法.uni被执行并以硬件trap或具体返回值作ISA oracle。"
+      ],
+      "expected_artifacts": [
+        "完整manifest与source/target/capability/profile/tool/IR hash（计划产物）",
+        "guard_active_effect_sets.json",
+        "uniform_symbolic_proofs.json",
+        "single_mutation_preflight_results.json"
+      ],
+      "coverage_ids": [
+        "CV-CTRL-002"
+      ],
+      "suites": [
+        "DIRECTED",
+        "NEGATIVE",
+        "RANDOM"
+      ],
+      "fixed_seed": null,
+      "timeout_policy": "GEN_BOUNDED",
+      "current_status": "NOT_RUN",
+      "current_gate": "BLOCKED_MISSING_IMPLEMENTATION"
+    },
+    {
+      "source_testpoint_id": "SIG-CTRL-003",
+      "id": "TC-CTRL-003",
+      "title": "call/ret和thread exit",
+      "phase": "P2_REFERENCE_PROGRAM",
+      "prerequisites": [
+        "发生器/对应unit harness和独立审计器已实现；当前缺失，因此本case为NOT_RUN/BLOCKED_MISSING_IMPLEMENTATION。",
+        "锁定PTX9.4 form/target证据、项目capability、IR/schema及数值profile；缺规则的variant为BLOCKED而非PASS。",
+        "独立checker不调用generator或DUT的同一合法性、decode、rounding helper；共享常量及独立边界已评审。",
+        "参考程序解释/编译路线及独立oracle均存在并版本锁定；结果只作P2证据，不填SM RTL覆盖。"
+      ],
+      "config_profile": "TP-REF-BASE",
+      "parameters": {
+        "parameter_status": "下列规模/调度值是待冻结的测试预算建议，不是SM时延、native编码或当前运行结果。",
+        "seed_strategy": "固定seed由主testplan赋值；RNG子流和所有抽样结果写入完整manifest，边界枚举不依赖随机偶然命中。",
+        "call_depths": [
+          1,
+          2,
+          3
+        ],
+        "return_site_counts": [
+          1,
+          2,
+          3
+        ],
+        "thread_exit_patterns": [
+          "none",
+          "one_lane",
+          "lower_half_after_sync",
+          "tail_warp_existing_lanes"
+        ],
+        "frame_size_candidates_bytes": [
+          8,
+          32,
+          128
+        ],
+        "loop_rounds": [
+          1,
+          2,
+          8
+        ]
+      },
+      "initial_state": [
+        "每thread有独立frame/return上下文和不同参数；ABI、stack alignment及clobber规则冻结。",
+        "退出前引用/async义务闭合，后续collective成员按该条规则重新合法审计。"
+      ],
+      "steps": [
+        "生成分歧call、多个ret site、匹配save/restore及部分线程退出的合法参考程序。",
+        "独立全路径检查callee签名、返回参数、frame lifetime和退出后的参与者集合。",
+        "参考执行器按thread推进PC/stack，独立控制模型逐事件核对return目标与定义的结果。",
+        "检查restore后不再访问旧对象，结束时保留合法退出集合与全部frame释放证据。"
+      ],
+      "checkpoints": [
+        "不同thread即使在同warp从不同ret site返回，均回到其正确caller。",
+        "成员退出不等同当前不active；后续mask满足逐指令合同。"
+      ],
+      "pass_criteria": [
+        "参考trace满足独立控制/ABI/生命周期关系，无跨thread return PC或栈对象串扰。",
+        "只比较规范保证的clobber/结果，CC不强制跨call保存。"
+      ],
+      "fail_criteria": [
+        "共享warp return PC、过期frame访问、非法返回目标或退出后仍有资源引用。",
+        "对本来合法的ret/exit调度差异指定唯一不必要时序。"
+      ],
+      "expected_artifacts": [
+        "完整manifest与source/target/capability/profile/tool/IR hash（计划产物）",
+        "per_thread_call_return_trace.jsonl",
+        "ABI_frame_object_map.json",
+        "exit_and_collective_legality.json"
+      ],
+      "coverage_ids": [
+        "CV-CTRL-001"
+      ],
+      "suites": [
+        "DIRECTED",
+        "RANDOM"
+      ],
+      "fixed_seed": null,
+      "timeout_policy": "REFERENCE_BOUNDED",
+      "current_status": "NOT_RUN",
+      "current_gate": "BLOCKED_MISSING_IMPLEMENTATION"
+    },
+    {
+      "source_testpoint_id": "SIG-CTRL-004",
+      "id": "TC-CTRL-004",
+      "title": "ITS解锁场景",
+      "phase": "P3_SM_RTL",
+      "prerequisites": [
+        "发生器/对应unit harness和独立审计器已实现；当前缺失，因此本case为NOT_RUN/BLOCKED_MISSING_IMPLEMENTATION。",
+        "锁定PTX9.4 form/target证据、项目capability、IR/schema及数值profile；缺规则的variant为BLOCKED而非PASS。",
+        "独立checker不调用generator或DUT的同一合法性、decode、rounding helper；共享常量及独立边界已评审。",
+        "真实SM RTL、已冻结项目机器入口/IR adapter及正式驱动协议可用；不使用PTX文本字节冒充native编码。",
+        "实际admit/writeback/completion与lane/fragment/producer monitor可用，外部服务的公平/延迟合同已配置。"
+      ],
+      "config_profile": "TP-SM-BASE",
+      "parameters": {
+        "parameter_status": "下列规模/调度值是待冻结的测试预算建议，不是SM时延、native编码或当前运行结果。",
+        "seed_strategy": "固定seed由主testplan赋值；RNG子流和所有抽样结果写入完整manifest，边界枚举不依赖随机偶然命中。",
+        "warp_count": 1,
+        "handoff_round_candidates": [
+          2,
+          4,
+          16
+        ],
+        "waiter_group_candidates": [
+          "lane0_wait_lane1_publish",
+          "lower_half_wait_upper_half_publish"
+        ],
+        "communication": "已初始化shared flag/data，使用被支持的release/acquire或对应原子协议，禁止无同步data race。",
+        "progress_budget": "由冻结的驻留/调度/返回公平上限及handoff轮数派生，不能假定任意未驻留CTA会解锁。"
+      },
+      "initial_state": [
+        "producer与waiter均已驻留，解除依赖的线程不需要被waiter持有的完成资源。",
+        "flag与payload初始化，scope/proxy和每轮collective成员合法，round标签不重复。"
+      ],
+      "steps": [
+        "先独立审计同warp合法handoff程序的HB、必要执行者、循环进度与完整cleanup。",
+        "真实执行中让部分线程等待flag/事件，其他线程保留可执行producer路径，施加允许的有限服务延迟。",
+        "monitor关联每轮producer发布、waiter acquire与相同PC多轮collective的动态实例。",
+        "依据实际wait-for图与公平合同判进度，等待全部线程/资源drain后比较payload与round标签。"
+      ],
+      "checkpoints": [
+        "等待线程没有永久阻止同warp可解除依赖的线程执行。",
+        "waiter只在正确发布/观察后消费数据，collective不跨round匹配。"
+      ],
+      "pass_criteria": [
+        "所有已接收合法handoff在明确假设下完成，数据/HB正确且无实例混并。",
+        "超时诊断区分外部永久stall、假设不成立和DUT真实等待环，非空真实progress证据保存。"
+      ],
+      "fail_criteria": [
+        "可执行producer被永久压制、读取未发布数据或不同循环轮次被合成同一collective。",
+        "以任意固定周期或未驻留CTA假设判断DUT，导致合法长时延误报。"
+      ],
+      "expected_artifacts": [
+        "完整manifest与source/target/capability/profile/tool/IR hash（计划产物）",
+        "ITS_handoff_program.json",
+        "real_thread_and_HB_events.jsonl",
+        "wait_for_graph_and_fairness.json",
+        "round_payload_checks.json"
+      ],
+      "coverage_ids": [
+        "CV-CTRL-003"
+      ],
+      "suites": [
+        "DIRECTED",
+        "RANDOM",
+        "STRESS"
+      ],
+      "fixed_seed": null,
+      "timeout_policy": "SM_PROGRESS",
+      "current_status": "NOT_RUN",
+      "current_gate": "BLOCKED_MISSING_IMPLEMENTATION"
+    },
+    {
+      "source_testpoint_id": "SIG-COLL-001",
+      "id": "TC-COLL-001",
+      "title": "成员与source lane",
+      "phase": "P1_GENERATOR_UNIT",
+      "prerequisites": [
+        "发生器/对应unit harness和独立审计器已实现；当前缺失，因此本case为NOT_RUN/BLOCKED_MISSING_IMPLEMENTATION。",
+        "锁定PTX9.4 form/target证据、项目capability、IR/schema及数值profile；缺规则的variant为BLOCKED而非PASS。",
+        "独立checker不调用generator或DUT的同一合法性、decode、rounding helper；共享常量及独立边界已评审。"
+      ],
+      "config_profile": "TP-GEN-BASE",
+      "parameters": {
+        "parameter_status": "下列规模/调度值是待冻结的测试预算建议，不是SM时延、native编码或当前运行结果。",
+        "seed_strategy": "固定seed由主testplan赋值；RNG子流和所有抽样结果写入完整manifest，边界枚举不依赖随机偶然命中。",
+        "warp_size": 32,
+        "existing_lane_count_candidates": [
+          1,
+          2,
+          16,
+          31,
+          32
+        ],
+        "membermask_candidates": [
+          "0xffffffff",
+          "0x0000ffff",
+          "0x55555555",
+          "0x80000001"
+        ],
+        "partition_width_candidates": [
+          1,
+          2,
+          4,
+          8,
+          16,
+          32
+        ],
+        "source_delta_classes": [
+          "0",
+          "1",
+          "partition_last",
+          "clamp_boundary",
+          "beyond_clamp_if_defined"
+        ],
+        "positive_mask_rule": "逐指令约束并与真实existing/live成员一致；不存在lane或违反同步source的情况不算正例。"
+      },
+      "initial_state": [
+        "每lane输入含唯一lane标签，active/guard/membermask分开初始化。",
+        "shfl/vote/match/redux/elect等逐条参与、source与target规则已审查，legacy默认按target门禁。"
+      ],
+      "steps": [
+        "枚举mask/partition/source边界与partial warp，只保留相应form允许的正向组合。",
+        "独立validator重算成员/参数一致性、live/exited与source lane合法性。",
+        "独立逐lane模型生成交换/ballot/match等期望制品，source无效时只采用原文实际规定而非猜默认值。",
+        "保存合法选择、被过滤规则及有限分母；本P1不执行真实warp会合。"
+      ],
+      "checkpoints": [
+        "非连续subset与partial warp仍遵守当前指令合同，executing lane不被漏出membermask。",
+        "clamp/partition边界的source选择可独立重算，不混CUDA lane与packed element。"
+      ],
+      "pass_criteria": [
+        "正常样本逐条合法且逐lane期望一致，未定义source只隔离不指定值。",
+        "有非空mask/source边界命中证据，接受/拒绝统计分开。"
+      ],
+      "fail_criteria": [
+        "一个宽泛sync规则接纳所有mask、source来自未参与lane却强制某个值。",
+        "仅有candidate文本便宣称会合/实际结果覆盖。"
+      ],
+      "expected_artifacts": [
+        "完整manifest与source/target/capability/profile/tool/IR hash（计划产物）",
+        "member_source_boundary_cases.json",
+        "per_instruction_participant_audit.json",
+        "lane_reference_results.json"
+      ],
+      "coverage_ids": [
+        "CV-COLL-001"
+      ],
+      "suites": [
+        "SMOKE",
+        "DIRECTED",
+        "RANDOM"
+      ],
+      "fixed_seed": null,
+      "timeout_policy": "GEN_BOUNDED",
+      "current_status": "NOT_RUN",
+      "current_gate": "BLOCKED_MISSING_IMPLEMENTATION"
+    },
+    {
+      "source_testpoint_id": "SIG-COLL-002",
+      "id": "TC-COLL-002",
+      "title": "guard/退出单因素负例",
+      "phase": "P1_GENERATOR_UNIT",
+      "prerequisites": [
+        "发生器/对应unit harness和独立审计器已实现；当前缺失，因此本case为NOT_RUN/BLOCKED_MISSING_IMPLEMENTATION。",
+        "锁定PTX9.4 form/target证据、项目capability、IR/schema及数值profile；缺规则的variant为BLOCKED而非PASS。",
+        "独立checker不调用generator或DUT的同一合法性、decode、rounding helper；共享常量及独立边界已评审。"
+      ],
+      "config_profile": "TP-GEN-BASE",
+      "parameters": {
+        "parameter_status": "下列规模/调度值是待冻结的测试预算建议，不是SM时延、native编码或当前运行结果。",
+        "seed_strategy": "固定seed由主testplan赋值；RNG子流和所有抽样结果写入完整manifest，边界枚举不依赖随机偶然命中。",
+        "mutation_dimensions": [
+          "issuer_not_in_mask",
+          "one_required_member_missing",
+          "one_guard_disagrees",
+          "one_uniform_operand_disagrees",
+          "legacy_removed_target"
+        ],
+        "mutations_per_baseline": 1,
+        "baseline_member_patterns": [
+          "full_live_warp",
+          "legal_subset",
+          "legal_partial_warp"
+        ],
+        "injection_boundary": "独立preflight/全程序合法化；UB候选绝不进入正常DUT数值流。"
+      },
+      "initial_state": [
+        "每个mutation都有独立审计合法baseline，所选违例在当前form确实禁止。",
+        "已退出与暂不active状态明确，拒绝层/规则不是从generator预填expected值直接信任。"
+      ],
+      "steps": [
+        "先产生并独立确认合法collective程序及目标限制，保存baseline原件。",
+        "一次只改变一个member/guard/operand/target关系，禁止修复器自动补成员后算负例成功。",
+        "独立全程序审计定位破坏的规则；语义UB、target非法与项目关闭分别分类。",
+        "确认非法stream未送DUT，正常baseline保持可接受，输出mutation diff和具体拒绝证据。"
+      ],
+      "checkpoints": [
+        "拒绝原因与单项变异有因果联系，而不是缺backend/不相关错误。",
+        "UB隔离不制造trap、deadlock时延或唯一数据golden。"
+      ],
+      "pass_criteria": [
+        "每个已定义的违规维度被正确分类/拒绝，baseline未误杀，CV-COLL-002按独立audit CHECKED采样。",
+        "拒绝、blocked、未运行与DUT检查数严格分离。"
+      ],
+      "fail_criteria": [
+        "把任何非零exit当目标约束命中、缺工具当PASS或偷偷修好mutation。",
+        "不一致collective被执行并以挂死/某个结果当ISA功能oracle。"
+      ],
+      "expected_artifacts": [
+        "完整manifest与source/target/capability/profile/tool/IR hash（计划产物）",
+        "legal_baselines.json",
+        "one_fault_mutation_diffs.json",
+        "preflight_rule_and_layer_results.json"
+      ],
+      "coverage_ids": [
+        "CV-COLL-002"
+      ],
+      "suites": [
+        "DIRECTED",
+        "NEGATIVE"
+      ],
+      "fixed_seed": null,
+      "timeout_policy": "GEN_BOUNDED",
+      "current_status": "NOT_RUN",
+      "current_gate": "BLOCKED_MISSING_IMPLEMENTATION"
+    },
+    {
+      "source_testpoint_id": "SIG-COLL-003",
+      "id": "TC-COLL-003",
+      "title": "会合与归约模型",
+      "phase": "P2_REFERENCE_PROGRAM",
+      "prerequisites": [
+        "发生器/对应unit harness和独立审计器已实现；当前缺失，因此本case为NOT_RUN/BLOCKED_MISSING_IMPLEMENTATION。",
+        "锁定PTX9.4 form/target证据、项目capability、IR/schema及数值profile；缺规则的variant为BLOCKED而非PASS。",
+        "独立checker不调用generator或DUT的同一合法性、decode、rounding helper；共享常量及独立边界已评审。",
+        "参考程序解释/编译路线及独立oracle均存在并版本锁定；结果只作P2证据，不填SM RTL覆盖。"
+      ],
+      "config_profile": "TP-REF-BASE",
+      "parameters": {
+        "parameter_status": "下列规模/调度值是待冻结的测试预算建议，不是SM时延、native编码或当前运行结果。",
+        "seed_strategy": "固定seed由主testplan赋值；RNG子流和所有抽样结果写入完整manifest，边界枚举不依赖随机偶然命中。",
+        "round_counts": [
+          2,
+          4,
+          8
+        ],
+        "families": [
+          "shfl",
+          "vote",
+          "match",
+          "redux",
+          "elect",
+          "activemask"
+        ],
+        "per_lane_round_tag": "round*64+lane，按输入format合法表示",
+        "allowed_schedule_orders": [
+          "ordered_groups",
+          "reverse_ready_groups",
+          "interleaved_ready_groups"
+        ],
+        "FP_reduction_cases": "仅启用tuple支持时加入NaN/±0，并按对应允许集合检查。"
+      },
+      "initial_state": [
+        "每轮PC可相同但动态轮次ID不同；各form成员和退出状态经独立审计。",
+        "参考解释器与独立会合模型分别存在，不能共用其内部rendezvous表作为golden。"
+      ],
+      "steps": [
+        "生成同PC多轮collective及不同合法ready-group次序，输入携带lane/round标签。",
+        "参考程序按允许调度推进，记录每个动态实例的真实当前active/live/member集合。",
+        "独立模型逐实例检查交换、ballot/match/归约、elect确定性和activemask当时的集合。",
+        "比较每轮结果；允许的调度差异按关系或集合处理，禁止把activemask当未来参与者预测。"
+      ],
+      "checkpoints": [
+        "相同membermask的elect按原文确定性选择，而不是每轮任意新leader。",
+        "任何结果tag只来自当前实例允许的lane/round，NaN/signed-zero采用对应形式规则。"
+      ],
+      "pass_criteria": [
+        "多种允许次序下无跨轮混并、漏成员或错误结果，参考输出均满足独立关系。",
+        "P2结果不计真实SM rendezvous覆盖；不可达/非法组合有显式原因。"
+      ],
+      "fail_criteria": [
+        "只以PC合并实例、activemask预测未来active线程、采用host reduction任意顺序作为唯一golden。",
+        "合法schedule差异被误报或共同模型内部表自证。"
+      ],
+      "expected_artifacts": [
+        "完整manifest与source/target/capability/profile/tool/IR hash（计划产物）",
+        "reference_collective_program.json",
+        "dynamic_member_round_events.jsonl",
+        "allowed_outcome_and_lane_tag_checks.json"
+      ],
+      "coverage_ids": [
+        "CV-COLL-001"
+      ],
+      "suites": [
+        "DIRECTED",
+        "RANDOM"
+      ],
+      "fixed_seed": null,
+      "timeout_policy": "REFERENCE_BOUNDED",
+      "current_status": "NOT_RUN",
+      "current_gate": "BLOCKED_MISSING_IMPLEMENTATION"
+    },
+    {
+      "source_testpoint_id": "SIG-COLL-004",
+      "id": "TC-COLL-004",
+      "title": "真实warp会合",
+      "phase": "P3_SM_RTL",
+      "prerequisites": [
+        "发生器/对应unit harness和独立审计器已实现；当前缺失，因此本case为NOT_RUN/BLOCKED_MISSING_IMPLEMENTATION。",
+        "锁定PTX9.4 form/target证据、项目capability、IR/schema及数值profile；缺规则的variant为BLOCKED而非PASS。",
+        "独立checker不调用generator或DUT的同一合法性、decode、rounding helper；共享常量及独立边界已评审。",
+        "真实SM RTL、已冻结项目机器入口/IR adapter及正式驱动协议可用；不使用PTX文本字节冒充native编码。",
+        "实际admit/writeback/completion与lane/fragment/producer monitor可用，外部服务的公平/延迟合同已配置。"
+      ],
+      "config_profile": "TP-SM-BASE",
+      "parameters": {
+        "parameter_status": "下列规模/调度值是待冻结的测试预算建议，不是SM时延、native编码或当前运行结果。",
+        "seed_strategy": "固定seed由主testplan赋值；RNG子流和所有抽样结果写入完整manifest，边界枚举不依赖随机偶然命中。",
+        "warp_count_candidates": [
+          1,
+          2,
+          4
+        ],
+        "round_counts": [
+          2,
+          4,
+          16
+        ],
+        "member_patterns": [
+          "full_live",
+          "legal_noncontiguous_subset",
+          "legal_partial_warp"
+        ],
+        "planned_service_delay_cycles": [
+          0,
+          1,
+          7,
+          31
+        ],
+        "stall_method": "只通过合法memory/执行域返回延迟造成ready差异，不篡改DUT内部成员或直接强迫非法lane事件。"
+      },
+      "initial_state": [
+        "真实warp/动态实例/generation监控可关联到源程序轮次；lane/round输入独特。",
+        "所有成员最终在规定公平假设下可到达同一实例，不生成故意缺员UB。"
+      ],
+      "steps": [
+        "构造合法collective循环，独立审计mask/guard/参数与前置访存依赖。",
+        "经真实SM驱动执行，插入允许的有限返回延迟与执行域stall形成不同lane就绪次序。",
+        "rendezvous monitor按warp+dynamic_instance+generation收集实际到达/释放/结果，不只看PC。",
+        "独立lane/allowed-set oracle检查结果并drain；同步完成不被当作其他async流full done。"
+      ],
+      "checkpoints": [
+        "实例只在本条规定成员满足后完成，不提前释放/重复完成或跨round配对。",
+        "source lane/归约结果与当前member集合匹配，异步完成域仍独立。"
+      ],
+      "pass_criteria": [
+        "非空真实会合和结果均正确，所有合法成员最终释放且CV-COLL-003来自实际checked事件。",
+        "计数可关联到实际admit/complete/checked，不以P1或P2日志补DUT证据。"
+      ],
+      "fail_criteria": [
+        "漏参与者、跨warp/round/generation混并、结果过早ready或无限等待合法可到达成员。",
+        "测试本身制造缺员UB却按功能失败归咎DUT。"
+      ],
+      "expected_artifacts": [
+        "完整manifest与source/target/capability/profile/tool/IR hash（计划产物）",
+        "real_rendezvous_trace.jsonl",
+        "dynamic_instance_provenance.json",
+        "lane_results_and_async_domain_checks.json"
+      ],
+      "coverage_ids": [
+        "CV-COLL-003"
+      ],
+      "suites": [
+        "DIRECTED",
+        "RANDOM",
+        "STRESS"
+      ],
+      "fixed_seed": null,
+      "timeout_policy": "SM_PROGRESS",
+      "current_status": "NOT_RUN",
+      "current_gate": "BLOCKED_MISSING_IMPLEMENTATION"
+    },
+    {
+      "source_testpoint_id": "SIG-REPLAY-001",
+      "id": "TC-REPLAY-001",
+      "title": "相同manifest重放",
+      "phase": "P1_GENERATOR_UNIT",
+      "prerequisites": [
+        "发生器/对应unit harness和独立审计器已实现；当前缺失，因此本case为NOT_RUN/BLOCKED_MISSING_IMPLEMENTATION。",
+        "锁定PTX9.4 form/target证据、项目capability、IR/schema及数值profile；缺规则的variant为BLOCKED而非PASS。",
+        "独立checker不调用generator或DUT的同一合法性、decode、rounding helper；共享常量及独立边界已评审。"
+      ],
+      "config_profile": "TP-GEN-BASE",
+      "parameters": {
+        "parameter_status": "下列规模/调度值是待冻结的测试预算建议，不是SM时延、native编码或当前运行结果。",
+        "seed_strategy": "固定seed由主testplan赋值；RNG子流和所有抽样结果写入完整manifest，边界枚举不依赖随机偶然命中。",
+        "generation_repetitions": 2,
+        "artifact_categories": [
+          "semantic_IR",
+          "optional_PTX_or_frozen_backend",
+          "input_data",
+          "object_layout",
+          "launch",
+          "service_schedule",
+          "rbits"
+        ],
+        "comparison": "规范化的确定性artifact字节hash；日志时间戳/输出绝对路径等非语义字段须显式排除或规范化。",
+        "substreams": [
+          "opcode",
+          "operand",
+          "control",
+          "resource",
+          "timing",
+          "fault"
+        ]
+      },
+      "initial_state": [
+        "manifest完整冻结source/capability/profile/schema/generator/validator/tool/RNG与所有输入；native未定则只走typed IR。",
+        "两次生成从相同初始RNG状态开始，独立hash工具不调用generator比较函数。"
+      ],
+      "steps": [
+        "保存完整manifest并预检必需字段、输入文件和版本；生成第一次物化制品。",
+        "在清洁的独立进程/工作目录重置相同子流状态，再生成第二次制品。",
+        "独立canonicalizer/hash逐类比较代码/data/layout/launch/schedule/rbits及子流消耗计数。",
+        "记录差异与规范化规则，保留两份制品；不把DOCX/PDF或wall-clock日志二进制当刺激确定性对象。"
+      ],
+      "checkpoints": [
+        "语义字段未被时间戳/路径排除规则误删；两份可检查AST和数据字节一致。",
+        "相同manifest不能隐藏新random调用、未记录rbits或工具版本变更。"
+      ],
+      "pass_criteria": [
+        "所有声明确定性制品一致，至少有非空程序与数据、子流使用记录。",
+        "只关闭发生器制品确定性检查，不声称SM重跑或DUT结果复现。"
+      ],
+      "fail_criteria": [
+        "同manifest刺激不同、RNG状态未重置或只比seed而漏代码/data/schedule。",
+        "规范化掩盖语义差异，缺backend却伪造native bytes。"
+      ],
+      "expected_artifacts": [
+        "完整manifest与source/target/capability/profile/tool/IR hash（计划产物）",
+        "manifest_run1.json",
+        "manifest_run2.json",
+        "deterministic_artifact_hashes.json",
+        "canonical_semantic_diffs.json"
+      ],
+      "coverage_ids": [
+        "CV-REPLAY-001"
+      ],
+      "suites": [
+        "SMOKE",
+        "DIRECTED",
+        "REPLAY"
+      ],
+      "fixed_seed": null,
+      "timeout_policy": "GEN_BOUNDED",
+      "current_status": "NOT_RUN",
+      "current_gate": "BLOCKED_MISSING_IMPLEMENTATION"
+    },
+    {
+      "source_testpoint_id": "SIG-REPLAY-002",
+      "id": "TC-REPLAY-002",
+      "title": "并发顺序扰动",
+      "phase": "P1_GENERATOR_UNIT",
+      "prerequisites": [
+        "发生器/对应unit harness和独立审计器已实现；当前缺失，因此本case为NOT_RUN/BLOCKED_MISSING_IMPLEMENTATION。",
+        "锁定PTX9.4 form/target证据、项目capability、IR/schema及数值profile；缺规则的variant为BLOCKED而非PASS。",
+        "独立checker不调用generator或DUT的同一合法性、decode、rounding helper；共享常量及独立边界已评审。"
+      ],
+      "config_profile": "TP-GEN-BASE",
+      "parameters": {
+        "parameter_status": "下列规模/调度值是待冻结的测试预算建议，不是SM时延、native编码或当前运行结果。",
+        "seed_strategy": "固定seed由主testplan赋值；RNG子流和所有抽样结果写入完整manifest，边界枚举不依赖随机偶然命中。",
+        "worker_count_candidates": [
+          1,
+          2,
+          4
+        ],
+        "case_orders": [
+          "stable_forward",
+          "stable_reverse",
+          "shuffled_assignment"
+        ],
+        "campaign_case_count": 16,
+        "variants": [
+          "same_manifest_worker_order_only",
+          "new_manifest_opcode_weight_mutation"
+        ],
+        "weight_change_expectation": "改权重是新配置；只比较声明独立的稳定draw-key/子流，不要求变化程序仍整体字节相同。"
+      },
+      "initial_state": [
+        "case ID与子流派生键固定，不用worker号/文件遍历顺序/wall-clock作为隐含seed。",
+        "拒绝重试日志与每个稳定draw-key可观测；变权重variant单列manifest，不冒充相同配置。"
+      ],
+      "steps": [
+        "以固定case集合和manifest先在单worker生成基线，保存逐case物化hash。",
+        "仅改变worker数量和任务分配次序，逐case独立hash比对；随机调度顺序不得进入其刺激输入。",
+        "另建只改opcode权重的新manifest，审计影响传播与不相关子流在相同稳定draw-key上的值。",
+        "保存attempt/reject/emit和子流计数，解释因程序结构改变产生的合法制品差异。"
+      ],
+      "checkpoints": [
+        "worker扰动variant的同case刺激保持一致，case归属不导致seed重派生。",
+        "权重变更不会偷偷重置/共享timing/fault子流；非独立数据因果差异有记录。"
+      ],
+      "pass_criteria": [
+        "并行/顺序生成满足声明确定性；新权重配置的差异符合记录的依赖范围。",
+        "CV-REPLAY-002在独立generator侧audit CHECKED采样，不写DUT事件。"
+      ],
+      "fail_criteria": [
+        "worker顺序改变刺激、未记录重试影响后续RNG、错误要求新配置全程序hash不变。",
+        "通过改seed规避差异，或把不相关stream共享状态而不报告。"
+      ],
+      "expected_artifacts": [
+        "完整manifest与source/target/capability/profile/tool/IR hash（计划产物）",
+        "case_assignment_and_stream_keys.json",
+        "per_worker_artifact_digests.json",
+        "retry_rng_consumption_log.jsonl",
+        "weight_mutation_impact_report.json"
+      ],
+      "coverage_ids": [
+        "CV-REPLAY-002"
+      ],
+      "suites": [
+        "DIRECTED",
+        "RANDOM",
+        "STRESS",
+        "REPLAY"
+      ],
+      "fixed_seed": null,
+      "timeout_policy": "GEN_BOUNDED",
+      "current_status": "NOT_RUN",
+      "current_gate": "BLOCKED_MISSING_IMPLEMENTATION"
+    },
+    {
+      "source_testpoint_id": "SIG-REPLAY-003",
+      "id": "TC-REPLAY-003",
+      "title": "缺项与污染检测",
+      "phase": "P2_REFERENCE_PROGRAM",
+      "prerequisites": [
+        "发生器/对应unit harness和独立审计器已实现；当前缺失，因此本case为NOT_RUN/BLOCKED_MISSING_IMPLEMENTATION。",
+        "锁定PTX9.4 form/target证据、项目capability、IR/schema及数值profile；缺规则的variant为BLOCKED而非PASS。",
+        "独立checker不调用generator或DUT的同一合法性、decode、rounding helper；共享常量及独立边界已评审。",
+        "参考程序解释/编译路线及独立oracle均存在并版本锁定；结果只作P2证据，不填SM RTL覆盖。"
+      ],
+      "config_profile": "TP-REF-BASE",
+      "parameters": {
+        "parameter_status": "下列规模/调度值是待冻结的测试预算建议，不是SM时延、native编码或当前运行结果。",
+        "seed_strategy": "固定seed由主testplan赋值；RNG子流和所有抽样结果写入完整manifest，边界枚举不依赖随机偶然命中。",
+        "mutation_count_per_variant": 1,
+        "manifest_fields": [
+          "target",
+          "capability_hash",
+          "profile",
+          "IR_schema",
+          "oracle_version",
+          "tool_hash",
+          "service_schedule",
+          "rbits"
+        ],
+        "artifact_mutations": [
+          "delete_required_file",
+          "flip_one_data_bit",
+          "change_IR_semantic_field",
+          "change_backend_hash_if_available"
+        ],
+        "native_rule": "未冻结/缺失backend的native variant显式BLOCKED，只在实际存在的IR/backend制品上检查污染。"
+      },
+      "initial_state": [
+        "存在完整非空基线replay bundle及可执行P2参考路线，独立preflight可核对版本和hash。",
+        "基线包只读保留，每个negative variant修改其副本，禁止污染原件。"
+      ],
+      "steps": [
+        "先独立确认完整基线包能够在P2参考路线重放并取得预期检查结果。",
+        "逐个删除必需字段/文件或改变一项数据、target、工具hash、rbits，记录精确mutation。",
+        "独立replay preflight检查完整性/兼容性/哈希，按预期层拒绝或标BLOCKED；不得只接受相同seed。",
+        "确认污染包未被当正常可复现证据执行/合并，恢复基线再检其仍可接受。"
+      ],
+      "checkpoints": [
+        "每个拒绝对应被污染的字段/文件，而非缺工具等无关失败。",
+        "rbits、服务schedule及oracle版本均受完整性保护，不只是程序文本hash。"
+      ],
+      "pass_criteria": [
+        "所有单因素污染被独立发现并正确分类，完整基线保持可接受。",
+        "无可用backend的variant为blocked而非伪造拒绝成功，原件保持原hash。"
+      ],
+      "fail_criteria": [
+        "被污染包仅凭seed被接纳、静默修补字段、任意非零退出都算预期拒绝。",
+        "原始bundle被覆盖，或污染结果混进真实数值/覆盖证据。"
+      ],
+      "expected_artifacts": [
+        "完整manifest与source/target/capability/profile/tool/IR hash（计划产物）",
+        "readonly_baseline_bundle_manifest.json",
+        "bundle_mutation_index.json",
+        "preflight_rule_results.json",
+        "baseline_integrity_recheck.json"
+      ],
+      "coverage_ids": [
+        "CV-REPLAY-003"
+      ],
+      "suites": [
+        "DIRECTED",
+        "NEGATIVE",
+        "REPLAY"
+      ],
+      "fixed_seed": null,
+      "timeout_policy": "REFERENCE_BOUNDED",
+      "current_status": "NOT_RUN",
+      "current_gate": "BLOCKED_MISSING_IMPLEMENTATION"
+    },
+    {
+      "source_testpoint_id": "SIG-REPLAY-004",
+      "id": "TC-REPLAY-004",
+      "title": "失败signature回放",
+      "phase": "P2_REFERENCE_PROGRAM",
+      "prerequisites": [
+        "发生器/对应unit harness和独立审计器已实现；当前缺失，因此本case为NOT_RUN/BLOCKED_MISSING_IMPLEMENTATION。",
+        "锁定PTX9.4 form/target证据、项目capability、IR/schema及数值profile；缺规则的variant为BLOCKED而非PASS。",
+        "独立checker不调用generator或DUT的同一合法性、decode、rounding helper；共享常量及独立边界已评审。",
+        "参考程序解释/编译路线及独立oracle均存在并版本锁定；结果只作P2证据，不填SM RTL覆盖。"
+      ],
+      "config_profile": "TP-REF-BASE",
+      "parameters": {
+        "parameter_status": "下列规模/调度值是待冻结的测试预算建议，不是SM时延、native编码或当前运行结果。",
+        "seed_strategy": "固定seed由主testplan赋值；RNG子流和所有抽样结果写入完整manifest，边界枚举不依赖随机偶然命中。",
+        "repetitions": 3,
+        "fixture_options": [
+          "versioned_reference_component_failure",
+          "explicit_SYNTHETIC_observed_trace_corruption_for_checker_unit"
+        ],
+        "signature_fields": [
+          "stage",
+          "rule_id",
+          "stable_source_operation",
+          "first_error_kind",
+          "normalized_expected_observed_relation"
+        ],
+        "schedule": "重放物化事件与稳定操作ID；不能仅重新抽取同seed的延迟。"
+      },
+      "initial_state": [
+        "存在合法非空基线程序、独立oracle与可重放失败fixture；SYNTHETIC fixture明确只检checker/replay，不是实际DUT失败证据。",
+        "签名规范化规则先冻结，不因缩减/回放难以通过临时放宽失败谓词。"
+      ],
+      "steps": [
+        "独立审计失败包的程序合法性及fixture注入合同，记录原始first failure与完整物化schedule。",
+        "在固定P2 backend/model版本下重放3次，从实际参考/fixture观察重新计算signature。",
+        "逐次核对同一失败判据与允许集合，不将新的timeout、UB或预检失败当原失败复现。",
+        "若不稳定，保留所有trace和schedule并输出NONDETERMINISTIC/INCONCLUSIVE诊断，不换seed抹去首个失败。"
+      ],
+      "checkpoints": [
+        "归一化保留因果操作和规则，未把不同失败类型合成同signature。",
+        "原判据仍由独立oracle触发，允许NaN/调度差异未制造假数值失败。"
+      ],
+      "pass_criteria": [
+        "三次满足冻结的原signature与失败predicate；或测试明确检出注入的不稳定并按该variant合同分类。",
+        "稳定/不稳定variant分开验收，不将INCONCLUSIVE结果写作真实DUT回放PASS。"
+      ],
+      "fail_criteria": [
+        "发生新错误却称原故障复现、忽略schedule/版本、换seed直到通过。",
+        "SYNTHETIC失败日志被当作SM执行错误证据或合法集合内差异被当mismatch。"
+      ],
+      "expected_artifacts": [
+        "完整manifest与source/target/capability/profile/tool/IR hash（计划产物）",
+        "original_failure_bundle_index.json",
+        "replay_attempts_and_signatures.jsonl",
+        "independent_failure_predicate_report.json",
+        "nondeterminism_diagnostic_if_needed.json"
+      ],
+      "coverage_ids": [
+        "CV-REPLAY-003"
+      ],
+      "suites": [
+        "DIRECTED",
+        "NEGATIVE",
+        "REPLAY"
+      ],
+      "fixed_seed": null,
+      "timeout_policy": "REFERENCE_BOUNDED",
+      "current_status": "NOT_RUN",
+      "current_gate": "BLOCKED_MISSING_IMPLEMENTATION"
+    },
+    {
+      "source_testpoint_id": "SIG-REDUCE-001",
+      "id": "TC-REDUCE-001",
+      "title": "定义与CFG缩减",
+      "phase": "P1_GENERATOR_UNIT",
+      "prerequisites": [
+        "发生器/对应unit harness和独立审计器已实现；当前缺失，因此本case为NOT_RUN/BLOCKED_MISSING_IMPLEMENTATION。",
+        "锁定PTX9.4 form/target证据、项目capability、IR/schema及数值profile；缺规则的variant为BLOCKED而非PASS。",
+        "独立checker不调用generator或DUT的同一合法性、decode、rounding helper；共享常量及独立边界已评审。"
+      ],
+      "config_profile": "TP-GEN-BASE",
+      "parameters": {
+        "parameter_status": "下列规模/调度值是待冻结的测试预算建议，不是SM时延、native编码或当前运行结果。",
+        "seed_strategy": "固定seed由主testplan赋值；RNG子流和所有抽样结果写入完整manifest，边界枚举不依赖随机偶然命中。",
+        "starting_program_instruction_counts": [
+          32,
+          128
+        ],
+        "candidate_transformations": [
+          "delete_independent_instruction",
+          "delete_producer",
+          "remove_branch_arm",
+          "replace_call",
+          "reduce_loop_count"
+        ],
+        "maximum_candidate_evaluations": 256,
+        "failure_fixture": "明确SYNTHETIC的稳定合法程序predicate用于shrinker unit；不构造假DUT运行结果。"
+      },
+      "initial_state": [
+        "原始合法程序与fixture predicate可复现并只读保留，独立CFG/def-use审计已通过。",
+        "shrinker与独立合法性checker可分别运行；候选不能仅继承原case的legal标记。"
+      ],
+      "steps": [
+        "建立含失败相关链、无关链、分支与call的合法基线，记录stable source ID和合成predicate。",
+        "逐项提出删除/替换/loop缩短候选，每次从候选IR重跑独立CFG、定义、参与者与生命周期审计。",
+        "拒绝缺producer/非法目标/缺成员候选；合法候选再判原fixture predicate，不因合法就自动接受。",
+        "在预算内保留合法且仍满足原predicate的缩减包，同时保留所有接受/拒绝变换日志。"
+      ],
+      "checkpoints": [
+        "删除支配定义、return目标或必要成员时被独立checker发现。",
+        "合法删除无关链不改变原predicate，guard/CC定义与cleanup仍完整。"
+      ],
+      "pass_criteria": [
+        "每个接受候选均重新合法化且保留冻结predicate，非法候选拒绝有具体理由。",
+        "有限评估内终止，原始包未覆盖；unit合成predicate不计DUT故障或覆盖。"
+      ],
+      "fail_criteria": [
+        "缩成未初始化读/非法跳转却接纳，复用原legal标记或临时弱化predicate。",
+        "只保持同样timeout文本而改变失败原因，或删除原始证据。"
+      ],
+      "expected_artifacts": [
+        "完整manifest与source/target/capability/profile/tool/IR hash（计划产物）",
+        "original_SYNTHETIC_unit_fixture.json",
+        "candidate_transform_log.jsonl",
+        "candidate_audit_results.jsonl",
+        "reduced_IR_and_stable_ID_map.json"
+      ],
+      "coverage_ids": [
+        "CV-REDUCE-001"
+      ],
+      "suites": [
+        "DIRECTED",
+        "NEGATIVE"
+      ],
+      "fixed_seed": null,
+      "timeout_policy": "GEN_BOUNDED",
+      "current_status": "NOT_RUN",
+      "current_gate": "BLOCKED_MISSING_IMPLEMENTATION"
+    },
+    {
+      "source_testpoint_id": "SIG-REDUCE-002",
+      "id": "TC-REDUCE-002",
+      "title": "异步资源缩减",
+      "phase": "P1_GENERATOR_UNIT",
+      "prerequisites": [
+        "发生器/对应unit harness和独立审计器已实现；当前缺失，因此本case为NOT_RUN/BLOCKED_MISSING_IMPLEMENTATION。",
+        "锁定PTX9.4 form/target证据、项目capability、IR/schema及数值profile；缺规则的variant为BLOCKED而非PASS。",
+        "独立checker不调用generator或DUT的同一合法性、decode、rounding helper；共享常量及独立边界已评审。"
+      ],
+      "config_profile": "TP-GEN-BASE",
+      "parameters": {
+        "parameter_status": "下列规模/调度值是待冻结的测试预算建议，不是SM时延、native编码或当前运行结果。",
+        "seed_strategy": "固定seed由主testplan赋值；RNG子流和所有抽样结果写入完整manifest，边界枚举不依赖随机偶然命中。",
+        "template_candidates": [
+          "classic_group",
+          "bulk_mbarrier",
+          "TMEM_alloc_use_wait_dealloc",
+          "group2_peer_lifecycle",
+          "Fabric_submit_primary_report"
+        ],
+        "deletion_candidates": [
+          "alloc",
+          "expect_tx",
+          "commit",
+          "wait",
+          "dealloc",
+          "peer_participant",
+          "submit"
+        ],
+        "maximum_candidate_evaluations": 256,
+        "profile_boundary": "仅经审查的audit-only recipe/profile做P1合法性单测；不因该模板存在而开启真实DUT能力。"
+      },
+      "initial_state": [
+        "每个基线的typed obligations、HB、参与者、计数单位、phase和cleanup均由独立审计确认。",
+        "未实现/原文未闭合recipe的variant为BLOCKED；失败fixture若合成则明确NON_DUT。"
+      ],
+      "steps": [
+        "选择一条完整合法async资源模板，冻结原始对象/事件/依赖图与原failure predicate。",
+        "分别提出删除alloc/expect/commit/wait/free/peer/submit的单项候选，不自动跨family补wait。",
+        "独立resource/HB/全路径checker重算typed count、对象存活和进度前置条件；不使用预测完成周期释放资源。",
+        "只让合法且原predicate仍成立的候选进入结果，记录UB/新死锁/不同错误的拒绝原因。"
+      ],
+      "checkpoints": [
+        "缺wait/free/expect或peer造成的use-after-free、过早phase完成和孤儿责任被检出。",
+        "bytes/arrivals/Fabric16B、source-read/full与allocation/permit不被共用无类型计数。"
+      ],
+      "pass_criteria": [
+        "所有接受候选保持原模板合法性与失败predicate，无新UB/新超时顶替原故障。",
+        "每次候选的独立HB/obligation结果保存，原包完整，P1不声称异步DUT执行。"
+      ],
+      "fail_criteria": [
+        "删除peer或同步后仍接纳、用另一家族wait掩盖缺口、将发射当完成释放。",
+        "未知recipe被假定合法，或合成模型日志被算为真实SM/TMA/Fabric覆盖。"
+      ],
+      "expected_artifacts": [
+        "完整manifest与source/target/capability/profile/tool/IR hash（计划产物）",
+        "original_async_recipe_fixture.json",
+        "typed_obligation_HB_graphs.json",
+        "lifecycle_deletion_audits.jsonl",
+        "accepted_candidate_predicate_checks.json"
+      ],
+      "coverage_ids": [
+        "CV-REDUCE-002"
+      ],
+      "suites": [
+        "DIRECTED",
+        "NEGATIVE"
+      ],
+      "fixed_seed": null,
+      "timeout_policy": "GEN_BOUNDED",
+      "current_status": "NOT_RUN",
+      "current_gate": "BLOCKED_MISSING_IMPLEMENTATION"
+    },
+    {
+      "source_testpoint_id": "SIG-REDUCE-003",
+      "id": "TC-REDUCE-003",
+      "title": "数值与调度缩减",
+      "phase": "P2_REFERENCE_PROGRAM",
+      "prerequisites": [
+        "发生器/对应unit harness和独立审计器已实现；当前缺失，因此本case为NOT_RUN/BLOCKED_MISSING_IMPLEMENTATION。",
+        "锁定PTX9.4 form/target证据、项目capability、IR/schema及数值profile；缺规则的variant为BLOCKED而非PASS。",
+        "独立checker不调用generator或DUT的同一合法性、decode、rounding helper；共享常量及独立边界已评审。",
+        "参考程序解释/编译路线及独立oracle均存在并版本锁定；结果只作P2证据，不填SM RTL覆盖。"
+      ],
+      "config_profile": "TP-REF-BASE",
+      "parameters": {
+        "parameter_status": "下列规模/调度值是待冻结的测试预算建议，不是SM时延、native编码或当前运行结果。",
+        "seed_strategy": "固定seed由主testplan赋值；RNG子流和所有抽样结果写入完整manifest，边界枚举不依赖随机偶然命中。",
+        "transform_dimensions": [
+          "FP_operand_bits",
+          "scale_value",
+          "metadata_entries",
+          "rbits",
+          "service_event_delays"
+        ],
+        "maximum_candidate_evaluations": 512,
+        "preserved_fields": [
+          "target_profile",
+          "oracle_version",
+          "rule_id",
+          "stable_failure_operation",
+          "typed_count_units",
+          "report_contract"
+        ],
+        "predicate_policy": "原包先冻结误差/bit/allowed-outcome失败谓词与签名规范化；不能为接受候选临时放宽。"
+      },
+      "initial_state": [
+        "原始失败在固定P2参考路线可复现，独立oracle与合法性已确认，原始包只读。",
+        "选定scale/metadata/rbits模板实际有已审查格式/约束；native缺失不冒充有执行后端。"
+      ],
+      "steps": [
+        "依次降低数据复杂度和schedule延迟/事件数量，保持program/对象/参与者与故障注入合同。",
+        "每个候选独立复审tuple/CFG/HB/metadata/scale边界及profile，重算golden或允许集合。",
+        "执行P2参考/fixture并重新判原failure predicate，拒绝只产生新timeout、UB或允许NaN差异的候选。",
+        "接受的候选保存新物化制品与完整manifest，直至预算或局部不再缩减；原件不覆盖。"
+      ],
+      "checkpoints": [
+        "缩rbits或FP值后仍保留原舍入见证，不把未规定payload差异改造为假mismatch。",
+        "缩schedule没有破坏公平/错误注入窗、report/计数或必要source/full顺序。"
+      ],
+      "pass_criteria": [
+        "最终候选独立合法且仍触发冻结的原失败谓词，golden/allowed-set与新输入匹配。",
+        "数据/调度变换因果可追溯，不把局部最小称全局最小或实际SM验证。"
+      ],
+      "fail_criteria": [
+        "沿用旧golden、变化profile、把允许结果当错值或以新UB/死锁冒充原故障。",
+        "schedule缩减撤销了原故障却通过弱化签名接纳。"
+      ],
+      "expected_artifacts": [
+        "完整manifest与source/target/capability/profile/tool/IR hash（计划产物）",
+        "numeric_schedule_candidate_log.jsonl",
+        "fresh_candidate_oracles.json",
+        "same_failure_witness_checks.json",
+        "original_and_reduced_bundle_indices.json"
+      ],
+      "coverage_ids": [
+        "CV-REDUCE-003"
+      ],
+      "suites": [
+        "DIRECTED",
+        "RANDOM",
+        "REPLAY"
+      ],
+      "fixed_seed": null,
+      "timeout_policy": "REFERENCE_BOUNDED",
+      "current_status": "NOT_RUN",
+      "current_gate": "BLOCKED_MISSING_IMPLEMENTATION"
+    },
+    {
+      "source_testpoint_id": "SIG-REDUCE-004",
+      "id": "TC-REDUCE-004",
+      "title": "最小化可复现包",
+      "phase": "P2_REFERENCE_PROGRAM",
+      "prerequisites": [
+        "发生器/对应unit harness和独立审计器已实现；当前缺失，因此本case为NOT_RUN/BLOCKED_MISSING_IMPLEMENTATION。",
+        "锁定PTX9.4 form/target证据、项目capability、IR/schema及数值profile；缺规则的variant为BLOCKED而非PASS。",
+        "独立checker不调用generator或DUT的同一合法性、decode、rounding helper；共享常量及独立边界已评审。",
+        "参考程序解释/编译路线及独立oracle均存在并版本锁定；结果只作P2证据，不填SM RTL覆盖。"
+      ],
+      "config_profile": "TP-REF-BASE",
+      "parameters": {
+        "parameter_status": "下列规模/调度值是待冻结的测试预算建议，不是SM时延、native编码或当前运行结果。",
+        "seed_strategy": "固定seed由主testplan赋值；RNG子流和所有抽样结果写入完整manifest，边界枚举不依赖随机偶然命中。",
+        "candidate_evaluation_caps": [
+          64,
+          256,
+          1024
+        ],
+        "wall_time_budget_seconds_proposed": 120,
+        "final_bundle_replay_repetitions": 2,
+        "terminal_reasons": [
+          "no_more_accepted_reduction",
+          "candidate_budget",
+          "wall_time_budget",
+          "nondeterministic_or_blocked"
+        ]
+      },
+      "initial_state": [
+        "存在可复现P2失败包、独立audit/oracle及已评审shrinker变换；停止/错误分类规则冻结。",
+        "原始包、每次候选和最后合法见证分别保存；中止时不得只留下部分损坏包。"
+      ],
+      "steps": [
+        "从原始只读失败包运行有界缩减，逐候选重新独立审计与原predicate检查。",
+        "在无可接受变换、次数或时间上限时保存最后一个合法仍失败候选及精确停止原因。",
+        "用独立replay入口/参考路线在清洁目录重放最终物化包2次，校验全部hash、oracle与同一失败signature。",
+        "归档原始/缩减manifest、变换/拒绝日志、未能缩减的依赖和新旧体积，明确仅局部最小。"
+      ],
+      "checkpoints": [
+        "预算耗尽仍产出完整最后合法包，未把尚未验证candidate当最终见证。",
+        "最终两次重放满足原predicate；不稳定则保留并分类，不能当稳定复现通过。"
+      ],
+      "pass_criteria": [
+        "在配置预算内终止，输出包独立合法、完整且可重复触发同一P2失败判据。",
+        "原始证据保留，停止/缩减程度报告真实，不宣称数学全局最小或DUT故障已修复。"
+      ],
+      "fail_criteria": [
+        "无限缩减、最终包缺文件/hash、最后候选未复审，或重放成新timeout/UB仍称原故障。",
+        "超时/缺工具被写为PASS，原始包被覆盖或丢失失败因果。"
+      ],
+      "expected_artifacts": [
+        "完整manifest与source/target/capability/profile/tool/IR hash（计划产物）",
+        "original_bundle_manifest.json",
+        "reduced_bundle_manifest.json",
+        "transform_and_rejection_history.jsonl",
+        "final_independent_replay_results.json",
+        "bounded_stop_reason.json"
+      ],
+      "coverage_ids": [
+        "CV-REDUCE-003"
+      ],
+      "suites": [
+        "SMOKE",
+        "DIRECTED",
+        "REPLAY"
+      ],
+      "fixed_seed": null,
+      "timeout_policy": "REFERENCE_BOUNDED",
+      "current_status": "NOT_RUN",
+      "current_gate": "BLOCKED_MISSING_IMPLEMENTATION"
+    }
+  ]
+}

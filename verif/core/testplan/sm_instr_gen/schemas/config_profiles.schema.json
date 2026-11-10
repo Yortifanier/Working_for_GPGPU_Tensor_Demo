@@ -1,0 +1,201 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "required": [
+    "schema_version",
+    "plan_id",
+    "version",
+    "date",
+    "source_files",
+    "profiles"
+  ],
+  "properties": {
+    "schema_version": {
+      "const": "1.0"
+    },
+    "plan_id": {
+      "const": "SM-INSTR-GEN-TESTPLAN"
+    },
+    "version": {
+      "const": "1.0"
+    },
+    "date": {
+      "type": "string",
+      "format": "date"
+    },
+    "source_files": {
+      "type": "object",
+      "required": [
+        "vplan_testpoints",
+        "vplan_features",
+        "vplan_document",
+        "sm_architecture"
+      ],
+      "properties": {
+        "vplan_testpoints": {
+          "type": "object",
+          "required": [
+            "path",
+            "sha256"
+          ],
+          "properties": {
+            "path": {
+              "type": "string",
+              "minLength": 1
+            },
+            "sha256": {
+              "type": "string",
+              "pattern": "^[0-9a-f]{64}$"
+            }
+          }
+        },
+        "vplan_features": {
+          "type": "object",
+          "required": [
+            "path",
+            "sha256"
+          ],
+          "properties": {
+            "path": {
+              "type": "string",
+              "minLength": 1
+            },
+            "sha256": {
+              "type": "string",
+              "pattern": "^[0-9a-f]{64}$"
+            }
+          }
+        },
+        "vplan_document": {
+          "type": "object",
+          "required": [
+            "path",
+            "sha256"
+          ],
+          "properties": {
+            "path": {
+              "type": "string",
+              "minLength": 1
+            },
+            "sha256": {
+              "type": "string",
+              "pattern": "^[0-9a-f]{64}$"
+            }
+          }
+        },
+        "sm_architecture": {
+          "type": "object",
+          "required": [
+            "path",
+            "sha256"
+          ],
+          "properties": {
+            "path": {
+              "type": "string",
+              "minLength": 1
+            },
+            "sha256": {
+              "type": "string",
+              "pattern": "^[0-9a-f]{64}$"
+            }
+          }
+        }
+      },
+      "additionalProperties": false
+    },
+    "profiles": {
+      "type": "array",
+      "minItems": 8,
+      "maxItems": 8,
+      "items": {
+        "type": "object",
+        "required": [
+          "id",
+          "kind",
+          "phase",
+          "enabled_for_execution",
+          "backend",
+          "capability_source",
+          "defaults",
+          "entry_gates",
+          "exit_gates"
+        ],
+        "properties": {
+          "id": {
+            "enum": [
+              "TP-P0-STATIC",
+              "TP-GEN-BASE",
+              "TP-GEN-NEGATIVE",
+              "TP-REF-BASE",
+              "TP-SM-BASE",
+              "TP-SM-STRESS",
+              "TP-SOC-BASE",
+              "TP-SOC-FAULT"
+            ]
+          },
+          "kind": {
+            "enum": [
+              "PLAN_STATIC",
+              "PLANNED_DYNAMIC"
+            ]
+          },
+          "phase": {
+            "enum": [
+              "P0_PLAN_STATIC",
+              "P1_GENERATOR_UNIT",
+              "P2_REFERENCE_PROGRAM",
+              "P3_SM_RTL",
+              "P4_SOC"
+            ]
+          },
+          "enabled_for_execution": {
+            "type": "boolean"
+          },
+          "backend": {
+            "type": "string",
+            "minLength": 1
+          },
+          "capability_source": {
+            "anyOf": [
+              {
+                "type": "string",
+                "minLength": 1
+              },
+              {
+                "type": "object",
+                "minProperties": 1
+              },
+              {
+                "type": "array",
+                "items": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "minItems": 1
+              }
+            ]
+          },
+          "defaults": {
+            "type": "object"
+          },
+          "entry_gates": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "minLength": 1
+            },
+            "minItems": 1
+          },
+          "exit_gates": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "minLength": 1
+            },
+            "minItems": 1
+          }
+        }
+      }
+    }
+  }
+}

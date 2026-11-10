@@ -1,0 +1,344 @@
+{
+  "schema_version": "1.0",
+  "plan_id": "SM-INSTR-GEN-TESTPLAN",
+  "version": "1.0",
+  "date": "2026-11-09",
+  "source_files": {
+    "vplan_testpoints": {
+      "path": "verif/core/vplan/sm_instr_gen/testpoints.json",
+      "sha256": "9a230465115ed9e01b8edf64da32aba41af7a2da80b12275e28a8894792018c3"
+    },
+    "vplan_features": {
+      "path": "verif/core/vplan/sm_instr_gen/vplan_features.json",
+      "sha256": "8ee62fb376abac123d8704fad8d12c03b681e5736890373436b29a585f67a17d"
+    },
+    "vplan_document": {
+      "path": "verif/core/vplan/sm_instr_gen/SM_INSTR_GEN_VPLAN.md",
+      "sha256": "71cd695ebdfbba906d17233c975762cec863187d2e4e96afc723a5d4e40915c9"
+    },
+    "sm_architecture": {
+      "path": "docs/sm/SM_ARCHITECTURE.md",
+      "sha256": "b28eaee5bf381c7dbcc8387687c62bc8030eb722935e11774cf3eaecb20fb0ba"
+    }
+  },
+  "profiles": [
+    {
+      "id": "TP-P0-STATIC",
+      "kind": "PLAN_STATIC",
+      "phase": "P0_PLAN_STATIC",
+      "enabled_for_execution": true,
+      "backend": "check_testplan.py metadata validator only",
+      "capability_source": "Fixed committed source files and schemas; no runtime instruction capability inferred.",
+      "defaults": {
+        "dynamic_tests_executed": 0,
+        "may_change_case_execution_status": false
+      },
+      "entry_gates": [
+        "Repository metadata and jsonschema available."
+      ],
+      "exit_gates": [
+        "Source identity, associations, deterministic seed expansion and all plan-state invariants pass; no dynamic test result claimed."
+      ]
+    },
+    {
+      "id": "TP-GEN-BASE",
+      "kind": "PLANNED_DYNAMIC",
+      "phase": "P1_GENERATOR_UNIT",
+      "enabled_for_execution": false,
+      "backend": "FUTURE_GENERATOR_UNIT_API",
+      "capability_source": {
+        "source": "REQUIRES_APPROVED_EXACT_TARGET_AND_PROJECT_CAPABILITY",
+        "file": null,
+        "must_resolve_before_run": true
+      },
+      "defaults": {
+        "exact_target": null,
+        "legal_form_registry_hash": null,
+        "project_capability_hash": null,
+        "numerical_profile": "REQUIRES_CASE_APPROVED_PROFILE",
+        "unresolved_policy": "BLOCKED",
+        "budget_status": "PROVISIONAL_CALIBRATION_REQUIRED",
+        "program_body_instruction_limit": 1024,
+        "cleanup_instruction_reserve": 128,
+        "max_CFG_blocks": 32,
+        "max_bounded_loop_iterations": 8,
+        "max_call_depth": 4,
+        "case_overrides": "Explicit case parameters override defaults only after independent resource/legality/budget review; never truncate a required witness or cleanup.",
+        "log_origin": "GENERATOR_UNIT",
+        "real_DUT_coverage_sink_enabled": false,
+        "max_constraint_attempts_per_candidate": 256,
+        "timeout_policy": "GEN_BOUNDED"
+      },
+      "entry_gates": [
+        "Exact target, approved legal-form registry, project capability and numerical profile are resolved and source-hash locked.",
+        "Backend, independent auditor/oracle and case-specific recipe are implemented and independently validated.",
+        "Required variants, permitted outcomes, cleanup and environment fairness have reviewed finite definitions.",
+        "All provisional harness budgets for this case/backend are calibrated; missing mandatory configuration remains BLOCKED."
+      ],
+      "exit_gates": [
+        "At least one eligible required variant has actual checked evidence; all mandatory eligible variants and obligations are closed.",
+        "Expected rejection/fault layer and rule match the case; no ISA UB is assigned a fabricated trap/numeric oracle.",
+        "No orphan resources, untriaged mismatch, incomplete manifest or unclassified timeout is converted to PASS."
+      ]
+    },
+    {
+      "id": "TP-GEN-NEGATIVE",
+      "kind": "PLANNED_DYNAMIC",
+      "phase": "P1_GENERATOR_UNIT",
+      "enabled_for_execution": false,
+      "backend": "FUTURE_GENERATOR_LEGALITY_API",
+      "capability_source": {
+        "source": "REQUIRES_APPROVED_EXACT_TARGET_AND_PROJECT_CAPABILITY",
+        "file": null,
+        "must_resolve_before_run": true
+      },
+      "defaults": {
+        "exact_target": null,
+        "legal_form_registry_hash": null,
+        "project_capability_hash": null,
+        "numerical_profile": "REQUIRES_CASE_APPROVED_PROFILE",
+        "unresolved_policy": "BLOCKED",
+        "budget_status": "PROVISIONAL_CALIBRATION_REQUIRED",
+        "program_body_instruction_limit": 1024,
+        "cleanup_instruction_reserve": 128,
+        "max_CFG_blocks": 32,
+        "max_bounded_loop_iterations": 8,
+        "max_call_depth": 4,
+        "case_overrides": "Explicit case parameters override defaults only after independent resource/legality/budget review; never truncate a required witness or cleanup.",
+        "log_origin": "GENERATOR_NEGATIVE_UNIT",
+        "single_factor_mutation": true,
+        "baseline_must_pass_independent_audit": true,
+        "ISA_UB_normal_execution_allowed": false,
+        "real_DUT_coverage_sink_enabled": false,
+        "timeout_policy": "GEN_BOUNDED"
+      },
+      "entry_gates": [
+        "Exact target, approved legal-form registry, project capability and numerical profile are resolved and source-hash locked.",
+        "Backend, independent auditor/oracle and case-specific recipe are implemented and independently validated.",
+        "Required variants, permitted outcomes, cleanup and environment fairness have reviewed finite definitions.",
+        "All provisional harness budgets for this case/backend are calibrated; missing mandatory configuration remains BLOCKED."
+      ],
+      "exit_gates": [
+        "At least one eligible required variant has actual checked evidence; all mandatory eligible variants and obligations are closed.",
+        "Expected rejection/fault layer and rule match the case; no ISA UB is assigned a fabricated trap/numeric oracle.",
+        "No orphan resources, untriaged mismatch, incomplete manifest or unclassified timeout is converted to PASS."
+      ]
+    },
+    {
+      "id": "TP-REF-BASE",
+      "kind": "PLANNED_DYNAMIC",
+      "phase": "P2_REFERENCE_PROGRAM",
+      "enabled_for_execution": false,
+      "backend": "FUTURE_INDEPENDENT_SEMANTIC_REFERENCE_API",
+      "capability_source": {
+        "source": "REQUIRES_APPROVED_EXACT_TARGET_AND_PROJECT_CAPABILITY",
+        "file": null,
+        "must_resolve_before_run": true
+      },
+      "defaults": {
+        "exact_target": null,
+        "legal_form_registry_hash": null,
+        "project_capability_hash": null,
+        "numerical_profile": "REQUIRES_CASE_APPROVED_PROFILE",
+        "unresolved_policy": "BLOCKED",
+        "budget_status": "PROVISIONAL_CALIBRATION_REQUIRED",
+        "program_body_instruction_limit": 1024,
+        "cleanup_instruction_reserve": 128,
+        "max_CFG_blocks": 32,
+        "max_bounded_loop_iterations": 8,
+        "max_call_depth": 4,
+        "case_overrides": "Explicit case parameters override defaults only after independent resource/legality/budget review; never truncate a required witness or cleanup.",
+        "log_origin": "REFERENCE_MODEL",
+        "real_DUT_coverage_sink_enabled": false,
+        "outcome_policy": "Only proven singleton outcomes use unique-value checks; atomics and weak memory may require allowed sets/linearization relations.",
+        "timeout_policy": "REFERENCE_BOUNDED"
+      },
+      "entry_gates": [
+        "Exact target, approved legal-form registry, project capability and numerical profile are resolved and source-hash locked.",
+        "Backend, independent auditor/oracle and case-specific recipe are implemented and independently validated.",
+        "Required variants, permitted outcomes, cleanup and environment fairness have reviewed finite definitions.",
+        "All provisional harness budgets for this case/backend are calibrated; missing mandatory configuration remains BLOCKED."
+      ],
+      "exit_gates": [
+        "At least one eligible required variant has actual checked evidence; all mandatory eligible variants and obligations are closed.",
+        "Expected rejection/fault layer and rule match the case; no ISA UB is assigned a fabricated trap/numeric oracle.",
+        "No orphan resources, untriaged mismatch, incomplete manifest or unclassified timeout is converted to PASS."
+      ]
+    },
+    {
+      "id": "TP-SM-BASE",
+      "kind": "PLANNED_DYNAMIC",
+      "phase": "P3_SM_RTL",
+      "enabled_for_execution": false,
+      "backend": "FUTURE_PROJECT_SM_DRIVER_AND_MONITORS",
+      "capability_source": {
+        "source": "REQUIRES_APPROVED_EXACT_TARGET_AND_PROJECT_CAPABILITY",
+        "file": null,
+        "must_resolve_before_run": true
+      },
+      "defaults": {
+        "exact_target": null,
+        "legal_form_registry_hash": null,
+        "project_capability_hash": null,
+        "numerical_profile": "REQUIRES_CASE_APPROVED_PROFILE",
+        "unresolved_policy": "BLOCKED",
+        "budget_status": "PROVISIONAL_CALIBRATION_REQUIRED",
+        "program_body_instruction_limit": 1024,
+        "cleanup_instruction_reserve": 128,
+        "max_CFG_blocks": 32,
+        "max_bounded_loop_iterations": 8,
+        "max_call_depth": 4,
+        "case_overrides": "Explicit case parameters override defaults only after independent resource/legality/budget review; never truncate a required witness or cleanup.",
+        "log_origin": "ACTUAL_SM_EVENTS",
+        "S0_warp_size": 32,
+        "S0_max_resident_warps": 64,
+        "S0_max_resident_CTAs": 8,
+        "S0_SMEM_pool_bytes": 262144,
+        "S0_TMEM_max_bytes": 294912,
+        "R_SM": null,
+        "single_CTA_shared_limit": null,
+        "target_alloc_granularity": null,
+        "completion_schedule": "ANY_ALLOWED_ORDER",
+        "timeout_policy": "SM_PROGRESS"
+      },
+      "entry_gates": [
+        "Exact target, approved legal-form registry, project capability and numerical profile are resolved and source-hash locked.",
+        "Backend, independent auditor/oracle and case-specific recipe are implemented and independently validated.",
+        "Required variants, permitted outcomes, cleanup and environment fairness have reviewed finite definitions.",
+        "All provisional harness budgets for this case/backend are calibrated; missing mandatory configuration remains BLOCKED."
+      ],
+      "exit_gates": [
+        "At least one eligible required variant has actual checked evidence; all mandatory eligible variants and obligations are closed.",
+        "Expected rejection/fault layer and rule match the case; no ISA UB is assigned a fabricated trap/numeric oracle.",
+        "No orphan resources, untriaged mismatch, incomplete manifest or unclassified timeout is converted to PASS."
+      ]
+    },
+    {
+      "id": "TP-SM-STRESS",
+      "kind": "PLANNED_DYNAMIC",
+      "phase": "P3_SM_RTL",
+      "enabled_for_execution": false,
+      "backend": "FUTURE_PROJECT_SM_DRIVER_AND_MONITORS",
+      "capability_source": {
+        "source": "REQUIRES_APPROVED_EXACT_TARGET_AND_PROJECT_CAPABILITY",
+        "file": null,
+        "must_resolve_before_run": true
+      },
+      "defaults": {
+        "exact_target": null,
+        "legal_form_registry_hash": null,
+        "project_capability_hash": null,
+        "numerical_profile": "REQUIRES_CASE_APPROVED_PROFILE",
+        "unresolved_policy": "BLOCKED",
+        "budget_status": "PROVISIONAL_CALIBRATION_REQUIRED",
+        "program_body_instruction_limit": 1024,
+        "cleanup_instruction_reserve": 128,
+        "max_CFG_blocks": 32,
+        "max_bounded_loop_iterations": 8,
+        "max_call_depth": 4,
+        "case_overrides": "Explicit case parameters override defaults only after independent resource/legality/budget review; never truncate a required witness or cleanup.",
+        "log_origin": "ACTUAL_SM_EVENTS",
+        "pressure": "Near independently admitted legal capacity, not overcommit",
+        "pressure_values_from_backend": true,
+        "exact_fifo_depths": null,
+        "return_order": "Permitted permutations with explicit bounded-service/fairness assumptions",
+        "cleanup_reserved": true,
+        "timeout_policy": "SM_PROGRESS"
+      },
+      "entry_gates": [
+        "Exact target, approved legal-form registry, project capability and numerical profile are resolved and source-hash locked.",
+        "Backend, independent auditor/oracle and case-specific recipe are implemented and independently validated.",
+        "Required variants, permitted outcomes, cleanup and environment fairness have reviewed finite definitions.",
+        "All provisional harness budgets for this case/backend are calibrated; missing mandatory configuration remains BLOCKED."
+      ],
+      "exit_gates": [
+        "At least one eligible required variant has actual checked evidence; all mandatory eligible variants and obligations are closed.",
+        "Expected rejection/fault layer and rule match the case; no ISA UB is assigned a fabricated trap/numeric oracle.",
+        "No orphan resources, untriaged mismatch, incomplete manifest or unclassified timeout is converted to PASS."
+      ]
+    },
+    {
+      "id": "TP-SOC-BASE",
+      "kind": "PLANNED_DYNAMIC",
+      "phase": "P4_SOC",
+      "enabled_for_execution": false,
+      "backend": "FUTURE_MULTI_SM_SOC_SERVICES_AND_MONITORS",
+      "capability_source": {
+        "source": "REQUIRES_APPROVED_EXACT_TARGET_AND_PROJECT_CAPABILITY",
+        "file": null,
+        "must_resolve_before_run": true
+      },
+      "defaults": {
+        "exact_target": null,
+        "legal_form_registry_hash": null,
+        "project_capability_hash": null,
+        "numerical_profile": "REQUIRES_CASE_APPROVED_PROFILE",
+        "unresolved_policy": "BLOCKED",
+        "budget_status": "PROVISIONAL_CALIBRATION_REQUIRED",
+        "program_body_instruction_limit": 1024,
+        "cleanup_instruction_reserve": 128,
+        "max_CFG_blocks": 32,
+        "max_bounded_loop_iterations": 8,
+        "max_call_depth": 4,
+        "case_overrides": "Explicit case parameters override defaults only after independent resource/legality/budget review; never truncate a required witness or cleanup.",
+        "log_origin": "ACTUAL_SOC_EVENTS",
+        "S0_pair_placement": "two distinct reachable SM/endpoints, even/odd cluster ranks",
+        "remote_owner_lifetime_pinned": true,
+        "completion_units": "Explicit per operation: bytes, arrivals, 16B units or other specified units",
+        "timeout_policy": "SOC_PROGRESS"
+      },
+      "entry_gates": [
+        "Exact target, approved legal-form registry, project capability and numerical profile are resolved and source-hash locked.",
+        "Backend, independent auditor/oracle and case-specific recipe are implemented and independently validated.",
+        "Required variants, permitted outcomes, cleanup and environment fairness have reviewed finite definitions.",
+        "All provisional harness budgets for this case/backend are calibrated; missing mandatory configuration remains BLOCKED."
+      ],
+      "exit_gates": [
+        "At least one eligible required variant has actual checked evidence; all mandatory eligible variants and obligations are closed.",
+        "Expected rejection/fault layer and rule match the case; no ISA UB is assigned a fabricated trap/numeric oracle.",
+        "No orphan resources, untriaged mismatch, incomplete manifest or unclassified timeout is converted to PASS."
+      ]
+    },
+    {
+      "id": "TP-SOC-FAULT",
+      "kind": "PLANNED_DYNAMIC",
+      "phase": "P4_SOC",
+      "enabled_for_execution": false,
+      "backend": "FUTURE_SOC_DEFINED_FAULT_INJECTION_API",
+      "capability_source": {
+        "source": "REQUIRES_APPROVED_EXACT_TARGET_AND_PROJECT_CAPABILITY",
+        "file": null,
+        "must_resolve_before_run": true
+      },
+      "defaults": {
+        "exact_target": null,
+        "legal_form_registry_hash": null,
+        "project_capability_hash": null,
+        "numerical_profile": "REQUIRES_CASE_APPROVED_PROFILE",
+        "unresolved_policy": "BLOCKED",
+        "budget_status": "PROVISIONAL_CALIBRATION_REQUIRED",
+        "program_body_instruction_limit": 1024,
+        "cleanup_instruction_reserve": 128,
+        "max_CFG_blocks": 32,
+        "max_bounded_loop_iterations": 8,
+        "max_call_depth": 4,
+        "case_overrides": "Explicit case parameters override defaults only after independent resource/legality/budget review; never truncate a required witness or cleanup.",
+        "log_origin": "ACTUAL_SOC_DEFINED_FAULT_EVENTS",
+        "fault_kinds": "Only operation-defined report/failure behavior or explicitly tagged project protocol robustness; no generic ISA-UB trap promise.",
+        "side_effect_retry_policy": "No automatic retry of non-idempotent reductions/stores without an approved protocol.",
+        "timeout_policy": "SOC_PROGRESS"
+      },
+      "entry_gates": [
+        "Exact target, approved legal-form registry, project capability and numerical profile are resolved and source-hash locked.",
+        "Backend, independent auditor/oracle and case-specific recipe are implemented and independently validated.",
+        "Required variants, permitted outcomes, cleanup and environment fairness have reviewed finite definitions.",
+        "All provisional harness budgets for this case/backend are calibrated; missing mandatory configuration remains BLOCKED."
+      ],
+      "exit_gates": [
+        "At least one eligible required variant has actual checked evidence; all mandatory eligible variants and obligations are closed.",
+        "Expected rejection/fault layer and rule match the case; no ISA UB is assigned a fabricated trap/numeric oracle.",
+        "No orphan resources, untriaged mismatch, incomplete manifest or unclassified timeout is converted to PASS."
+      ]
+    }
+  ]
+}

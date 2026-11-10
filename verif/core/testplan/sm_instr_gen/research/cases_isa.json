@@ -1,0 +1,1848 @@
+{
+  "schema_version": "1.0",
+  "date": "2026-11-09",
+  "artifact_kind": "SM instruction generator testplan case contribution",
+  "source_testpoints": {
+    "path": "verif/core/vplan/sm_instr_gen/testpoints.json",
+    "sha256": "9a230465115ed9e01b8edf64da32aba41af7a2da80b12275e28a8894792018c3"
+  },
+  "scope_feature_ids": [
+    "GEN-ISA-01",
+    "GEN-IR-01",
+    "GEN-CVT-01",
+    "GEN-SYS-01",
+    "GEN-NEG-01",
+    "GEN-TEX-01"
+  ],
+  "counts": {
+    "cases": 24,
+    "features": 6,
+    "executed_cases": 0
+  },
+  "status_note": "Plan only. Source identity/phase/coverage copied; fixed_seed deliberately null for root campaign assignment. No executable commands, native bit encodings or completed results are supplied.",
+  "cases": [
+    {
+      "source_testpoint_id": "SIG-ISA-001",
+      "id": "TC-ISA-001",
+      "title": "全部目录及别名身份",
+      "phase": "P1_GENERATOR_UNIT",
+      "feature_ids": [
+        "GEN-ISA-01"
+      ],
+      "coverage_ids": [
+        "CV-ISA-001"
+      ],
+      "prerequisites": [
+        "固定并核对源vPlan/testpoint、PTX9.4 inventory、target/capability、规则及模型版本hash；fixed_seed由主campaign在运行前赋值。",
+        "发生器、unit harness和独立合法性/结构审计器必须可用；共享source身份不等于共享待测约束函数。",
+        "执行本case前冻结timeout预算；缺预算、模型、工具或服务时保持BLOCKED，不以空执行关闭case。"
+      ],
+      "config_profile": "TP-GEN-BASE",
+      "parameters": {
+        "timeout_budget_ref": "campaign配置中与timeout_policy对应的有限预算；不在本case猜测SM固定周期。",
+        "instruction_descriptions": 215,
+        "control_syntax_descriptions": 2,
+        "sreg_descriptions": 35,
+        "directive_descriptions": 34,
+        "identity_key": "source section, not mnemonic",
+        "target_snapshot_count_min": 2,
+        "mutations": [
+          {
+            "field": "one source section identity",
+            "action": "duplicate one record while omitting a different record",
+            "expected_layer": "INDEPENDENT_INVENTORY_AUDIT"
+          }
+        ]
+      },
+      "initial_state": [
+        "固定源目录和两份独立target快照只读；输出索引、计数和mapping账本为空。",
+        "{}、@、sreg、directive均有独立entry_kind，不占普通执行opcode计数。"
+      ],
+      "steps": [
+        "载入两份源inventory并校验SHA，按source section遍历217个说明叶子和35个sreg说明；另索引34个directive。",
+        "生成每节的identity与别名/同名多类型记录；保留mov两说明节和同节多个名称，不以mnemonic去重。",
+        "用独立提取的source集合逐项核对section、名称数组、物理/印刷页码和entry_kind，再按各target筛选可用形式。",
+        "在隔离索引副本中只制造一个身份替换错误（重复一节并遗漏一节），确认集合审计报错；不将该副本送发生器正向流。"
+      ],
+      "checkpoints": [
+        "基线索引为217唯一指令/语法说明，其中215 instruction与2 syntax，另35 sreg；不是opcode或tuple数。",
+        "同名/别名记录未丢失；变异副本定位到重复与缺失的具体section而不是仅总数相等就通过。"
+      ],
+      "pass_criteria": [
+        "所有源身份/页码匹配且scope计数独立；target快照不被隐式继承。",
+        "基线可审计，身份替换副本被独立审计拒绝并保留差异。",
+        "实际执行量、检查量及所需覆盖非空，所有必需检查满足；本case当前NOT_RUN不因计划/静态检查而变为PASS。"
+      ],
+      "fail_criteria": [
+        "源hash变化后继续合并旧覆盖，或只比较总数漏掉身份替换。",
+        "语法/sreg/directive被当可执行opcode，或同名节被去重。"
+      ],
+      "expected_artifacts": [
+        "manifest.json",
+        "case_result.json",
+        "coverage_delta.json",
+        "source_identity_diff.json",
+        "identity_index.json",
+        "target_snapshots.json"
+      ],
+      "suites": [
+        "SMOKE",
+        "DIRECTED",
+        "NEGATIVE"
+      ],
+      "fixed_seed": null,
+      "timeout_policy": "GEN_BOUNDED",
+      "current_status": "NOT_RUN",
+      "current_gate": "BLOCKED_MISSING_IMPLEMENTATION",
+      "source_refs": [
+        "verif/core/vplan/sm_instr_gen/testpoints.json#SIG-ISA-001",
+        "docs/sm/SM_ARCHITECTURE.md#3"
+      ]
+    },
+    {
+      "source_testpoint_id": "SIG-ISA-002",
+      "id": "TC-ISA-002",
+      "title": "target与capability单因素变异",
+      "phase": "P1_GENERATOR_UNIT",
+      "feature_ids": [
+        "GEN-ISA-01"
+      ],
+      "coverage_ids": [
+        "CV-ISA-002"
+      ],
+      "prerequisites": [
+        "固定并核对源vPlan/testpoint、PTX9.4 inventory、target/capability、规则及模型版本hash；fixed_seed由主campaign在运行前赋值。",
+        "发生器、unit harness和独立合法性/结构审计器必须可用；共享source身份不等于共享待测约束函数。",
+        "执行本case前冻结timeout预算；缺预算、模型、工具或服务时保持BLOCKED，不以空执行关闭case。"
+      ],
+      "config_profile": "TP-GEN-BASE",
+      "parameters": {
+        "timeout_budget_ref": "campaign配置中与timeout_policy对应的有限预算；不在本case猜测SM固定周期。",
+        "baseline_source": "independently audited legal-form registry",
+        "mutation_cardinality": 1,
+        "mutation_axes": [
+          "exact_target",
+          "family_membership",
+          "one_operand_type",
+          "one_modifier"
+        ],
+        "target_examples": "仅使用已核验recipe展示sm_90a WGMMA及sm_107相关a/f门限；不是所有形式用同一target。",
+        "unknown_rule_expected": "BLOCKED_RULE_UNRESOLVED"
+      },
+      "initial_state": [
+        "每个baseline有独立LEGAL verdict及source/target证据；baseline IR冻结。",
+        "project capability状态单独记录，不把target合法等同project已实现。"
+      ],
+      "steps": [
+        "为每个target边界载入一个已独立核验合法baseline，先确认原样可被相应合法化路径接受。",
+        "复制baseline并只改变一个target/family/type/modifier字段；保留其余IR、对象、参与者及seed子流不变。",
+        "用独立规则表先预测被违反的规则与拒绝层，再提交baseline与mutant；未知规则单列BLOCKED。",
+        "对照结构差分确认恰一字段改变，并检查拒绝原因只对应预期约束；恢复baseline再次审计以排除全拒绝器。"
+      ],
+      "checkpoints": [
+        "基线仍合法且有实际accept记录；规范target和project capability分别出结论。",
+        "mutant差分恰一字段，拒绝rule/layer匹配；unknown rule不被当accept或负例PASS。"
+      ],
+      "pass_criteria": [
+        "全部选择的baseline接受，单因素mutant按独立规则判断且拒绝可解释。",
+        "实际执行量、检查量及所需覆盖非空，所有必需检查满足；本case当前NOT_RUN不因计划/静态检查而变为PASS。"
+      ],
+      "fail_criteria": [
+        "多个无关字段被静默重写，或只按sm数字大小继承a/f能力。",
+        "基线和mutant全部拒绝却报负例通过，或缺规则自动排除。"
+      ],
+      "expected_artifacts": [
+        "manifest.json",
+        "case_result.json",
+        "coverage_delta.json",
+        "baseline_mutant_diff.json",
+        "legality_verdicts.json",
+        "rule_provenance.json"
+      ],
+      "suites": [
+        "DIRECTED",
+        "NEGATIVE"
+      ],
+      "fixed_seed": null,
+      "timeout_policy": "GEN_BOUNDED",
+      "current_status": "NOT_RUN",
+      "current_gate": "BLOCKED_MISSING_IMPLEMENTATION",
+      "source_refs": [
+        "verif/core/vplan/sm_instr_gen/testpoints.json#SIG-ISA-002",
+        "docs/sm/SM_ARCHITECTURE.md#3"
+      ]
+    },
+    {
+      "source_testpoint_id": "SIG-ISA-003",
+      "id": "TC-ISA-003",
+      "title": "关闭能力与lowering证据",
+      "phase": "P2_REFERENCE_PROGRAM",
+      "feature_ids": [
+        "GEN-ISA-01"
+      ],
+      "coverage_ids": [
+        "CV-ISA-001"
+      ],
+      "prerequisites": [
+        "固定并核对源vPlan/testpoint、PTX9.4 inventory、target/capability、规则及模型版本hash；fixed_seed由主campaign在运行前赋值。",
+        "所用独立参考解释器/允许结果模型及lowering或服务reference route必须可用；P2结果不计真实SM执行。",
+        "执行本case前冻结timeout预算；缺预算、模型、工具或服务时保持BLOCKED，不以空执行关闭case。",
+        "本case至少一条可执行且有证明的reference lowering路线已注册；否则整体保持BLOCKED。"
+      ],
+      "config_profile": "TP-REF-BASE",
+      "parameters": {
+        "timeout_budget_ref": "campaign配置中与timeout_policy对应的有限预算；不在本case猜测SM固定周期。",
+        "route_trials": [
+          "native_disabled",
+          "lowering_certificate_absent",
+          "service_absent",
+          "separately_enabled_proven_lowering"
+        ],
+        "mutation_cardinality": 1,
+        "disabled_route_diagnostic": "CAPABILITY_DISABLED",
+        "lowering_proof": "rule/version/hash and independent observable-relation check"
+      },
+      "initial_state": [
+        "规范合法baseline已确认，project native/lowering/service开关初始关闭。",
+        "功能capability与lowering证明登记独立，外部service没有默认可用假设。"
+      ],
+      "steps": [
+        "载入一项规范合法但项目关闭的baseline，保存原始语义与输入状态。",
+        "逐个尝试native、lowering、service路线，每次仅改变该路线选择，确认关闭/缺证书/缺服务被对应层拒绝而非no-op。",
+        "在独立future-enabled profile中仅登记已证明lowering及其版本；若没有证书则保留该trial BLOCKED，不临时编造helper。",
+        "对可用证明路线执行原语义和lowered程序参考模型，比较可见寄存器、guard、CC和副作用；保存relation与证明hash。"
+      ],
+      "checkpoints": [
+        "关闭路径没有任何functional issue；每次路线选择变更可重放且拒绝原因明确。",
+        "启用lowering只有同时具备capability和有效证书时产生，reference观测关系满足声明。"
+      ],
+      "pass_criteria": [
+        "未实现路径明确拒绝；至少一项实际可用的证明路线完成独立relation检查才能关闭本case。",
+        "实际执行量、检查量及所需覆盖非空，所有必需检查满足；本case当前NOT_RUN不因计划/静态检查而变为PASS。"
+      ],
+      "fail_criteria": [
+        "无证明fallback、静默no-op，或service缺失被当成功。",
+        "仅成功输出lowered文本就计执行等价，或缺证书仍关闭case。"
+      ],
+      "expected_artifacts": [
+        "manifest.json",
+        "case_result.json",
+        "coverage_delta.json",
+        "route_decisions.json",
+        "lowering_certificate_manifest.json",
+        "reference_relation.json"
+      ],
+      "suites": [
+        "DIRECTED",
+        "NEGATIVE"
+      ],
+      "fixed_seed": null,
+      "timeout_policy": "REFERENCE_BOUNDED",
+      "current_status": "NOT_RUN",
+      "current_gate": "BLOCKED_MISSING_IMPLEMENTATION",
+      "source_refs": [
+        "verif/core/vplan/sm_instr_gen/testpoints.json#SIG-ISA-003",
+        "docs/sm/SM_ARCHITECTURE.md#3"
+      ]
+    },
+    {
+      "source_testpoint_id": "SIG-ISA-004",
+      "id": "TC-ISA-004",
+      "title": "入口一致性",
+      "phase": "P3_SM_RTL",
+      "feature_ids": [
+        "GEN-ISA-01"
+      ],
+      "coverage_ids": [
+        "CV-ISA-003"
+      ],
+      "prerequisites": [
+        "固定并核对源vPlan/testpoint、PTX9.4 inventory、target/capability、规则及模型版本hash；fixed_seed由主campaign在运行前赋值。",
+        "项目接口版本、SM RTL/driver/monitor及本case启用服务必须可用；native编码未冻结时不得发送伪二进制。",
+        "执行本case前冻结timeout预算；缺预算、模型、工具或服务时保持BLOCKED，不以空执行关闭case。"
+      ],
+      "config_profile": "TP-SM-BASE",
+      "parameters": {
+        "timeout_budget_ref": "campaign配置中与timeout_policy对应的有限预算；不在本case猜测SM固定周期。",
+        "positive_route": "selected enabled project instruction/IR adapter route",
+        "negative_change": "one contract-defined invalid project route token",
+        "negative_class": "NONISA_ROBUSTNESS",
+        "expected_rejection_layer": "PROJECT_ADAPTER",
+        "encoding": "only frozen backend contract; no guessed native bits"
+      },
+      "initial_state": [
+        "真实adapter状态清空，启用route和合法输入对象已登记。",
+        "负例fault ID及其接收/拒绝/错误ack合同已书面定义。"
+      ],
+      "steps": [
+        "生成并独立审计合法baseline，绑定实例ID/route/owner后送真实driver，记录valid/ready和accept事件。",
+        "等待对应真实完成/检查事件，确认baseline副作用与参考值一致；不以preflight通过代替issue。",
+        "复制baseline，仅通过项目fault API将route token改为合同定义非法值，其他payload/握手稳定性保持合法。",
+        "送adapter隔离负例并观察规定拒绝/错误事件、无非预期写入及资源收尾；分别统计preflight、accept、reject、complete和checked。"
+      ],
+      "checkpoints": [
+        "正向有真实accept、complete及checked证据，动态身份/route不串。",
+        "负例在项目合同层被处理且无不允许副作用；preflight拒绝从未计DUT执行。"
+      ],
+      "pass_criteria": [
+        "正向真实执行关系正确，负例只按已定义项目错误合同判定。",
+        "实际执行量、检查量及所需覆盖非空，所有必需检查满足；本case当前NOT_RUN不因计划/静态检查而变为PASS。"
+      ],
+      "fail_criteria": [
+        "无真实issue事件却报告执行覆盖，或合法/非法实例被错误路由。",
+        "非法route导致非预期写入/重复ack/责任泄漏，或被宣称PTX UB trap一致性。"
+      ],
+      "expected_artifacts": [
+        "manifest.json",
+        "case_result.json",
+        "coverage_delta.json",
+        "adapter_event_trace.jsonl",
+        "route_scoreboard.json",
+        "fault_contract.json"
+      ],
+      "suites": [
+        "SMOKE",
+        "DIRECTED",
+        "NEGATIVE"
+      ],
+      "fixed_seed": null,
+      "timeout_policy": "SM_PROGRESS",
+      "current_status": "NOT_RUN",
+      "current_gate": "BLOCKED_MISSING_IMPLEMENTATION",
+      "source_refs": [
+        "verif/core/vplan/sm_instr_gen/testpoints.json#SIG-ISA-004",
+        "docs/sm/SM_ARCHITECTURE.md#3"
+      ]
+    },
+    {
+      "source_testpoint_id": "SIG-IR-001",
+      "id": "TC-IR-001",
+      "title": "IR完整往返",
+      "phase": "P1_GENERATOR_UNIT",
+      "feature_ids": [
+        "GEN-IR-01"
+      ],
+      "coverage_ids": [
+        "CV-IR-001"
+      ],
+      "prerequisites": [
+        "固定并核对源vPlan/testpoint、PTX9.4 inventory、target/capability、规则及模型版本hash；fixed_seed由主campaign在运行前赋值。",
+        "发生器、unit harness和独立合法性/结构审计器必须可用；共享source身份不等于共享待测约束函数。",
+        "执行本case前冻结timeout预算；缺预算、模型、工具或服务时保持BLOCKED，不以空执行关闭case。"
+      ],
+      "config_profile": "TP-GEN-BASE",
+      "parameters": {
+        "timeout_budget_ref": "campaign配置中与timeout_policy对应的有限预算；不在本case猜测SM固定周期。",
+        "operand_kinds": [
+          "register",
+          "immediate",
+          "packed_bits",
+          "symbolic_address",
+          "descriptor",
+          "metadata"
+        ],
+        "semantic_fields": [
+          "width",
+          "signedness",
+          "byte_order",
+          "mask",
+          "owner_generation",
+          "numerical_profile",
+          "source_identity",
+          "completion_obligation"
+        ],
+        "json_order": "irrelevant",
+        "raw_ti16_encoding": "not synthesized"
+      },
+      "initial_state": [
+        "schema及semantic IR版本冻结；symbolic object/owner可由独立registry解析。",
+        "语义基线AST包含小宽度、跨word及向量operand，无native编码假设。"
+      ],
+      "steps": [
+        "按六类operand构造合法typed AST，并显式设置mask、owner/generation、profile与完成义务。",
+        "使用发生器序列化器输出IR，再由独立schema解码器恢复AST。",
+        "仅重排无语义JSON键次序，重复decode并比较规范化语义；同时检查packed载体和地址引用没有转成普通整数。",
+        "选择一字段（如signedness）在隔离副本变异，确认语义比较定位差异而非按字符串顺序决定相等。"
+      ],
+      "checkpoints": [
+        "完整往返后所有语义字段与引用身份相等；无隐式host byte order依赖。",
+        "键重排不改变语义，单字段变异被比较器识别。"
+      ],
+      "pass_criteria": [
+        "每类operand实际往返并通过独立语义比较；变异对照不被错误视为相等。",
+        "实际执行量、检查量及所需覆盖非空，所有必需检查满足；本case当前NOT_RUN不因计划/静态检查而变为PASS。"
+      ],
+      "fail_criteria": [
+        "位宽、符号、mask、owner或完成义务丢失/默认填充改变语义。",
+        "仅比较JSON字符串或复用同一序列化实现作为独立oracle。"
+      ],
+      "expected_artifacts": [
+        "manifest.json",
+        "case_result.json",
+        "coverage_delta.json",
+        "input_ast.json",
+        "serialized_ir.json",
+        "decoded_ast.json",
+        "semantic_diff.json"
+      ],
+      "suites": [
+        "SMOKE",
+        "DIRECTED",
+        "REPLAY"
+      ],
+      "fixed_seed": null,
+      "timeout_policy": "GEN_BOUNDED",
+      "current_status": "NOT_RUN",
+      "current_gate": "BLOCKED_MISSING_IMPLEMENTATION",
+      "source_refs": [
+        "verif/core/vplan/sm_instr_gen/testpoints.json#SIG-IR-001",
+        "docs/sm/SM_ARCHITECTURE.md#3"
+      ]
+    },
+    {
+      "source_testpoint_id": "SIG-IR-002",
+      "id": "TC-IR-002",
+      "title": "编码后端门禁",
+      "phase": "P1_GENERATOR_UNIT",
+      "feature_ids": [
+        "GEN-IR-01"
+      ],
+      "coverage_ids": [
+        "CV-IR-002"
+      ],
+      "prerequisites": [
+        "固定并核对源vPlan/testpoint、PTX9.4 inventory、target/capability、规则及模型版本hash；fixed_seed由主campaign在运行前赋值。",
+        "发生器、unit harness和独立合法性/结构审计器必须可用；共享source身份不等于共享待测约束函数。",
+        "执行本case前冻结timeout预算；缺预算、模型、工具或服务时保持BLOCKED，不以空执行关闭case。"
+      ],
+      "config_profile": "TP-GEN-BASE",
+      "parameters": {
+        "timeout_budget_ref": "campaign配置中与timeout_policy对应的有限预算；不在本case猜测SM固定周期。",
+        "output_modes": [
+          "semantic_ir",
+          "native_requested"
+        ],
+        "native_backend_state": "UNFROZEN_OR_UNAVAILABLE",
+        "mutations": [
+          {
+            "field": "schema_version",
+            "kind": "unknown_version"
+          },
+          {
+            "field": "reserved_field",
+            "kind": "one_invalid_reserved_value"
+          }
+        ],
+        "mutation_cardinality_per_trial": 1,
+        "reject_layer": "SCHEMA_OR_BACKEND_GATE"
+      },
+      "initial_state": [
+        "semantic IR schema可用，native后端标记未冻结/不可用；native输出buffer为空。",
+        "保留字段的约束来自实际已冻结IR schema，若无定义该trial BLOCKED。"
+      ],
+      "steps": [
+        "提交合法semantic IR输出请求，校验可产生带版本和source identity的IR制品。",
+        "保持语义不变只将输出模式改为native，检查明确backend gate拒绝且fetch流无任何payload。",
+        "从原始IR分别构造未知schema版本和单个保留字段非法值的隔离变异，各trial只变一个字段。",
+        "用独立schema/backend审计核对拒绝层及版本记录，并确认未把PTX文本UTF-8或IR JSON字节作为机器指令输出。"
+      ],
+      "checkpoints": [
+        "IR成功输出与native被阻塞的结果分开，native buffer和DUT issue计数保持零。",
+        "未知版本/保留位变异被各自规则拒绝，合法IR基线不受影响。"
+      ],
+      "pass_criteria": [
+        "semantic输出符合schema，native未冻结时明确拒绝，无伪二进制或隐式fallback。",
+        "实际执行量、检查量及所需覆盖非空，所有必需检查满足；本case当前NOT_RUN不因计划/静态检查而变为PASS。"
+      ],
+      "fail_criteria": [
+        "返回任意文本字节并标native成功，或未知schema被静默接受。",
+        "同时改变多个字段导致拒绝原因不可归属。"
+      ],
+      "expected_artifacts": [
+        "manifest.json",
+        "case_result.json",
+        "coverage_delta.json",
+        "backend_gate.json",
+        "schema_negative_diff.json",
+        "output_artifact_manifest.json"
+      ],
+      "suites": [
+        "DIRECTED",
+        "NEGATIVE"
+      ],
+      "fixed_seed": null,
+      "timeout_policy": "GEN_BOUNDED",
+      "current_status": "NOT_RUN",
+      "current_gate": "BLOCKED_MISSING_IMPLEMENTATION",
+      "source_refs": [
+        "verif/core/vplan/sm_instr_gen/testpoints.json#SIG-IR-002",
+        "docs/sm/SM_ARCHITECTURE.md#3"
+      ]
+    },
+    {
+      "source_testpoint_id": "SIG-IR-003",
+      "id": "TC-IR-003",
+      "title": "降低保持",
+      "phase": "P2_REFERENCE_PROGRAM",
+      "feature_ids": [
+        "GEN-IR-01"
+      ],
+      "coverage_ids": [
+        "CV-IR-001"
+      ],
+      "prerequisites": [
+        "固定并核对源vPlan/testpoint、PTX9.4 inventory、target/capability、规则及模型版本hash；fixed_seed由主campaign在运行前赋值。",
+        "所用独立参考解释器/允许结果模型及lowering或服务reference route必须可用；P2结果不计真实SM执行。",
+        "执行本case前冻结timeout预算；缺预算、模型、工具或服务时保持BLOCKED，不以空执行关闭case。"
+      ],
+      "config_profile": "TP-REF-BASE",
+      "parameters": {
+        "timeout_budget_ref": "campaign配置中与timeout_policy对应的有限预算；不在本case猜测SM固定周期。",
+        "lowering_set": "only reviewed rules with observable-relation certificates",
+        "observable_state": [
+          "destinations",
+          "predicate",
+          "CC",
+          "memory_side_effects",
+          "thread_control"
+        ],
+        "temporary_policy": "declared dead temporaries or saved/restored live state",
+        "negative_change": "one missing certificate or one declared live CC clobber per isolated trial"
+      },
+      "initial_state": [
+        "原始语义和lowered程序解释器可独立实现；输入状态有活跃predicate/CC和guard关闭分支。",
+        "helper临时寄存器集合、可见状态及允许clobber已经声明。"
+      ],
+      "steps": [
+        "选择一条有证书lowering，在相同初始状态运行原语义reference并保存可见终态/事件。",
+        "运行对应lowered程序reference，记录helper临时寄存器和CC读写轨迹。",
+        "按声明观测relation比较终态与side effects，忽略仅被证明dead的临时状态；检查guard/rounding未改变。",
+        "在隔离trial删除该证书或只引入一次live CC clobber，确认分别得到缺证明拒绝或relation反例，不执行无证据fallback。"
+      ],
+      "checkpoints": [
+        "原/降级可见行为满足证书定义，live CC/predicate/guard不被helper破坏。",
+        "缺证书与数值/状态relation不等价是不同结果，均保存具体证据。"
+      ],
+      "pass_criteria": [
+        "至少一项真实reference lowering关系成立；单因子对照能定位证书缺失或state clobber。",
+        "实际执行量、检查量及所需覆盖非空，所有必需检查满足；本case当前NOT_RUN不因计划/静态检查而变为PASS。"
+      ],
+      "fail_criteria": [
+        "忽略live CC或内存副作用，只比较最终目的数值就宣称等价。",
+        "无证书helper被隐式选择，或两个oracle共用待测lowering函数。"
+      ],
+      "expected_artifacts": [
+        "manifest.json",
+        "case_result.json",
+        "coverage_delta.json",
+        "original_reference_trace.jsonl",
+        "lowered_reference_trace.jsonl",
+        "lowering_relation.json",
+        "clobber_diff.json"
+      ],
+      "suites": [
+        "DIRECTED",
+        "NEGATIVE"
+      ],
+      "fixed_seed": null,
+      "timeout_policy": "REFERENCE_BOUNDED",
+      "current_status": "NOT_RUN",
+      "current_gate": "BLOCKED_MISSING_IMPLEMENTATION",
+      "source_refs": [
+        "verif/core/vplan/sm_instr_gen/testpoints.json#SIG-IR-003",
+        "docs/sm/SM_ARCHITECTURE.md#3"
+      ]
+    },
+    {
+      "source_testpoint_id": "SIG-IR-004",
+      "id": "TC-IR-004",
+      "title": "总线stall与采样",
+      "phase": "P3_SM_RTL",
+      "feature_ids": [
+        "GEN-IR-01"
+      ],
+      "coverage_ids": [
+        "CV-IR-003"
+      ],
+      "prerequisites": [
+        "固定并核对源vPlan/testpoint、PTX9.4 inventory、target/capability、规则及模型版本hash；fixed_seed由主campaign在运行前赋值。",
+        "项目接口版本、SM RTL/driver/monitor及本case启用服务必须可用；native编码未冻结时不得发送伪二进制。",
+        "执行本case前冻结timeout预算；缺预算、模型、工具或服务时保持BLOCKED，不以空执行关闭case。"
+      ],
+      "config_profile": "TP-SM-BASE",
+      "parameters": {
+        "timeout_budget_ref": "campaign配置中与timeout_policy对应的有限预算；不在本case猜测SM固定周期。",
+        "ready_schedule": [
+          "bounded_hold_low",
+          "single_accept",
+          "alternating_ready",
+          "drain_high"
+        ],
+        "fragment_plan": "from selected frozen adapter schema",
+        "identity_key": [
+          "tag",
+          "generation",
+          "fragment_index"
+        ],
+        "tag_reuse": "only after permitted retirement; generation then changes"
+      },
+      "initial_state": [
+        "adapter接口/分片合同冻结；source事务和payload hash已固定，scoreboard无在途条目。",
+        "驱动器与monitor独立采样，最终drain窗口允许进度。"
+      ],
+      "steps": [
+        "准备一个多片IR实例与一个在合法回收后复用tag但generation不同的实例，分别登记payload hash。",
+        "对第一实例保持valid并让ready在有限窗口为低，逐拍记录payload/identity；随后放行各片。",
+        "仅按接口允许的回收点复用tag并提交新generation，交错其他合法事务及随机ready。",
+        "拉高ready完成drain，按(tag,generation,fragment)核对唯一accept和route；单独等待指令的真实完成，区分适配接收与执行结束。"
+      ],
+      "checkpoints": [
+        "valid阻塞期间全部payload、tag/generation和fragment身份稳定；每片恰一次accept。",
+        "tag复用不混generation，adapted事件不被计为指令已完成。"
+      ],
+      "pass_criteria": [
+        "所有计划分片在有界公平ready条件下唯一接收且hash/route一致；完成计数来自相应真实事件。",
+        "实际执行量、检查量及所需覆盖非空，所有必需检查满足；本case当前NOT_RUN不因计划/静态检查而变为PASS。"
+      ],
+      "fail_criteria": [
+        "阻塞期间变值、重复接收副作用、丢片或旧generation串入新事务。",
+        "只记录adapter accept便提前报告指令完成。"
+      ],
+      "expected_artifacts": [
+        "manifest.json",
+        "case_result.json",
+        "coverage_delta.json",
+        "handshake_trace.jsonl",
+        "payload_hashes.json",
+        "fragment_scoreboard.json"
+      ],
+      "suites": [
+        "DIRECTED",
+        "RANDOM",
+        "STRESS",
+        "REPLAY"
+      ],
+      "fixed_seed": null,
+      "timeout_policy": "SM_PROGRESS",
+      "current_status": "NOT_RUN",
+      "current_gate": "BLOCKED_MISSING_IMPLEMENTATION",
+      "source_refs": [
+        "verif/core/vplan/sm_instr_gen/testpoints.json#SIG-IR-004",
+        "docs/sm/SM_ARCHITECTURE.md#3"
+      ]
+    },
+    {
+      "source_testpoint_id": "SIG-CVT-001",
+      "id": "TC-CVT-001",
+      "title": "数值转换边界",
+      "phase": "P1_GENERATOR_UNIT",
+      "feature_ids": [
+        "GEN-CVT-01"
+      ],
+      "coverage_ids": [
+        "CV-CVT-001"
+      ],
+      "prerequisites": [
+        "固定并核对源vPlan/testpoint、PTX9.4 inventory、target/capability、规则及模型版本hash；fixed_seed由主campaign在运行前赋值。",
+        "发生器、unit harness和独立合法性/结构审计器必须可用；共享source身份不等于共享待测约束函数。",
+        "执行本case前冻结timeout预算；缺预算、模型、工具或服务时保持BLOCKED，不以空执行关闭case。"
+      ],
+      "config_profile": "TP-GEN-BASE",
+      "parameters": {
+        "timeout_budget_ref": "campaign配置中与timeout_policy对应的有限预算；不在本case猜测SM固定周期。",
+        "form_selection": "independently validated per-target integer<->FP and FP<->FP recipes",
+        "value_classes": [
+          "zero_signed",
+          "normal_midpoint_and_neighbors",
+          "min_subnormal_boundary",
+          "max_finite_overflow_boundary",
+          "integer_range_boundary",
+          "NaN_Inf_where_defined"
+        ],
+        "modifier_trials": [
+          "rn/rz where legal",
+          "sat/satfinite where legal",
+          "pzo where legal",
+          "rs with explicit rbits where legal"
+        ],
+        "rbits_policy": "manifest contains exact operand bits; repeat identical then change only rbits"
+      },
+      "initial_state": [
+        "每条recipe已声明源/目的格式、carrier、rounding/FTZ及target；未知规则形式不进入正向。",
+        "独立转换模型使用数学值/整数表示，不调用DUT decoder。"
+      ],
+      "steps": [
+        "按每条合法recipe计算可表示边界与精确中点，构造中点两侧、溢出/下溢及符号样本。",
+        "分别生成合法rounding/saturation/pzo trial；每次仅改变一个允许modifier并保留相同数值输入。",
+        "对rs形式把rbits作为显式operand写入manifest，先同rbits重复，再单改rbits进行配对试验。",
+        "比较生成/序列化结果与独立转换模型；bitcast路径作为不同操作，不能替代cvt数值规则。"
+      ],
+      "checkpoints": [
+        "每条结果使用该recipe的rounding/FTZ/NaN规则，不能以目标位数截断替代。",
+        "同输入和rbits可重放；rbits改变不牵连其他随机子流或隐式全局RNG。"
+      ],
+      "pass_criteria": [
+        "全部选定边界样本与独立规则一致，所有执行形式具有合法target证据。",
+        "实际执行量、检查量及所需覆盖非空，所有必需检查满足；本case当前NOT_RUN不因计划/静态检查而变为PASS。"
+      ],
+      "fail_criteria": [
+        "舍入/饱和/pzo被忽略，或rs结果依赖未记录隐式随机状态。",
+        "不支持的modifier被当通用功能，或误把bitcast等同数值转换。"
+      ],
+      "expected_artifacts": [
+        "manifest.json",
+        "case_result.json",
+        "coverage_delta.json",
+        "conversion_vectors.json",
+        "rounding_reference.json",
+        "rbits_manifest.json",
+        "serialized_operands.json"
+      ],
+      "suites": [
+        "SMOKE",
+        "DIRECTED",
+        "REPLAY"
+      ],
+      "fixed_seed": null,
+      "timeout_policy": "GEN_BOUNDED",
+      "current_status": "NOT_RUN",
+      "current_gate": "BLOCKED_MISSING_IMPLEMENTATION",
+      "source_refs": [
+        "verif/core/vplan/sm_instr_gen/testpoints.json#SIG-CVT-001",
+        "docs/sm/SM_ARCHITECTURE.md#10"
+      ]
+    },
+    {
+      "source_testpoint_id": "SIG-CVT-002",
+      "id": "TC-CVT-002",
+      "title": "稀疏载体约束",
+      "phase": "P1_GENERATOR_UNIT",
+      "feature_ids": [
+        "GEN-CVT-01"
+      ],
+      "coverage_ids": [
+        "CV-CVT-002"
+      ],
+      "prerequisites": [
+        "固定并核对源vPlan/testpoint、PTX9.4 inventory、target/capability、规则及模型版本hash；fixed_seed由主campaign在运行前赋值。",
+        "发生器、unit harness和独立合法性/结构审计器必须可用；共享source身份不等于共享待测约束函数。",
+        "执行本case前冻结timeout预算；缺预算、模型、工具或服务时保持BLOCKED，不以空执行关闭case。"
+      ],
+      "config_profile": "TP-GEN-BASE",
+      "parameters": {
+        "timeout_budget_ref": "campaign配置中与timeout_policy对应的有限预算；不在本case猜测SM固定周期。",
+        "operations": [
+          "spcompress",
+          "spdecompress"
+        ],
+        "recipe_source": "enabled legal spfactor/idxsize/num/elemsize/descriptor tuples",
+        "register_total_limit": 253,
+        "boundary_selection": "highest reachable legal total <=253; do not assume exactly253 is attainable",
+        "negative_mutation": {
+          "field": "one output register binding",
+          "change": "alias one live input register without changing vector lengths",
+          "expected_rule": "VECTOR_OPERAND_OVERLAP_FORBIDDEN",
+          "expected_layer": "LEGALIZER_ONLY",
+          "classification": "PTX_UB_QUARANTINED"
+        }
+      },
+      "initial_state": [
+        "输入/输出vector分配互不重叠，descriptor与elemsize一致；总量按相应公式计算。",
+        "合法recipe及register-set审计器可用；不存在固定253恰可达到的假设。"
+      ],
+      "steps": [
+        "遍历当前target启用recipe，独立计算data/cdata/mdata长度及寄存器总量，选择小规模与最高可达合法边界。",
+        "为每个recipe分配互不重叠集合并生成descriptor/metadata，核对padding和输入span等条件。",
+        "复制一个合法baseline，仅把一个输出寄存器绑定改成已用输入，保持num、长度、descriptor和总量不变。",
+        "只向legalizer提交重叠副本，要求单一重叠违规诊断并标UB quarantine；对合法baseline继续结构审计，不发送负例到普通数值执行流。"
+      ],
+      "checkpoints": [
+        "合法长度、总量<=253、descriptor一致性和无重叠均独立成立。",
+        "负例恰改变一个binding且只验证legalizer拒入，不设硬件trap或普通值oracle。"
+      ],
+      "pass_criteria": [
+        "所有启用recipe的可达边界被正确选取，重叠mutant被隔离，合法基线不被错误过滤。",
+        "实际执行量、检查量及所需覆盖非空，所有必需检查满足；本case当前NOT_RUN不因计划/静态检查而变为PASS。"
+      ],
+      "fail_criteria": [
+        "按字面253制造不存在的tuple，或漏检vector复用/总量条件。",
+        "执行重叠UB并把设备返回/崩溃当预期通过。"
+      ],
+      "expected_artifacts": [
+        "manifest.json",
+        "case_result.json",
+        "coverage_delta.json",
+        "sparse_recipe_sizes.json",
+        "register_allocation.json",
+        "single_binding_diff.json",
+        "legalizer_rejections.json"
+      ],
+      "suites": [
+        "DIRECTED",
+        "NEGATIVE"
+      ],
+      "fixed_seed": null,
+      "timeout_policy": "GEN_BOUNDED",
+      "current_status": "NOT_RUN",
+      "current_gate": "BLOCKED_MISSING_IMPLEMENTATION",
+      "source_refs": [
+        "verif/core/vplan/sm_instr_gen/testpoints.json#SIG-CVT-002",
+        "docs/sm/SM_ARCHITECTURE.md#10"
+      ]
+    },
+    {
+      "source_testpoint_id": "SIG-CVT-003",
+      "id": "TC-CVT-003",
+      "title": "选择与补零允许集合",
+      "phase": "P2_REFERENCE_PROGRAM",
+      "feature_ids": [
+        "GEN-CVT-01"
+      ],
+      "coverage_ids": [
+        "CV-CVT-001"
+      ],
+      "prerequisites": [
+        "固定并核对源vPlan/testpoint、PTX9.4 inventory、target/capability、规则及模型版本hash；fixed_seed由主campaign在运行前赋值。",
+        "所用独立参考解释器/允许结果模型及lowering或服务reference route必须可用；P2结果不计真实SM执行。",
+        "执行本case前冻结timeout预算；缺预算、模型、工具或服务时保持BLOCKED，不以空执行关闭case。",
+        "PTX§9.7.10.30/.31 PDF392–395的选择与implementation-specific说明作为oracle边界；不得扩展为任意输出都合法。"
+      ],
+      "config_profile": "TP-REF-BASE",
+      "parameters": {
+        "timeout_budget_ref": "campaign配置中与timeout_policy对应的有限预算；不在本case猜测SM固定周期。",
+        "compress_patterns": [
+          "two_equal_extrema",
+          "three_or_more_NaNs",
+          "minus_zero_plus_zero",
+          "repeated_second_extreme"
+        ],
+        "decompress_metadata_classes": [
+          "0<=index<num_target: defined placement",
+          "index>num_target: implementation-specific in source",
+          "index==num_target: source-boundary interpretation requires review"
+        ],
+        "oracle": "allowed-selection set plus exact chosen-value/metadata consistency and zero fill",
+        "unknown_target_behavior": "BLOCKED_SOURCE_REVIEW, not invented unique golden",
+        "negative_mutation": {
+          "field": "one output metadata index",
+          "change": "choose an element outside source-permitted winner set in a checker-only result fixture",
+          "expected_layer": "REFERENCE_RESULT_CHECKER"
+        },
+        "pattern_applicability": "NaN patterns only use source-legal formats encoding NaN; finite-only FP and integer recipes do not receive invented NaN bit strings.",
+        "negative_fixture_baseline": "Use a group with a strict permitted winner set so a single metadata-index mutation has a demonstrably disallowed selection."
+      },
+      "initial_state": [
+        "允许的selection/tie/NaN规则已登记，metadata补零模型独立。",
+        "implementation-specific/OOB行为若无目标定义，只保留符号允许集/阻塞，不标PTX UB。"
+      ],
+      "steps": [
+        "仅在支持相应值类的合法输入格式构造等值极值、≥3个NaN和±0组，独立枚举规范允许的winner集合；整数/finite-only格式不伪造NaN。",
+        "通过reference route取得压缩数据与metadata，检查选中索引和值一致、NaN优先及-0<+0规则；不强制唯一tie-break。",
+        "用in-range metadata执行解压reference，逐位置检查散布与未填零；对index>num_target单列implementation-specific trial，仅在已登记目标行为模型下检查。",
+        "将index==num_target解释缺口标review gate；另在checker-only输出fixture中仅改一个winner index，确认非法结果被允许集合检查器拒绝。"
+      ],
+      "checkpoints": [
+        "所有正向selection属于允许集合，chosen data与metadata相符，合法解压补零逐位置正确。",
+        "implementation-specific、source解释缺口和真正UB分类分开；没有对前者施加通用唯一golden。"
+      ],
+      "pass_criteria": [
+        "定义域内结果及允许集合关系正确；checker-only单索引反例被识别。",
+        "目标未定义行为没有被偷偷当固定值或UB执行预期。",
+        "实际执行量、检查量及所需覆盖非空，所有必需检查满足；本case当前NOT_RUN不因计划/静态检查而变为PASS。"
+      ],
+      "fail_criteria": [
+        "tie-break被硬编码成唯一索引，NaN/±0优先规则或补零被破坏。",
+        "把source声明implementation-specific的索引行为当硬件trap或把==边界解释缺口直接通过。"
+      ],
+      "expected_artifacts": [
+        "manifest.json",
+        "case_result.json",
+        "coverage_delta.json",
+        "selection_allowed_sets.json",
+        "reference_sparse_results.json",
+        "decompression_position_checks.json",
+        "behavior_classification.json"
+      ],
+      "suites": [
+        "DIRECTED",
+        "NEGATIVE"
+      ],
+      "fixed_seed": null,
+      "timeout_policy": "REFERENCE_BOUNDED",
+      "current_status": "NOT_RUN",
+      "current_gate": "BLOCKED_MISSING_IMPLEMENTATION",
+      "source_refs": [
+        "verif/core/vplan/sm_instr_gen/testpoints.json#SIG-CVT-003",
+        "docs/sm/SM_ARCHITECTURE.md#10"
+      ]
+    },
+    {
+      "source_testpoint_id": "SIG-CVT-004",
+      "id": "TC-CVT-004",
+      "title": "多寄存器返回",
+      "phase": "P3_SM_RTL",
+      "feature_ids": [
+        "GEN-CVT-01"
+      ],
+      "coverage_ids": [
+        "CV-CVT-003"
+      ],
+      "prerequisites": [
+        "固定并核对源vPlan/testpoint、PTX9.4 inventory、target/capability、规则及模型版本hash；fixed_seed由主campaign在运行前赋值。",
+        "项目接口版本、SM RTL/driver/monitor及本case启用服务必须可用；native编码未冻结时不得发送伪二进制。",
+        "执行本case前冻结timeout预算；缺预算、模型、工具或服务时保持BLOCKED，不以空执行关闭case。"
+      ],
+      "config_profile": "TP-SM-BASE",
+      "parameters": {
+        "timeout_budget_ref": "campaign配置中与timeout_policy对应的有限预算；不在本case猜测SM固定周期。",
+        "large_vector_recipe": "largest selected legal .num recipe within operand/register budgets",
+        "return_schedule": [
+          "first_fragment_only_then_stall",
+          "middle_fragment_stall",
+          "drain"
+        ],
+        "dependency_tests": [
+          "consumer_waits_for_all_required_fragments",
+          "later_writer_waits_for_uncaptured_sources"
+        ]
+      },
+      "initial_state": [
+        "真实wide/vector转换route及RF片段/源捕获monitor可用，所有目的片段标未就绪。",
+        "源和guard保存在合法活跃寄存器，recipe满足本target长度与253总量等约束。"
+      ],
+      "steps": [
+        "为大.num稀疏变换或宽转换生成非重复分量pattern，先用独立模型建立全部目的片段期望。",
+        "发射操作并在首片返回后施加有限RF backpressure，同时放入依赖consumer和可能后写源的合法指令。",
+        "观察中间片段和源捕获状态，确认consumer尚不能读取未完成整体且后写不会覆盖未捕获源。",
+        "放行drain并收齐全部片段，再执行consumer与后写，逐片和最终结果核对且检查每片恰结算一次。"
+      ],
+      "checkpoints": [
+        "首片返回不使多片目的整体ready，允许的片段级ready也必须匹配消费者确切需求。",
+        "源值直到实际捕获前受保护，全部片段写回后consumer读取完整正确结果。"
+      ],
+      "pass_criteria": [
+        "全部必需片段被真实检查，源/目的依赖和反压恢复正确，无固定延迟假设。",
+        "实际执行量、检查量及所需覆盖非空，所有必需检查满足；本case当前NOT_RUN不因计划/静态检查而变为PASS。"
+      ],
+      "fail_criteria": [
+        "首片触发整体ready、片段丢失/重复，或WAR覆盖未捕获源。",
+        "RF backpressure改变输入、metadata或profile。"
+      ],
+      "expected_artifacts": [
+        "manifest.json",
+        "case_result.json",
+        "coverage_delta.json",
+        "rf_fragment_trace.jsonl",
+        "source_capture_ledger.json",
+        "consumer_scoreboard.json"
+      ],
+      "suites": [
+        "DIRECTED",
+        "STRESS"
+      ],
+      "fixed_seed": null,
+      "timeout_policy": "SM_PROGRESS",
+      "current_status": "NOT_RUN",
+      "current_gate": "BLOCKED_MISSING_IMPLEMENTATION",
+      "source_refs": [
+        "verif/core/vplan/sm_instr_gen/testpoints.json#SIG-CVT-004",
+        "docs/sm/SM_ARCHITECTURE.md#10"
+      ]
+    },
+    {
+      "source_testpoint_id": "SIG-TEX-001",
+      "id": "TC-TEX-001",
+      "title": "默认关闭门禁",
+      "phase": "P1_GENERATOR_UNIT",
+      "feature_ids": [
+        "GEN-TEX-01"
+      ],
+      "coverage_ids": [
+        "CV-TEX-001"
+      ],
+      "prerequisites": [
+        "固定并核对源vPlan/testpoint、PTX9.4 inventory、target/capability、规则及模型版本hash；fixed_seed由主campaign在运行前赋值。",
+        "发生器、unit harness和独立合法性/结构审计器必须可用；共享source身份不等于共享待测约束函数。",
+        "执行本case前冻结timeout预算；缺预算、模型、工具或服务时保持BLOCKED，不以空执行关闭case。"
+      ],
+      "config_profile": "TP-GEN-BASE",
+      "parameters": {
+        "timeout_budget_ref": "campaign配置中与timeout_policy对应的有限预算；不在本case猜测SM固定周期。",
+        "texture_surface_capability": "DISABLED",
+        "candidate_source": "independently legal per-target texture/surface recipes",
+        "single_factor": "same candidate with only project enable bit changed in auditor-only comparison",
+        "expected_layer": "GENERATOR_LEGALIZER",
+        "expected_reason": "CAPABILITY_DISABLED"
+      },
+      "initial_state": [
+        "default计算型profile关闭texture/surface，任何functional issue队列为空。",
+        "合法对象recipe只用于候选审计，不假设真实sampler存在。"
+      ],
+      "steps": [
+        "独立选取规范target合法的texture/surface候选并保存其对象/维度/类型证据。",
+        "保持profile disabled提交发生器/合法化入口，记录CAPABILITY_DISABLED及source identity。",
+        "在隔离auditor对照中只改变enable bit以验证拒绝由project capability而非错误句柄/target引起；不因此启动未实现服务。",
+        "核对native输出和DUT issue计数为零，将拒绝证据归入负例/门禁覆盖而非功能执行覆盖。"
+      ],
+      "checkpoints": [
+        "候选规范合法而project关闭，两种状态不混。",
+        "拒绝发生在规定入口，无no-op/伪支持/实际服务请求。"
+      ],
+      "pass_criteria": [
+        "门禁精确拒绝关闭候选，合法性对照能区分target与capability原因。",
+        "实际执行量、检查量及所需覆盖非空，所有必需检查满足；本case当前NOT_RUN不因计划/静态检查而变为PASS。"
+      ],
+      "fail_criteria": [
+        "关闭时发出sampler/surface事务，或把入口拒绝算正向服务PASS。",
+        "用本来就非法的对象掩盖能力门禁缺陷。"
+      ],
+      "expected_artifacts": [
+        "manifest.json",
+        "case_result.json",
+        "coverage_delta.json",
+        "texture_gate_verdicts.json",
+        "candidate_object_manifest.json",
+        "issue_counter_snapshot.json"
+      ],
+      "suites": [
+        "SMOKE",
+        "DIRECTED",
+        "NEGATIVE"
+      ],
+      "fixed_seed": null,
+      "timeout_policy": "GEN_BOUNDED",
+      "current_status": "NOT_RUN",
+      "current_gate": "BLOCKED_MISSING_IMPLEMENTATION",
+      "source_refs": [
+        "verif/core/vplan/sm_instr_gen/testpoints.json#SIG-TEX-001",
+        "docs/sm/SM_ARCHITECTURE.md#19"
+      ]
+    },
+    {
+      "source_testpoint_id": "SIG-TEX-002",
+      "id": "TC-TEX-002",
+      "title": "可选对象合法化",
+      "phase": "P1_GENERATOR_UNIT",
+      "feature_ids": [
+        "GEN-TEX-01"
+      ],
+      "coverage_ids": [
+        "CV-TEX-002"
+      ],
+      "prerequisites": [
+        "固定并核对源vPlan/testpoint、PTX9.4 inventory、target/capability、规则及模型版本hash；fixed_seed由主campaign在运行前赋值。",
+        "发生器、unit harness和独立合法性/结构审计器必须可用；共享source身份不等于共享待测约束函数。",
+        "执行本case前冻结timeout预算；缺预算、模型、工具或服务时保持BLOCKED，不以空执行关闭case。"
+      ],
+      "config_profile": "TP-GEN-BASE",
+      "parameters": {
+        "timeout_budget_ref": "campaign配置中与timeout_policy对应的有限预算；不在本case猜测SM固定周期。",
+        "profile_enable": "isolated future capability snapshot only",
+        "axes": [
+          "texture_or_surface",
+          "dimension",
+          "channel_type",
+          "pixel_vs_byte_coordinate",
+          "LOD_or_boundary_mode"
+        ],
+        "mutation_cardinality": 1,
+        "negative_change": "replace one opaque handle/object-kind reference with incompatible registry kind",
+        "expected_layer": "OBJECT_LEGALIZER"
+      },
+      "initial_state": [
+        "启用对照仅用于独立合法化，不宣称当前SoC服务实现。",
+        "对象registry给出exact kind、格式、维度与source-target recipe；opaque handle不当普通地址。"
+      ],
+      "steps": [
+        "在隔离启用snapshot登记一组合法texture和surface对象，按各自指令规则生成dim/channel/坐标及LOD/boundary参数。",
+        "用独立registry和target表审计每个候选，明确surface byte/element地址语义与texture采样address mode。",
+        "从合法候选只变更一个对象kind/handle引用，保持其余operand和recipe不变，送object legalizer。",
+        "核对基线接受、mutant在object-kind规则拒绝，保存字段差分；未冻结/未支持组合标BLOCKED或disabled，不填造native payload。"
+      ],
+      "checkpoints": [
+        "合法对象属性与指令期待相符，surface/texture坐标边界语义分开。",
+        "单因素对象变异被精确定位，未改变target/format掩盖错误。"
+      ],
+      "pass_criteria": [
+        "所有已登记合法候选通过，单对象变异被拒绝；未知组合不被静默合法化。",
+        "实际执行量、检查量及所需覆盖非空，所有必需检查满足；本case当前NOT_RUN不因计划/静态检查而变为PASS。"
+      ],
+      "fail_criteria": [
+        "句柄当普通pointer处理，或把surface boundary与texture address mode混用。",
+        "候选同时违反多个约束，无法归因拒绝。"
+      ],
+      "expected_artifacts": [
+        "manifest.json",
+        "case_result.json",
+        "coverage_delta.json",
+        "object_registry_snapshot.json",
+        "object_recipe_audit.json",
+        "handle_kind_diff.json"
+      ],
+      "suites": [
+        "DIRECTED",
+        "NEGATIVE"
+      ],
+      "fixed_seed": null,
+      "timeout_policy": "GEN_BOUNDED",
+      "current_status": "NOT_RUN",
+      "current_gate": "BLOCKED_MISSING_IMPLEMENTATION",
+      "source_refs": [
+        "verif/core/vplan/sm_instr_gen/testpoints.json#SIG-TEX-002",
+        "docs/sm/SM_ARCHITECTURE.md#19"
+      ]
+    },
+    {
+      "source_testpoint_id": "SIG-TEX-003",
+      "id": "TC-TEX-003",
+      "title": "独立采样模型",
+      "phase": "P2_REFERENCE_PROGRAM",
+      "feature_ids": [
+        "GEN-TEX-01"
+      ],
+      "coverage_ids": [
+        "CV-TEX-001"
+      ],
+      "prerequisites": [
+        "固定并核对源vPlan/testpoint、PTX9.4 inventory、target/capability、规则及模型版本hash；fixed_seed由主campaign在运行前赋值。",
+        "所用独立参考解释器/允许结果模型及lowering或服务reference route必须可用；P2结果不计真实SM执行。",
+        "执行本case前冻结timeout预算；缺预算、模型、工具或服务时保持BLOCKED，不以空执行关闭case。"
+      ],
+      "config_profile": "TP-REF-BASE",
+      "parameters": {
+        "timeout_budget_ref": "campaign配置中与timeout_policy对应的有限预算；不在本case猜测SM固定周期。",
+        "image_extent": [
+          4,
+          4
+        ],
+        "pattern": "P(x,y,c)=16*x+4*y+c; component type/normalization from validated object recipe",
+        "operations": [
+          "nearest",
+          "filter",
+          "gather",
+          "query",
+          "surface_load_store_reduce where legal"
+        ],
+        "coordinate_classes": [
+          "texel_centers",
+          "interior_midpoints",
+          "documented_boundaries"
+        ],
+        "oracle": "independent sampler/channel-conversion/boundary model; target-allowed precision sets"
+      },
+      "initial_state": [
+        "独立sampler与surface reference模型和对象规范已实现；当前DUT能力不因此开启。",
+        "静态纹理pattern已初始化；surface读写阶段采用本对象服务明确的完成/顺序合同，不附加generic coherence。"
+      ],
+      "steps": [
+        "用可解析4x4 pattern构建合法对象，分别登记channel conversion、normalized coordinate、address/filter/LOD规则。",
+        "生成texel center与内部midpoint样本，对nearest/filter/gather/query逐操作运行reference，按允许精度关系比较。",
+        "在独立surface对象上执行合法load/store/reduce并按已声明服务顺序读取结果，检查pixel/byte坐标和channel值。",
+        "对文档边界样本应用各对象自己的address/boundary模式，不用普通global load或generic fence假定替代对象语义。"
+      ],
+      "checkpoints": [
+        "中心/中点/gather/query结果符合独立对象模型和允许数值误差，不按任意精确bit值误判filter。",
+        "surface副作用及边界处理遵循本对象合同，texture/surface未被加上普通generic内存模型保证。"
+      ],
+      "pass_criteria": [
+        "每个启用reference操作有非空独立结果检查，定义域与目标允许集合都满足。",
+        "实际执行量、检查量及所需覆盖非空，所有必需检查满足；本case当前NOT_RUN不因计划/静态检查而变为PASS。"
+      ],
+      "fail_criteria": [
+        "用同一sampler实现给自己做oracle，或普通global load冒充filter/gather/channel转换。",
+        "凭generic store/fence推断texture可见，或错误复用surface/texture边界模式。"
+      ],
+      "expected_artifacts": [
+        "manifest.json",
+        "case_result.json",
+        "coverage_delta.json",
+        "image_pattern.json",
+        "sampler_reference_results.json",
+        "surface_reference_events.jsonl",
+        "allowed_precision_checks.json"
+      ],
+      "suites": [
+        "DIRECTED"
+      ],
+      "fixed_seed": null,
+      "timeout_policy": "REFERENCE_BOUNDED",
+      "current_status": "NOT_RUN",
+      "current_gate": "BLOCKED_MISSING_IMPLEMENTATION",
+      "source_refs": [
+        "verif/core/vplan/sm_instr_gen/testpoints.json#SIG-TEX-003",
+        "docs/sm/SM_ARCHITECTURE.md#19"
+      ]
+    },
+    {
+      "source_testpoint_id": "SIG-TEX-004",
+      "id": "TC-TEX-004",
+      "title": "实际可选服务",
+      "phase": "P4_SOC",
+      "feature_ids": [
+        "GEN-TEX-01"
+      ],
+      "coverage_ids": [
+        "CV-TEX-003"
+      ],
+      "prerequisites": [
+        "固定并核对源vPlan/testpoint、PTX9.4 inventory、target/capability、规则及模型版本hash；fixed_seed由主campaign在运行前赋值。",
+        "真实SoC/SM adapter与本case启用的对象/服务、端到端monitor必须可用；stub结果不能替代P4执行。",
+        "执行本case前冻结timeout预算；缺预算、模型、工具或服务时保持BLOCKED，不以空执行关闭case。"
+      ],
+      "config_profile": "TP-SOC-BASE",
+      "parameters": {
+        "timeout_budget_ref": "campaign配置中与timeout_policy对应的有限预算；不在本case猜测SM固定周期。",
+        "required_capability": "IMPLEMENTED_AND_ENABLED_TEXTURE_SURFACE_SERVICE",
+        "request_mix": [
+          "texture_sample",
+          "query",
+          "surface_memory_operation"
+        ],
+        "response_schedule": [
+          "bounded_return_stall",
+          "legal_out_of_order_between_independent_requests",
+          "drain"
+        ],
+        "no_aliasing_assumption": "independent initialized objects unless explicit service ordering recipe"
+      },
+      "initial_state": [
+        "TP-SOC-BASE中真实服务已实现并显式启用；否则本case保持BLOCKED，不转换成关闭门禁PASS。",
+        "请求ID/owner/generation、对象元数据和sampler oracle已登记。"
+      ],
+      "steps": [
+        "生成已审计合法的静态纹理及独立surface对象请求，先记录每请求参考值与允许精度/副作用。",
+        "提交真实SoC服务，施加有限返回stall并交错独立对象请求，保持各自payload/handle/owner身份。",
+        "按服务明确允许的边界/返回顺序监控sample、query和surface事务，禁止自行假定跨对象coherence。",
+        "drain全部已接受请求，核对真实返回值/副作用及对象回收条件；关闭profile对照只验证不会进入此正向执行。"
+      ],
+      "checkpoints": [
+        "接受/返回/检查数量按真实事件对应，元数据和数据在stall/乱序间不串对象。",
+        "所有已接受服务责任最终结算，关闭capability从不执行本路径。"
+      ],
+      "pass_criteria": [
+        "真实启用服务有非空端到端检查，数值/对象/边界/回收合同满足。",
+        "实际执行量、检查量及所需覆盖非空，所有必需检查满足；本case当前NOT_RUN不因计划/静态检查而变为PASS。"
+      ],
+      "fail_criteria": [
+        "返回与错误对象/owner匹配、stall导致丢失/重复副作用，或未完成即回收对象。",
+        "只有stub/文本输出或关闭门禁证据却报告P4采样服务通过。"
+      ],
+      "expected_artifacts": [
+        "manifest.json",
+        "case_result.json",
+        "coverage_delta.json",
+        "soc_object_manifest.json",
+        "sampler_service_trace.jsonl",
+        "surface_side_effects.json",
+        "soc_scoreboard.json"
+      ],
+      "suites": [
+        "DIRECTED",
+        "STRESS"
+      ],
+      "fixed_seed": null,
+      "timeout_policy": "SOC_PROGRESS",
+      "current_status": "NOT_RUN",
+      "current_gate": "BLOCKED_MISSING_IMPLEMENTATION",
+      "source_refs": [
+        "verif/core/vplan/sm_instr_gen/testpoints.json#SIG-TEX-004",
+        "docs/sm/SM_ARCHITECTURE.md#19"
+      ]
+    },
+    {
+      "source_testpoint_id": "SIG-SYS-001",
+      "id": "TC-SYS-001",
+      "title": "sreg和元数据清单",
+      "phase": "P1_GENERATOR_UNIT",
+      "feature_ids": [
+        "GEN-SYS-01"
+      ],
+      "coverage_ids": [
+        "CV-SYS-001"
+      ],
+      "prerequisites": [
+        "固定并核对源vPlan/testpoint、PTX9.4 inventory、target/capability、规则及模型版本hash；fixed_seed由主campaign在运行前赋值。",
+        "发生器、unit harness和独立合法性/结构审计器必须可用；共享source身份不等于共享待测约束函数。",
+        "执行本case前冻结timeout预算；缺预算、模型、工具或服务时保持BLOCKED，不以空执行关闭case。"
+      ],
+      "config_profile": "TP-GEN-BASE",
+      "parameters": {
+        "timeout_budget_ref": "campaign配置中与timeout_policy对应的有限预算；不在本case猜测SM固定周期。",
+        "special_register_sections": 35,
+        "directive_description_leaves": 34,
+        "read_access": "only source-legal mov/cvt forms, widths/components per target",
+        "classification": [
+          "launch_constant",
+          "reschedule_sensitive",
+          "driver_defined",
+          "undefined_or_target_specific"
+        ],
+        "negative_change": "one attempted ordinary write to read-only special-register AST",
+        "expected_layer": "SOURCE_IR_LEGALIZER"
+      },
+      "initial_state": [
+        "35节sreg与34节directive源索引只读，目标/driver状态提供方已声明。",
+        "未展开range标签为猜测的物理CSR计数；元数据与执行指令账本分开。"
+      ],
+      "steps": [
+        "逐节读取sreg预定义声明和target notes，生成各自合法mov/cvt读取的typed IR与状态提供方绑定。",
+        "遍历version/target/entry/cluster/ABI/debug等directive，验证只进入编译/launch元数据，不占执行opcode。",
+        "按稳定性分类配置sreg参考策略；对pm/target-specific读禁止固定通用golden。",
+        "从一合法读AST仅改为普通写sreg的隔离副本，检查source/IR legalizer拒绝，合法读集合仍可用。"
+      ],
+      "checkpoints": [
+        "35与34说明身份/名称/来源一致，sreg通过合法访问读取且directive不变成执行操作。",
+        "只读写入变异被拒，类型/分量/target无静默放宽。"
+      ],
+      "pass_criteria": [
+        "全部说明节有真实生成/审计记录且分类正确，普通sreg写被legalizer拦截。",
+        "实际执行量、检查量及所需覆盖非空，所有必需检查满足；本case当前NOT_RUN不因计划/静态检查而变为PASS。"
+      ],
+      "fail_criteria": [
+        "把全部sreg缓存为CTA常量、猜PM固定值或把directive计入opcode。",
+        "产生普通写special register而无诊断。"
+      ],
+      "expected_artifacts": [
+        "manifest.json",
+        "case_result.json",
+        "coverage_delta.json",
+        "sreg_access_matrix.json",
+        "directive_metadata_index.json",
+        "sreg_stability_classes.json",
+        "readonly_negative.json"
+      ],
+      "suites": [
+        "SMOKE",
+        "DIRECTED",
+        "NEGATIVE"
+      ],
+      "fixed_seed": null,
+      "timeout_policy": "GEN_BOUNDED",
+      "current_status": "NOT_RUN",
+      "current_gate": "BLOCKED_MISSING_IMPLEMENTATION",
+      "source_refs": [
+        "verif/core/vplan/sm_instr_gen/testpoints.json#SIG-SYS-001",
+        "docs/sm/SM_ARCHITECTURE.md#20"
+      ]
+    },
+    {
+      "source_testpoint_id": "SIG-SYS-002",
+      "id": "TC-SYS-002",
+      "title": "栈与配额约束",
+      "phase": "P1_GENERATOR_UNIT",
+      "feature_ids": [
+        "GEN-SYS-01"
+      ],
+      "coverage_ids": [
+        "CV-SYS-002"
+      ],
+      "prerequisites": [
+        "固定并核对源vPlan/testpoint、PTX9.4 inventory、target/capability、规则及模型版本hash；fixed_seed由主campaign在运行前赋值。",
+        "发生器、unit harness和独立合法性/结构审计器必须可用；共享source身份不等于共享待测约束函数。",
+        "执行本case前冻结timeout预算；缺预算、模型、工具或服务时保持BLOCKED，不以空执行关闭case。"
+      ],
+      "config_profile": "TP-GEN-BASE",
+      "parameters": {
+        "timeout_budget_ref": "campaign配置中与timeout_policy对应的有限预算；不在本case猜测SM固定周期。",
+        "thread_contexts_min": 2,
+        "stack_actions": [
+          "stacksave",
+          "alloca",
+          "nested_call_return",
+          "stackrestore"
+        ],
+        "quota_actions": [
+          "setmaxnreg.dec",
+          "setmaxnreg.inc"
+        ],
+        "quota_values": "select legal aligned values from exact target recipe, not arbitrary counts",
+        "resource_supply": "reserve legal future dec/release path before accepting blocking inc",
+        "negative_change": "one use of an object invalidated by stackrestore; frontend-only"
+      },
+      "initial_state": [
+        "每thread独立stack/frame、live register及CC/predicate状态；CTA RF池预算来自已声明profile。",
+        "未分配/新获得寄存器均不可当已定义源读取，warpgroup参与规则按selected target。"
+      ],
+      "steps": [
+        "为两个thread构造不同stack对象和分歧call/return路径，记录各自saved SP及对象generation。",
+        "执行symbolic alloca/调用/restore，独立检查对齐、frame生命周期和返回关系；restore后旧对象失效。",
+        "按合法recipe安排dec释放及inc请求，预留可执行供给者和同步，确认inc不能在无供给时无限等待；新增寄存器先定义后使用。",
+        "仅在隔离副本把一次后续引用改为失效stack对象，要求生命周期legalizer拒绝；不执行该UB副本。"
+      ],
+      "checkpoints": [
+        "stack不是warp共用一份返回/对象状态，restore不影响其他thread或保留过期对象。",
+        "RF quota按规定请求/释放/参与合同处理，不因指令描述为hint就忽略架构约束；有界供给可进展。"
+      ],
+      "pass_criteria": [
+        "合法stack/ABI和quota序列通过独立状态模型，过期引用变异被阻止。",
+        "实际执行量、检查量及所需覆盖非空，所有必需检查满足；本case当前NOT_RUN不因计划/静态检查而变为PASS。"
+      ],
+      "fail_criteria": [
+        "失效对象仍可用、线程返回状态串扰，或读未初始化新寄存器。",
+        "inc生成无可执行供给/收尾路径，或把quota变化当无语义no-op。"
+      ],
+      "expected_artifacts": [
+        "manifest.json",
+        "case_result.json",
+        "coverage_delta.json",
+        "per_thread_stack_ledger.json",
+        "call_return_trace.jsonl",
+        "rf_quota_schedule.json",
+        "expired_object_reject.json"
+      ],
+      "suites": [
+        "DIRECTED",
+        "NEGATIVE"
+      ],
+      "fixed_seed": null,
+      "timeout_policy": "GEN_BOUNDED",
+      "current_status": "NOT_RUN",
+      "current_gate": "BLOCKED_MISSING_IMPLEMENTATION",
+      "source_refs": [
+        "verif/core/vplan/sm_instr_gen/testpoints.json#SIG-SYS-002",
+        "docs/sm/SM_ARCHITECTURE.md#20"
+      ]
+    },
+    {
+      "source_testpoint_id": "SIG-SYS-003",
+      "id": "TC-SYS-003",
+      "title": "驱动和不确定值",
+      "phase": "P2_REFERENCE_PROGRAM",
+      "feature_ids": [
+        "GEN-SYS-01"
+      ],
+      "coverage_ids": [
+        "CV-SYS-001"
+      ],
+      "prerequisites": [
+        "固定并核对源vPlan/testpoint、PTX9.4 inventory、target/capability、规则及模型版本hash；fixed_seed由主campaign在运行前赋值。",
+        "所用独立参考解释器/允许结果模型及lowering或服务reference route必须可用；P2结果不计真实SM执行。",
+        "执行本case前冻结timeout预算；缺预算、模型、工具或服务时保持BLOCKED，不以空执行关闭case。"
+      ],
+      "config_profile": "TP-REF-BASE",
+      "parameters": {
+        "timeout_budget_ref": "campaign配置中与timeout_policy对应的有限预算；不在本case猜测SM固定周期。",
+        "driver_profiles": [
+          "perCTA allocation unsupported: size=0",
+          "supported: legal size multiple1024 and >=minperctamemory"
+        ],
+        "sreg_relations": [
+          "smid/warpid may change after declared reschedule",
+          "nsmid is ID bound, not physical count",
+          "pm values undefined",
+          "globaltimer target-specific"
+        ],
+        "nanosleep": "source/target allowed timing relation only; no fence assumption"
+      },
+      "initial_state": [
+        "driver/launch模型明确.minperctamemory及slice地址/pitch，shared/local/TMEM对象独立。",
+        "调度模型可在合法点更新smid/warpid，工具值没有默认黄金常量。"
+      ],
+      "steps": [
+        "分别加载driver不支持与支持per-CTA global分配的环境snapshot；仅在有.minperctamemory的entry读取相关sreg。",
+        "对支持环境检查size为合法1024B倍数和slice地址来源；对不支持环境记录size=0，不将地址译到SMEM。",
+        "在声明的重调度点前后读取smid/warpid，按ID范围/上下文关系检查而非要求值不变；PM读只检合法访问与允许值类别。",
+        "对nanosleep/clock/globaltimer reference事件应用已注册target/环境关系，拒绝添加精确唤醒时刻、跨设备统一时钟或隐含fence断言。"
+      ],
+      "checkpoints": [
+        "perCTA global由driver slice模型解释，size/driver关系正确，不与其他地址空间混用。",
+        "可变/未规定值使用关系或允许集合判据；没有把它们误分类成UB。"
+      ],
+      "pass_criteria": [
+        "所有已定义关系成立，未规定/target-specific值不被固定bit比较误判。",
+        "实际执行量、检查量及所需覆盖非空，所有必需检查满足；本case当前NOT_RUN不因计划/静态检查而变为PASS。"
+      ],
+      "fail_criteria": [
+        "nsmid当实际SM计数、smid/warpid强制不变，或PM/globaltimer被伪造通用精确oracle。",
+        "无.minperctamemory时仍当合法普通读取，或size=0被当成功分配。"
+      ],
+      "expected_artifacts": [
+        "manifest.json",
+        "case_result.json",
+        "coverage_delta.json",
+        "driver_environment_snapshots.json",
+        "special_value_classification.json",
+        "sreg_relation_checks.json",
+        "timing_relation.json"
+      ],
+      "suites": [
+        "DIRECTED"
+      ],
+      "fixed_seed": null,
+      "timeout_policy": "REFERENCE_BOUNDED",
+      "current_status": "NOT_RUN",
+      "current_gate": "BLOCKED_MISSING_IMPLEMENTATION",
+      "source_refs": [
+        "verif/core/vplan/sm_instr_gen/testpoints.json#SIG-SYS-003",
+        "docs/sm/SM_ARCHITECTURE.md#20"
+      ]
+    },
+    {
+      "source_testpoint_id": "SIG-SYS-004",
+      "id": "TC-SYS-004",
+      "title": "系统事件与调度",
+      "phase": "P3_SM_RTL",
+      "feature_ids": [
+        "GEN-SYS-01"
+      ],
+      "coverage_ids": [
+        "CV-SYS-003"
+      ],
+      "prerequisites": [
+        "固定并核对源vPlan/testpoint、PTX9.4 inventory、target/capability、规则及模型版本hash；fixed_seed由主campaign在运行前赋值。",
+        "项目接口版本、SM RTL/driver/monitor及本case启用服务必须可用；native编码未冻结时不得发送伪二进制。",
+        "执行本case前冻结timeout预算；缺预算、模型、工具或服务时保持BLOCKED，不以空执行关闭case。"
+      ],
+      "config_profile": "TP-SM-BASE",
+      "parameters": {
+        "timeout_budget_ref": "campaign配置中与timeout_policy对应的有限预算；不在本case猜测SM固定周期。",
+        "system_trials": [
+          "debug_breakpoint",
+          "trap_expected_termination",
+          "nanosleep_with_legal_context",
+          "runtime_rf_quota"
+        ],
+        "trial_isolation": "separate reset/context per terminating event",
+        "expected_terminal_class": "from frozen project debug/trap service contract",
+        "no_exact_latency": "only configured progress/fairness and source-allowed timing relations"
+      },
+      "initial_state": [
+        "真实debug/trap/RF服务和monitor可用且明确哪些事件终止kernel/context。",
+        "每trial有独立初始上下文，预期终止与普通算术错误分不同结果类。"
+      ],
+      "steps": [
+        "先运行无终止的合法系统baseline并采样driver/sreg关系，确认观测路径可用。",
+        "在隔离上下文发起brkpt或trap，记录真实接受、调试/终止事件及责任清理；不继续等待正常算术writeback。",
+        "另起上下文运行合法nanosleep和RF quota序列，施加有界压力但不假定精确延迟或fence。",
+        "按事件分类monitor和ABI/relation checker检查各trial终态，再执行规定reset/恢复并验证无旧generation事件污染。"
+      ],
+      "checkpoints": [
+        "预期trap/debug不被错误记为普通算术FAIL或丢指令，事件类与服务合同匹配。",
+        "非终止trial的ABI/配额/driver关系正确，恢复后无旧响应污染。"
+      ],
+      "pass_criteria": [
+        "真实系统事件及恢复证据非空，终止、调试和正常完成分类符合合同。",
+        "实际执行量、检查量及所需覆盖非空，所有必需检查满足；本case当前NOT_RUN不因计划/静态检查而变为PASS。"
+      ],
+      "fail_criteria": [
+        "trap被吞成无副作用branch，或预期终止被算正常completed。",
+        "借精确nanosleep周期或generic fence假设判定通过，或恢复遗留旧责任。"
+      ],
+      "expected_artifacts": [
+        "manifest.json",
+        "case_result.json",
+        "coverage_delta.json",
+        "system_event_trace.jsonl",
+        "debug_trap_contract.json",
+        "abi_relation_checks.json",
+        "post_reset_generation_checks.json"
+      ],
+      "suites": [
+        "DIRECTED",
+        "STRESS"
+      ],
+      "fixed_seed": null,
+      "timeout_policy": "SM_PROGRESS",
+      "current_status": "NOT_RUN",
+      "current_gate": "BLOCKED_MISSING_IMPLEMENTATION",
+      "source_refs": [
+        "verif/core/vplan/sm_instr_gen/testpoints.json#SIG-SYS-004",
+        "docs/sm/SM_ARCHITECTURE.md#20"
+      ]
+    },
+    {
+      "source_testpoint_id": "SIG-NEG-001",
+      "id": "TC-NEG-001",
+      "title": "单因素变异",
+      "phase": "P1_GENERATOR_UNIT",
+      "feature_ids": [
+        "GEN-NEG-01"
+      ],
+      "coverage_ids": [
+        "CV-NEG-001"
+      ],
+      "prerequisites": [
+        "固定并核对源vPlan/testpoint、PTX9.4 inventory、target/capability、规则及模型版本hash；fixed_seed由主campaign在运行前赋值。",
+        "发生器、unit harness和独立合法性/结构审计器必须可用；共享source身份不等于共享待测约束函数。",
+        "执行本case前冻结timeout预算；缺预算、模型、工具或服务时保持BLOCKED，不以空执行关闭case。"
+      ],
+      "config_profile": "TP-GEN-NEGATIVE",
+      "parameters": {
+        "timeout_budget_ref": "campaign配置中与timeout_policy对应的有限预算；不在本case猜测SM固定周期。",
+        "baseline_required": "independent positive verdict with immutable source/target/IR hashes",
+        "mutation_cardinality": 1,
+        "mutation_fields": [
+          "one tuple field",
+          "one participant relation",
+          "one lifetime reference"
+        ],
+        "expected_layer_rule": "declared before mutant submission",
+        "silent_repair": "forbidden"
+      },
+      "initial_state": [
+        "baseline已独立合法化并保留正向可接受记录；mutator不修改原baseline。",
+        "每trial指定单一field/relation、预期rule及拒绝层，其他约束保持合法。"
+      ],
+      "steps": [
+        "选择一个已验证baseline并保存完整结构与source/target证据。",
+        "按预登记mutation只改变一个字段/关系，例如把一次引用改为已失效owner，而不同时改type/mask/target。",
+        "在执行前用独立差分确认单因素，并按规则预测拒绝层；若额外约束被连带破坏则丢弃该trial并记录原因。",
+        "向指定前端/合法化层提交mutant，核对规则与层；重新提交原baseline确认仍可接受，不允许静默修复后宣称负例命中。"
+      ],
+      "checkpoints": [
+        "baseline保持合法，mutant差分与预登记规则一一对应。",
+        "实际拒绝层/原因匹配，修复/重采样有显式新身份而不冒充原负例。"
+      ],
+      "pass_criteria": [
+        "单因素负例有明确拒绝证据且对应baseline实际通过合法性检查。",
+        "实际执行量、检查量及所需覆盖非空，所有必需检查满足；本case当前NOT_RUN不因计划/静态检查而变为PASS。"
+      ],
+      "fail_criteria": [
+        "多个变化混入或baseline本来非法，拒绝原因被其他约束遮蔽。",
+        "自动修复、替换seed或全拒绝器被报预期命中。"
+      ],
+      "expected_artifacts": [
+        "manifest.json",
+        "case_result.json",
+        "coverage_delta.json",
+        "baseline_positive_verdict.json",
+        "mutation_manifest.json",
+        "single_factor_diff.json",
+        "rejection_layer_check.json"
+      ],
+      "suites": [
+        "DIRECTED",
+        "NEGATIVE"
+      ],
+      "fixed_seed": null,
+      "timeout_policy": "GEN_BOUNDED",
+      "current_status": "NOT_RUN",
+      "current_gate": "BLOCKED_MISSING_IMPLEMENTATION",
+      "source_refs": [
+        "verif/core/vplan/sm_instr_gen/testpoints.json#SIG-NEG-001",
+        "docs/sm/SM_ARCHITECTURE.md#23"
+      ]
+    },
+    {
+      "source_testpoint_id": "SIG-NEG-002",
+      "id": "TC-NEG-002",
+      "title": "UB隔离",
+      "phase": "P1_GENERATOR_UNIT",
+      "feature_ids": [
+        "GEN-NEG-01"
+      ],
+      "coverage_ids": [
+        "CV-NEG-002"
+      ],
+      "prerequisites": [
+        "固定并核对源vPlan/testpoint、PTX9.4 inventory、target/capability、规则及模型版本hash；fixed_seed由主campaign在运行前赋值。",
+        "发生器、unit harness和独立合法性/结构审计器必须可用；共享source身份不等于共享待测约束函数。",
+        "执行本case前冻结timeout预算；缺预算、模型、工具或服务时保持BLOCKED，不以空执行关闭case。"
+      ],
+      "config_profile": "TP-GEN-NEGATIVE",
+      "parameters": {
+        "timeout_budget_ref": "campaign配置中与timeout_policy对应的有限预算；不在本case猜测SM固定周期。",
+        "classes": [
+          "defined",
+          "implementation_specific_or_underspecified",
+          "source_undefined_behavior",
+          "unresolved_source_rule"
+        ],
+        "ub_examples": [
+          "out_of_range where source explicitly UB",
+          "inconsistent collective participation where source UB",
+          "use_after_lifetime where source UB"
+        ],
+        "ub_sink": "quarantine only; no normal backend issue",
+        "non_ub_example": "spdecompress index>num_target is implementation-specific, not automatically UB"
+      },
+      "initial_state": [
+        "正常functional stream与quarantine出口物理/逻辑分开，coverage分母账本为空。",
+        "每候选的source classification与证据已登记；未知规则不默认UB或合法。"
+      ],
+      "steps": [
+        "从合法baseline分别单改一个条件构造source明确UB候选，并记录该条规范证据。",
+        "另构造implementation-specific/允许集合候选和未解决规则候选，用独立分类器确认它们不被合并成UB。",
+        "将UB送quarantine并尝试普通functional发布，要求路由拒入且无backend/DUT事件；项目另有明确robustness合同的试验使用不同ID/stream。",
+        "核对coverage registry只按规则登记可达合法项，不把UB或缺规则自动当通过/已覆盖；保留隔离和诊断artifact。"
+      ],
+      "checkpoints": [
+        "source UB与implementation-specific/允许集合、unresolved分开，分类具有原文出处。",
+        "UB在普通stream的issue/completed/checked均零，无预期硬件trap假设。"
+      ],
+      "pass_criteria": [
+        "UB隔离生效，普通功能分母/执行统计不被负例污染，非UB边界不会被粗暴归类。",
+        "实际执行量、检查量及所需覆盖非空，所有必需检查满足；本case当前NOT_RUN不因计划/静态检查而变为PASS。"
+      ],
+      "fail_criteria": [
+        "执行UB并把崩溃/任意值当PASS，或让quarantine流混入普通覆盖。",
+        "把implementation-specific值强制为唯一golden，或把unknown rule自动waive。"
+      ],
+      "expected_artifacts": [
+        "manifest.json",
+        "case_result.json",
+        "coverage_delta.json",
+        "behavior_taxonomy.json",
+        "quarantine_manifest.json",
+        "functional_stream_audit.json",
+        "coverage_denominator_diff.json"
+      ],
+      "suites": [
+        "DIRECTED",
+        "NEGATIVE"
+      ],
+      "fixed_seed": null,
+      "timeout_policy": "GEN_BOUNDED",
+      "current_status": "NOT_RUN",
+      "current_gate": "BLOCKED_MISSING_IMPLEMENTATION",
+      "source_refs": [
+        "verif/core/vplan/sm_instr_gen/testpoints.json#SIG-NEG-002",
+        "docs/sm/SM_ARCHITECTURE.md#23"
+      ]
+    },
+    {
+      "source_testpoint_id": "SIG-NEG-003",
+      "id": "TC-NEG-003",
+      "title": "错误层relation",
+      "phase": "P2_REFERENCE_PROGRAM",
+      "feature_ids": [
+        "GEN-NEG-01"
+      ],
+      "coverage_ids": [
+        "CV-NEG-003"
+      ],
+      "prerequisites": [
+        "固定并核对源vPlan/testpoint、PTX9.4 inventory、target/capability、规则及模型版本hash；fixed_seed由主campaign在运行前赋值。",
+        "所用独立参考解释器/允许结果模型及lowering或服务reference route必须可用；P2结果不计真实SM执行。",
+        "执行本case前冻结timeout预算；缺预算、模型、工具或服务时保持BLOCKED，不以空执行关闭case。"
+      ],
+      "config_profile": "TP-REF-BASE",
+      "parameters": {
+        "timeout_budget_ref": "campaign配置中与timeout_policy对应的有限预算；不在本case猜测SM固定周期。",
+        "result_layers": [
+          "PRE_FLIGHT_REJECT",
+          "COMPILE_OR_TOOL_BLOCKED",
+          "BACKEND_UNSUPPORTED",
+          "PROJECT_PROTOCOL_ERROR"
+        ],
+        "expected_rule_layer": "declared separately per trial",
+        "missing_dependency_policy": "non-injected missing tool/service makes affected trial and aggregate required case BLOCKED, not PASS",
+        "taxonomy_fixture_policy": "explicitly SIMULATED taxonomy records may test classifier only; they do not count compile/SM execution"
+      },
+      "initial_state": [
+        "独立错误taxonomy和reference/harness结果接口已实现，真实观测与SIMULATED分类fixture分开。",
+        "至少一个实际运行的参考/前端trial可用，不能以全缺工具关闭本case。"
+      ],
+      "steps": [
+        "为每类结果声明触发层、错误rule、证据来源和所需依赖，准备合法baseline及各自单因素trial。",
+        "运行可用的preflight/reference/backend route，采集原始结果、工具版本、事件与退出分类；缺依赖立即记录BLOCKED而非预期失败PASS。",
+        "对项目协议类只使用已声明reference模型或真实合同事件并记录provenance；若使用taxonomy fixture则明确SIMULATED且排除执行计数。",
+        "由独立classifier比对实际层/rule与预期，检查非零exit不是统一通过条件，汇总时保留必需trial的BLOCKED状态。"
+      ],
+      "checkpoints": [
+        "拒绝、unsupported、缺工具和协议故障保留不同层及证据，实际执行与模拟分类分开。",
+        "任一必需依赖缺失不会因错误码非零就关闭该trial或整个case。"
+      ],
+      "pass_criteria": [
+        "实际可运行trial的分类与预期匹配，所有必需依赖满足后才能关闭case；fixture单独不构成执行证据。",
+        "实际执行量、检查量及所需覆盖非空，所有必需检查满足；本case当前NOT_RUN不因计划/静态检查而变为PASS。"
+      ],
+      "fail_criteria": [
+        "所有非零exit被当负例PASS，或缺工具被误记编译/执行成功。",
+        "reference协议结果冒充真实SM事件，或模拟taxonomy覆盖替代实际case证据。"
+      ],
+      "expected_artifacts": [
+        "manifest.json",
+        "case_result.json",
+        "coverage_delta.json",
+        "raw_outcomes.json",
+        "error_layer_relation.json",
+        "dependency_gate_report.json",
+        "provenance_manifest.json"
+      ],
+      "suites": [
+        "DIRECTED",
+        "NEGATIVE"
+      ],
+      "fixed_seed": null,
+      "timeout_policy": "REFERENCE_BOUNDED",
+      "current_status": "NOT_RUN",
+      "current_gate": "BLOCKED_MISSING_IMPLEMENTATION",
+      "source_refs": [
+        "verif/core/vplan/sm_instr_gen/testpoints.json#SIG-NEG-003",
+        "docs/sm/SM_ARCHITECTURE.md#23"
+      ]
+    },
+    {
+      "source_testpoint_id": "SIG-NEG-004",
+      "id": "TC-NEG-004",
+      "title": "项目robustness注入",
+      "phase": "P3_SM_RTL",
+      "feature_ids": [
+        "GEN-NEG-01"
+      ],
+      "coverage_ids": [
+        "CV-NEG-003"
+      ],
+      "prerequisites": [
+        "固定并核对源vPlan/testpoint、PTX9.4 inventory、target/capability、规则及模型版本hash；fixed_seed由主campaign在运行前赋值。",
+        "项目接口版本、SM RTL/driver/monitor及本case启用服务必须可用；native编码未冻结时不得发送伪二进制。",
+        "执行本case前冻结timeout预算；缺预算、模型、工具或服务时保持BLOCKED，不以空执行关闭case。"
+      ],
+      "config_profile": "TP-SM-BASE",
+      "parameters": {
+        "timeout_budget_ref": "campaign配置中与timeout_policy对应的有限预算；不在本case猜测SM固定周期。",
+        "classification": "NONISA_ROBUSTNESS",
+        "selected_fault": "one documented project adapter illegal-command token via fault API",
+        "encoding": "symbolic fault ID mapped only by frozen backend contract; no invented reserved bits",
+        "fault_cardinality": 1,
+        "optional_protocol_trial": "valid-held mutation only if monitor responsibility explicitly defined; no assumed SM recovery",
+        "not_in_scope": "PTX UB behavioral consistency"
+      },
+      "initial_state": [
+        "项目fault注入点、expected detector/ack/cleanup已冻结；没有合同的fault类保持BLOCKED。",
+        "真实adapter/monitor可用，合法baseline路径已确认；fault注入stream与普通随机正向分开。"
+      ],
+      "steps": [
+        "执行合法baseline并记录接收/完成/资源闭合，建立本fault trial的非故障对照。",
+        "通过已批准项目fault API只改变一次命令token或合同定义错误字段，其他payload/握手/target保持合法。",
+        "观察规定检测层、错误ack、禁止的副作用和资源cleanup；若选valid协议违例，严格按合同只检查指定monitor而不额外要求SM恢复。",
+        "执行合同规定drain/abort/reset并检查旧generation无后写，使用NONISA_ROBUSTNESS结果类归档，不计PTX UB兼容性。"
+      ],
+      "checkpoints": [
+        "注入恰一次且属于书面项目合同，检测/ack/责任归属明确。",
+        "错误处置和清理满足合同，无越权写/重复结算；结果未混入普通PTX数值覆盖。"
+      ],
+      "pass_criteria": [
+        "真实fault检测及规定恢复/终止证据完整，并与合法baseline对照一致。",
+        "实际执行量、检查量及所需覆盖非空，所有必需检查满足；本case当前NOT_RUN不因计划/静态检查而变为PASS。"
+      ],
+      "fail_criteria": [
+        "无合同就要求硬件trap/恢复，或把项目协议试验称PTX UB规范通过。",
+        "fault导致未授权写入、双ack、旧generation污染或资源泄漏。"
+      ],
+      "expected_artifacts": [
+        "manifest.json",
+        "case_result.json",
+        "coverage_delta.json",
+        "project_fault_contract.json",
+        "fault_injection_trace.jsonl",
+        "error_cleanup_scoreboard.json",
+        "nonisa_classification.json"
+      ],
+      "suites": [
+        "DIRECTED",
+        "NEGATIVE",
+        "STRESS"
+      ],
+      "fixed_seed": null,
+      "timeout_policy": "SM_PROGRESS",
+      "current_status": "NOT_RUN",
+      "current_gate": "BLOCKED_MISSING_IMPLEMENTATION",
+      "source_refs": [
+        "verif/core/vplan/sm_instr_gen/testpoints.json#SIG-NEG-004",
+        "docs/sm/SM_ARCHITECTURE.md#23"
+      ]
+    }
+  ]
+}

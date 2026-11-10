@@ -1,0 +1,287 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "required": [
+    "schema_version",
+    "plan_id",
+    "version",
+    "date",
+    "source_files",
+    "cases"
+  ],
+  "properties": {
+    "schema_version": {
+      "const": "1.0"
+    },
+    "plan_id": {
+      "const": "SM-INSTR-GEN-TESTPLAN"
+    },
+    "version": {
+      "const": "1.0"
+    },
+    "date": {
+      "type": "string",
+      "format": "date"
+    },
+    "source_files": {
+      "type": "object",
+      "required": [
+        "vplan_testpoints",
+        "vplan_features",
+        "vplan_document",
+        "sm_architecture"
+      ],
+      "properties": {
+        "vplan_testpoints": {
+          "type": "object",
+          "required": [
+            "path",
+            "sha256"
+          ],
+          "properties": {
+            "path": {
+              "type": "string",
+              "minLength": 1
+            },
+            "sha256": {
+              "type": "string",
+              "pattern": "^[0-9a-f]{64}$"
+            }
+          }
+        },
+        "vplan_features": {
+          "type": "object",
+          "required": [
+            "path",
+            "sha256"
+          ],
+          "properties": {
+            "path": {
+              "type": "string",
+              "minLength": 1
+            },
+            "sha256": {
+              "type": "string",
+              "pattern": "^[0-9a-f]{64}$"
+            }
+          }
+        },
+        "vplan_document": {
+          "type": "object",
+          "required": [
+            "path",
+            "sha256"
+          ],
+          "properties": {
+            "path": {
+              "type": "string",
+              "minLength": 1
+            },
+            "sha256": {
+              "type": "string",
+              "pattern": "^[0-9a-f]{64}$"
+            }
+          }
+        },
+        "sm_architecture": {
+          "type": "object",
+          "required": [
+            "path",
+            "sha256"
+          ],
+          "properties": {
+            "path": {
+              "type": "string",
+              "minLength": 1
+            },
+            "sha256": {
+              "type": "string",
+              "pattern": "^[0-9a-f]{64}$"
+            }
+          }
+        }
+      },
+      "additionalProperties": false
+    },
+    "cases": {
+      "type": "array",
+      "minItems": 106,
+      "maxItems": 106,
+      "items": {
+        "type": "object",
+        "required": [
+          "id",
+          "source_testpoint_id",
+          "title",
+          "source_title",
+          "feature_ids",
+          "phase",
+          "coverage_ids",
+          "prerequisites",
+          "config_profile",
+          "parameters",
+          "initial_state",
+          "steps",
+          "checkpoints",
+          "pass_criteria",
+          "fail_criteria",
+          "expected_artifacts",
+          "suites",
+          "fixed_seed",
+          "timeout_policy",
+          "current_status",
+          "current_gate"
+        ],
+        "properties": {
+          "id": {
+            "type": "string",
+            "pattern": "^TC-[A-Z0-9_-]+-[0-9]{3}$"
+          },
+          "source_testpoint_id": {
+            "type": "string",
+            "pattern": "^SIG-[A-Z0-9_-]+-[0-9]{3}$"
+          },
+          "title": {
+            "type": "string",
+            "minLength": 1
+          },
+          "source_title": {
+            "type": "string",
+            "minLength": 1
+          },
+          "feature_ids": {
+            "type": "array",
+            "minItems": 1,
+            "uniqueItems": true,
+            "items": {
+              "type": "string",
+              "pattern": "^GEN-[A-Z0-9_-]+$"
+            }
+          },
+          "phase": {
+            "enum": [
+              "P1_GENERATOR_UNIT",
+              "P2_REFERENCE_PROGRAM",
+              "P3_SM_RTL",
+              "P4_SOC"
+            ]
+          },
+          "coverage_ids": {
+            "type": "array",
+            "minItems": 1,
+            "uniqueItems": true,
+            "items": {
+              "type": "string",
+              "pattern": "^CV-[A-Z0-9_-]+-[0-9]{3}$"
+            }
+          },
+          "prerequisites": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "minLength": 1
+            },
+            "minItems": 1
+          },
+          "initial_state": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "minLength": 1
+            },
+            "minItems": 1
+          },
+          "pass_criteria": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "minLength": 1
+            },
+            "minItems": 1
+          },
+          "fail_criteria": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "minLength": 1
+            },
+            "minItems": 1
+          },
+          "expected_artifacts": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "minLength": 1
+            },
+            "minItems": 1
+          },
+          "config_profile": {
+            "enum": [
+              "TP-GEN-BASE",
+              "TP-GEN-NEGATIVE",
+              "TP-REF-BASE",
+              "TP-SM-BASE",
+              "TP-SM-STRESS",
+              "TP-SOC-BASE",
+              "TP-SOC-FAULT"
+            ]
+          },
+          "parameters": {
+            "type": "object",
+            "minProperties": 1
+          },
+          "steps": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "minLength": 1
+            },
+            "minItems": 3
+          },
+          "checkpoints": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "minLength": 1
+            },
+            "minItems": 2
+          },
+          "suites": {
+            "type": "array",
+            "minItems": 1,
+            "uniqueItems": true,
+            "items": {
+              "enum": [
+                "SMOKE",
+                "DIRECTED",
+                "NEGATIVE",
+                "RANDOM",
+                "STRESS",
+                "REPLAY"
+              ]
+            }
+          },
+          "fixed_seed": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 4294967295
+          },
+          "timeout_policy": {
+            "enum": [
+              "GEN_BOUNDED",
+              "REFERENCE_BOUNDED",
+              "SM_PROGRESS",
+              "SOC_PROGRESS"
+            ]
+          },
+          "current_status": {
+            "const": "NOT_RUN"
+          },
+          "current_gate": {
+            "const": "BLOCKED_MISSING_IMPLEMENTATION"
+          }
+        }
+      }
+    }
+  }
+}
