@@ -7,5 +7,6 @@ v1.0，2026-10-26。规范基准为用户提供的 PTX ISA Release 9.4；这是�
 - [规范核查](research/ptx94_architecture_audit.md) · [公开来源审查](research/architecture_source_review.md)：页码、target 条件和证据边界。
 - [构建说明](BUILDING.md)：正文、SVG/PNG 和文档生成器均随仓库保存。
 - [项目微架构](microarchitecture/README.md)：独立文档，含具体模块、端口/队列、存储、流水、资源复用与完成协议。
+- [MALU数量与M×N×K核查](research/TCGEN05_MALU_GEOMETRY_AUDIT.md)：2026-11-11重新核对表50、论文、两专利及CUTLASS；区分指令shape、数值分组与物理阵列，列出已证实数值及尚未证实的Rubin物理参数。
 
 原生 tcgen05 能力与项目 MALU 的 PROJECT_EXACT 功能分开记录；未证明的 Ti16 raw 编码、target 与 Rubin 的映射，以及具体数值实现保留明确边界。原始用户 PDF 不复制入仓库。

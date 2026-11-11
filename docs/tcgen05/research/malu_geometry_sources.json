@@ -1,0 +1,172 @@
+{
+  "title": "tcgen05 MALU quantity and geometry evidence",
+  "date": "2026-11-11",
+  "sources": [
+    {
+      "id": "P1",
+      "name": "ptx_isa_9.4.pdf",
+      "url": "https://docs.nvidia.com/cuda/parallel-thread-execution/",
+      "sha256": "4be2905e240b70a8b176b4d6fb162714f2fc361a9503572d848ff723abf289c3",
+      "physical_pdf_pages_cited": [
+        700,
+        701,
+        702,
+        703,
+        704,
+        705
+      ],
+      "scope": "Uploaded 9.4 is normative; current URL is source locator, not a version-matched replacement.",
+      "access": "Uploaded PDF read locally on 2026-11-11"
+    },
+    {
+      "id": "L1",
+      "name": "Accurate Models of NVIDIA Tensor Cores.pdf",
+      "url": "https://arxiv.org/abs/2512.07004",
+      "sha256": "63588196a40b61d41c6f4b435ef97cc69a4c2906f4493878a792be52d9e78307",
+      "physical_pdf_pages_cited": [
+        5,
+        11,
+        12,
+        13,
+        14,
+        15
+      ],
+      "scope": "B200 numerical groups; no confirmed Rubin physical MALU count.",
+      "access": "Uploaded PDF read locally on 2026-11-11"
+    },
+    {
+      "id": "N1",
+      "name": "US20250060938A1.pdf",
+      "url": "https://patents.google.com/patent/US20250060938A1/en",
+      "sha256": "c92a6ddcf5986ce62daa2f7b4e8c71b575f24bd9aeee36faf84095d07e84a12f",
+      "physical_pdf_pages_cited": [
+        11,
+        51,
+        52,
+        53,
+        54,
+        69
+      ],
+      "scope": "Physical datapath example, not a confirmed product mapping.",
+      "access": "Uploaded PDF read locally on 2026-11-11"
+    },
+    {
+      "id": "N2",
+      "name": "US20250077615A1.pdf",
+      "url": "https://patents.google.com/patent/US20250077615A1/en",
+      "sha256": "88b73c778dd37f17abfccdb3878bd0b6e926d61544abdecdbaa999293f6682b4",
+      "physical_pdf_pages_cited": [
+        11,
+        12,
+        61,
+        62,
+        80
+      ],
+      "scope": "Weight-stationary datapath example, not a confirmed product mapping.",
+      "access": "Uploaded PDF read locally on 2026-11-11"
+    },
+    {
+      "id": "C1",
+      "url": "https://raw.githubusercontent.com/NVIDIA/cutlass/main/include/cute/atom/mma_traits_sm100.hpp",
+      "sha256": "cf6d3421d0639a863653d638475f211a897a168f43c49a8e83502f0d88c7f991",
+      "bytes": 175628,
+      "scope": "Cross-checks logical instruction K, not physical engine count.",
+      "access": "HTTP 200 on 2026-11-11",
+      "version": "Retrieved main-branch snapshot identified by content SHA256; not assumed equivalent to uploaded PTX 9.4."
+    },
+    {
+      "id": "C2",
+      "url": "https://raw.githubusercontent.com/NVIDIA/cutlass/main/include/cute/arch/mma_sm100_umma.hpp",
+      "sha256": "cb373dd73b0a0a77b76eca4740f5fa1c78ef0585be172241a921a3a5cbabce1c",
+      "bytes": 81984,
+      "scope": "Public instruction wrappers; not a complete PTX 9.4 or Rubin implementation statement.",
+      "access": "HTTP 200 on 2026-11-11",
+      "version": "Retrieved main-branch snapshot identified by content SHA256; not assumed equivalent to uploaded PTX 9.4."
+    },
+    {
+      "id": "T1",
+      "url": "https://raw.githubusercontent.com/tlrmchlsmth/gpu-roofline-explorer/main/MODEL.md",
+      "sha256": "9b62e132b73b161cf9ac2714b14360b6e1b26d977d0363dea906ffb2c357ec17",
+      "bytes": 8784,
+      "scope": "Third-party analytical teaching model; hypothetical parallelism explicitly distinguished.",
+      "access": "HTTP 200 on 2026-11-11",
+      "version": "Retrieved main-branch snapshot identified by content SHA256; not assumed equivalent to uploaded PTX 9.4."
+    },
+    {
+      "id": "T2",
+      "url": "https://raw.githubusercontent.com/0xha0/gpu-bench/main/README.md",
+      "sha256": "25bd17c967a7d8eea9997b31bd0b1d5714ca141c0be5a8b773cfe9d22795b6b0",
+      "bytes": 8125,
+      "scope": "Research lead only; no GPU benchmark executed or unseen result cited.",
+      "access": "HTTP 200 on 2026-11-11",
+      "version": "Retrieved main-branch snapshot identified by content SHA256; not assumed equivalent to uploaded PTX 9.4."
+    },
+    {
+      "id": "O1",
+      "url": "https://developer.nvidia.com/blog/inside-nvidia-blackwell-ultra-the-chip-powering-the-ai-factory-era/",
+      "sha256": "756bf52521452789fa2fd307bd7f1afd017c6cd4f5213e9461b89dfe49e7f3e3",
+      "scope": "Article body states 4 Tensor Cores/SM for Blackwell Ultra; no Rubin internal MALU mapping. AI-generated summary excluded.",
+      "access": "Previously saved snapshot read locally; no new HTTP success claimed.",
+      "related_review": "docs/tcgen05/research/architecture_source_review.md"
+    }
+  ],
+  "findings": {
+    "native_instruction_shape_source": "P1 Table50, physical pages700-704",
+    "b200_numerical_groups": {
+      "F16_BF16_to_F32": 16,
+      "TF32_to_F32": 8,
+      "native_FP8_to_F32_F16": 32
+    },
+    "patent_example_lanes_per_partition": 32,
+    "patent_example_partitions_per_datapath": 4,
+    "patent_example_lanes_per_datapath": 128,
+    "rubin_confirmed_physical_malus_per_tensor_core": null,
+    "rubin_confirmed_physical_malu_shape": null
+  },
+  "scope_limits": [
+    "No hardware microbenchmark was run.",
+    "No synthesis/PPA or target throughput proven.",
+    "Instruction shape is not a physical compute array.",
+    "Existing single-MALU WORD32_REF code remains an uncommitted draft, not the target array.",
+    "Unresolved Table50 f8f6f4 cross-cell joint conditions are documented rather than expanded into an invented legal set."
+  ],
+  "network_attempts": {
+    "successful": [
+      "GitHub repository-search HTML",
+      "GitHub raw NVIDIA CUTLASS files",
+      "GitHub raw third-party README/MODEL"
+    ],
+    "http_403": [
+      "Google (ordinary and escalated execution)",
+      "Bing",
+      "NVIDIA official blog new fetch",
+      "Colfax",
+      "Chips and Cheese",
+      "Zhihu search",
+      "arxiv HTML",
+      "GitHub API repository search"
+    ],
+    "note": "403 pages are not treated as read sources; search HTML is only a discovery mechanism."
+  },
+  "dynamic_hardware_experiments_executed": 0,
+  "published_evidence_files_sha256": {
+    "docs/tcgen05/research/TCGEN05_MALU_GEOMETRY_AUDIT.md": "e1c00be536c80fc37138cb12bfb8b9cde96d5edd35f179940952552d00f23d37",
+    "docs/tcgen05/rtl/malu_geometry_literature.md": "765c2b27659817d2aac312dee4966877649c3bd34c5fdeb4e0585100b05cfdb3",
+    "docs/tcgen05/research/geometry_figures/source_patent_60938_fig5ab.png": "dfe090dbd76e875ee2f2f1a9c149a33539cd0221eb7025763e4e25c21ce9e81d",
+    "docs/tcgen05/research/geometry_figures/source_patent_77615_fig5ab.png": "ee5ecaabb1aa920628ed8dd15a0b893044b79bea07bda6b55b4063d986c6ef56"
+  },
+  "independent_review": {
+    "reviewer": "agent2_alu",
+    "PTX_physical_pages_checked": [
+      700,
+      701,
+      702,
+      703,
+      704,
+      705
+    ],
+    "result": "No blocking table error found; integer OPS and dot/slice-II clarifications incorporated.",
+    "all_native_tuples_assembled": false,
+    "hardware_microbenchmark_executed": false
+  }
+}
