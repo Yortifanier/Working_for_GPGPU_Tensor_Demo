@@ -1,0 +1,3 @@
+[45000] %Error: sm_warp_sched.sv:36: Assertion failed in tb_sm_warp_sched.dut.a_take_requires_candidate: 'assert' failed.
+%Error: design/core/src/rtl/sp/sm/sm_warp_sched.sv:36: Verilog $stop
+Aborting...

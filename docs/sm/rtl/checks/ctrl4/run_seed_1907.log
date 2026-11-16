@@ -1,0 +1,5 @@
+SM_INSTR_CTRL_PASS warps=4 flights=4 checks=647 fetches=49 rejected=8 issues=34 completed=33 aborted=1 warp_commands=15 resets=2 seed=1907 cycles=736
+- verif/core/src/rtl/sp/sm/tb_sm_instr_ctrl.sv:347: Verilog $finish
+- S i m u l a t i o n   R e p o r t: Verilator 5.032 2025-01-01
+- Verilator: $finish at 7us; walltime 0.053 s; speed 137.672 us/s
+- Verilator: cpu 0.053 s on 1 threads; alloced 34 MB

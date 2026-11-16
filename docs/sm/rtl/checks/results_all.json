@@ -1,0 +1,366 @@
+{
+  "kind": "SM_CONTROL_FUNCTIONAL_RTL_REGRESSION",
+  "passed": true,
+  "timestamp_utc": "2026-11-16T03:41:52.416245+00:00",
+  "tool": "Verilator 5.032 2025-01-01 rev (Debian 5.032-1+b2)",
+  "scope": "Uniform-control IR scheduler/scoreboard/controller only. Backend BFMs are protocol models, not implemented FMA/SFU/TMA/LSU/Tensor bridges or a full SM. No ITS or SM generator testplan execution claim.",
+  "requested_suite": "all",
+  "source_signature": "e07c1260f983c732c8985c1919f81cc38439d418a1983f82d8d2b68dd56001b8",
+  "source_sha256": {
+    "design/core/filelist/common/sm_pkg.f": "30ca90e598c9197ced072220028383bc964acf5bc06bd3be84a196db33108afa",
+    "design/core/filelist/if/sp/sm/sm_ctrl_if.f": "5117cc5fc9d5a31a199e7410d42a5cf35e5dfb9cec49051dbffaf39ef5e95c08",
+    "design/core/filelist/rtl/sp/sm/sm_instr_ctrl.f": "849d5fc7190e171293a462851abfd296eb602e18bb8857c4a06e29e125487905",
+    "design/core/src/common/sm_pkg.sv": "9e7d628314b2e6fdfb3dc399dc57cf8dca9dfb23f44b2cf57bbbd10e2e8797ee",
+    "design/core/src/if/sp/sm/sm_ctrl_if.sv": "cf239dcfc3c2faf04db11cc4e1a5b1cff743bfe4c6fcbdc7361a02a7e2355c90",
+    "design/core/src/rtl/sp/sm/sm_instr_ctrl.sv": "85a89a960978d4a0eed563cd2a827f8453a33ae8ba486cda6f9e59557a62520d",
+    "design/core/src/rtl/sp/sm/sm_scoreboard.sv": "71e64655199e0bdabd9d6c29ad875e77235e68d03d61ffabba722ac90cbb739d",
+    "design/core/src/rtl/sp/sm/sm_warp_sched.sv": "2755078c20e266f43c25dd2033106822ca94a3767ce8c4115c12402172157c7e",
+    "verif/core/filelist/rtl/sp/sm/tb_sm_instr_ctrl.f": "b6243a1d336a1108c853ecbf111fb4449205f7b1c7a007ac2adf768940d51ccd",
+    "verif/core/filelist/rtl/sp/sm/tb_sm_scoreboard.f": "05047bf9f8537cc9efa9a91709b37818c9b1d7282c6735db7d900c385cc2dc2e",
+    "verif/core/filelist/rtl/sp/sm/tb_sm_warp_sched.f": "bad72084648ff5717fe5ce1334ca290fdb1cbdd7c36fba37db3573753c980f19",
+    "verif/core/flow/rtl/sp/sm/run_sm_control.py": "2711020eb71f9de73ac1823c3bcb6b2ca911e7eeaeeb0854239401b0a4d8bc65",
+    "verif/core/src/rtl/sp/sm/tb_sm_instr_ctrl.sv": "cf5a940968c5f864fc4fc38133edb6152f0a49ea3d3954799100ad3b9b7d89ca",
+    "verif/core/src/rtl/sp/sm/tb_sm_scoreboard.sv": "65bbe478193093f3ff54f4c0fe82c0e1d7b99c6c0e35ae20b0353801045a35c9",
+    "verif/core/src/rtl/sp/sm/tb_sm_warp_sched.sv": "5fc2556e725f067869abb8ebabe5c74a32220b64da0250538f71e615b0801e43"
+  },
+  "normal_passes": 12,
+  "expected_assertion_failures": 3,
+  "results": [
+    {
+      "configuration": "sched64",
+      "suite": "scheduler",
+      "parameters": {
+        "WARPS": 64
+      },
+      "seed": 1907,
+      "outcome": "PASS",
+      "summary": "SM_WARP_SCHED_PASS warps=64 checks=11321 grants=4324 steps=5602 seed=1907",
+      "counts": {
+        "warps": 64,
+        "checks": 11321,
+        "grants": 4324,
+        "steps": 5602,
+        "seed": 1907
+      },
+      "log": "build/sm/control_regression/sched64/run_seed_1907.log",
+      "log_sha256": "2c3d47080592dd589906b04d48d6c80fb0177572e44874e575085852bffb8f35",
+      "reused_compilation": false,
+      "archived_log": "docs/sm/rtl/checks/sched64/run_seed_1907.log"
+    },
+    {
+      "configuration": "sched64",
+      "suite": "scheduler",
+      "parameters": {
+        "WARPS": 64
+      },
+      "seed": 2026,
+      "outcome": "PASS",
+      "summary": "SM_WARP_SCHED_PASS warps=64 checks=11321 grants=4243 steps=5602 seed=2026",
+      "counts": {
+        "warps": 64,
+        "checks": 11321,
+        "grants": 4243,
+        "steps": 5602,
+        "seed": 2026
+      },
+      "log": "build/sm/control_regression/sched64/run_seed_2026.log",
+      "log_sha256": "66a2d7548dd3204656a79a8be22e52be2ca024d65fe5807b649c023370965094",
+      "reused_compilation": false,
+      "archived_log": "docs/sm/rtl/checks/sched64/run_seed_2026.log"
+    },
+    {
+      "configuration": "sched64",
+      "suite": "scheduler",
+      "parameters": {
+        "WARPS": 64
+      },
+      "outcome": "EXPECTED_ASSERTION",
+      "assertion": "a_take_requires_candidate",
+      "exit_code": -6,
+      "log": "build/sm/control_regression/sched64/negative_take.log",
+      "log_sha256": "78584a774d2319e785f3b7e9aaa1e9766cd411a7b1daece83e09703e90c1af05",
+      "archived_log": "docs/sm/rtl/checks/sched64/negative_take.log"
+    },
+    {
+      "configuration": "sched7",
+      "suite": "scheduler",
+      "parameters": {
+        "WARPS": 7
+      },
+      "seed": 1907,
+      "outcome": "PASS",
+      "summary": "SM_WARP_SCHED_PASS warps=7 checks=10144 grants=3783 steps=5089 seed=1907",
+      "counts": {
+        "warps": 7,
+        "checks": 10144,
+        "grants": 3783,
+        "steps": 5089,
+        "seed": 1907
+      },
+      "log": "build/sm/control_regression/sched7/run_seed_1907.log",
+      "log_sha256": "20b88ff4a9330a50f8f8f8316ec59a60881242256bd2363bd267aa2fcded3627",
+      "reused_compilation": false,
+      "archived_log": "docs/sm/rtl/checks/sched7/run_seed_1907.log"
+    },
+    {
+      "configuration": "sched7",
+      "suite": "scheduler",
+      "parameters": {
+        "WARPS": 7
+      },
+      "seed": 2026,
+      "outcome": "PASS",
+      "summary": "SM_WARP_SCHED_PASS warps=7 checks=10153 grants=3728 steps=5089 seed=2026",
+      "counts": {
+        "warps": 7,
+        "checks": 10153,
+        "grants": 3728,
+        "steps": 5089,
+        "seed": 2026
+      },
+      "log": "build/sm/control_regression/sched7/run_seed_2026.log",
+      "log_sha256": "7ce0fdfca1b7f0bb51c504a783b681924813b85724d5d391b5b44236585eea68",
+      "reused_compilation": false,
+      "archived_log": "docs/sm/rtl/checks/sched7/run_seed_2026.log"
+    },
+    {
+      "configuration": "sched7",
+      "suite": "scheduler",
+      "parameters": {
+        "WARPS": 7
+      },
+      "outcome": "EXPECTED_ASSERTION",
+      "assertion": "a_take_requires_candidate",
+      "exit_code": -6,
+      "log": "build/sm/control_regression/sched7/negative_take.log",
+      "log_sha256": "78584a774d2319e785f3b7e9aaa1e9766cd411a7b1daece83e09703e90c1af05",
+      "archived_log": "docs/sm/rtl/checks/sched7/negative_take.log"
+    },
+    {
+      "configuration": "sched1",
+      "suite": "scheduler",
+      "parameters": {
+        "WARPS": 1
+      },
+      "seed": 1907,
+      "outcome": "PASS",
+      "summary": "SM_WARP_SCHED_PASS warps=1 checks=7578 grants=1905 steps=5035 seed=1907",
+      "counts": {
+        "warps": 1,
+        "checks": 7578,
+        "grants": 1905,
+        "steps": 5035,
+        "seed": 1907
+      },
+      "log": "build/sm/control_regression/sched1/run_seed_1907.log",
+      "log_sha256": "d73dcecbd46c7e25f0b1fa30e5250eb1917bf95a0192bf6f6cb0a2acbcbc6fac",
+      "reused_compilation": false,
+      "archived_log": "docs/sm/rtl/checks/sched1/run_seed_1907.log"
+    },
+    {
+      "configuration": "sched1",
+      "suite": "scheduler",
+      "parameters": {
+        "WARPS": 1
+      },
+      "seed": 2026,
+      "outcome": "PASS",
+      "summary": "SM_WARP_SCHED_PASS warps=1 checks=7524 grants=1836 steps=5035 seed=2026",
+      "counts": {
+        "warps": 1,
+        "checks": 7524,
+        "grants": 1836,
+        "steps": 5035,
+        "seed": 2026
+      },
+      "log": "build/sm/control_regression/sched1/run_seed_2026.log",
+      "log_sha256": "eebc1116179d9b312bf4006b8166c6a681f41ee66bb40ff24ed32c999af8d8b5",
+      "reused_compilation": false,
+      "archived_log": "docs/sm/rtl/checks/sched1/run_seed_2026.log"
+    },
+    {
+      "configuration": "sched1",
+      "suite": "scheduler",
+      "parameters": {
+        "WARPS": 1
+      },
+      "outcome": "EXPECTED_ASSERTION",
+      "assertion": "a_take_requires_candidate",
+      "exit_code": -6,
+      "log": "build/sm/control_regression/sched1/negative_take.log",
+      "log_sha256": "78584a774d2319e785f3b7e9aaa1e9766cd411a7b1daece83e09703e90c1af05",
+      "archived_log": "docs/sm/rtl/checks/sched1/negative_take.log"
+    },
+    {
+      "configuration": "score4",
+      "suite": "scoreboard",
+      "parameters": {
+        "WARPS": 4,
+        "FLIGHTS": 4
+      },
+      "seed": 1907,
+      "outcome": "PASS",
+      "summary": "SM_SCOREBOARD_PASS checks=216 reservations=14 retirements=13 diagnostics=22 cycles=137 warps=4 flights=4",
+      "counts": {
+        "checks": 216,
+        "reservations": 14,
+        "retirements": 13,
+        "diagnostics": 22,
+        "cycles": 137,
+        "warps": 4,
+        "flights": 4
+      },
+      "log": "build/sm/control_regression/score4/run_seed_1907.log",
+      "log_sha256": "d0aa60fbcb850492a6f9647c4cc9996ed06441249d523f839b17406d5ee2283a",
+      "reused_compilation": false,
+      "archived_log": "docs/sm/rtl/checks/score4/run_seed_1907.log"
+    },
+    {
+      "configuration": "score1",
+      "suite": "scoreboard",
+      "parameters": {
+        "WARPS": 1,
+        "FLIGHTS": 1
+      },
+      "seed": 1907,
+      "outcome": "PASS",
+      "summary": "SM_SCOREBOARD_PASS checks=173 reservations=9 retirements=8 diagnostics=22 cycles=107 warps=1 flights=1",
+      "counts": {
+        "checks": 173,
+        "reservations": 9,
+        "retirements": 8,
+        "diagnostics": 22,
+        "cycles": 107,
+        "warps": 1,
+        "flights": 1
+      },
+      "log": "build/sm/control_regression/score1/run_seed_1907.log",
+      "log_sha256": "2dd1f75244f937777e91e97b26fc070ed81a033e9524324073fab56d159d897d",
+      "reused_compilation": false,
+      "archived_log": "docs/sm/rtl/checks/score1/run_seed_1907.log"
+    },
+    {
+      "configuration": "ctrl4",
+      "suite": "control",
+      "parameters": {
+        "WARPS": 4,
+        "FLIGHTS": 4
+      },
+      "seed": 1907,
+      "outcome": "PASS",
+      "summary": "SM_INSTR_CTRL_PASS warps=4 flights=4 checks=647 fetches=49 rejected=8 issues=34 completed=33 aborted=1 warp_commands=15 resets=2 seed=1907 cycles=736",
+      "counts": {
+        "warps": 4,
+        "flights": 4,
+        "checks": 647,
+        "fetches": 49,
+        "rejected": 8,
+        "issues": 34,
+        "completed": 33,
+        "aborted": 1,
+        "warp_commands": 15,
+        "resets": 2,
+        "seed": 1907,
+        "cycles": 736
+      },
+      "log": "build/sm/control_regression/ctrl4/run_seed_1907.log",
+      "log_sha256": "edcfc9f84d06ad43d95e3d5eb0166bc714051c199c22b244f1fb9d0c09a550c6",
+      "reused_compilation": true,
+      "archived_log": "docs/sm/rtl/checks/ctrl4/run_seed_1907.log"
+    },
+    {
+      "configuration": "ctrl4",
+      "suite": "control",
+      "parameters": {
+        "WARPS": 4,
+        "FLIGHTS": 4
+      },
+      "seed": 2026,
+      "outcome": "PASS",
+      "summary": "SM_INSTR_CTRL_PASS warps=4 flights=4 checks=640 fetches=49 rejected=8 issues=34 completed=33 aborted=1 warp_commands=15 resets=2 seed=2026 cycles=729",
+      "counts": {
+        "warps": 4,
+        "flights": 4,
+        "checks": 640,
+        "fetches": 49,
+        "rejected": 8,
+        "issues": 34,
+        "completed": 33,
+        "aborted": 1,
+        "warp_commands": 15,
+        "resets": 2,
+        "seed": 2026,
+        "cycles": 729
+      },
+      "log": "build/sm/control_regression/ctrl4/run_seed_2026.log",
+      "log_sha256": "7321492512543ca8e588a110e743910609bb9b151051e8e522f5992a32c3fdd7",
+      "reused_compilation": true,
+      "archived_log": "docs/sm/rtl/checks/ctrl4/run_seed_2026.log"
+    },
+    {
+      "configuration": "ctrl64",
+      "suite": "control",
+      "parameters": {
+        "WARPS": 64,
+        "FLIGHTS": 16
+      },
+      "seed": 1907,
+      "outcome": "PASS",
+      "summary": "SM_INSTR_CTRL_PASS warps=64 flights=16 checks=763 fetches=49 rejected=8 issues=34 completed=33 aborted=1 warp_commands=14 resets=2 seed=1907 cycles=730",
+      "counts": {
+        "warps": 64,
+        "flights": 16,
+        "checks": 763,
+        "fetches": 49,
+        "rejected": 8,
+        "issues": 34,
+        "completed": 33,
+        "aborted": 1,
+        "warp_commands": 14,
+        "resets": 2,
+        "seed": 1907,
+        "cycles": 730
+      },
+      "log": "build/sm/control_regression/ctrl64/run_seed_1907.log",
+      "log_sha256": "aab902308c3ca21e0bfb009c4a3841797d3eabac44ba3dea89e01b7132e2be9b",
+      "reused_compilation": true,
+      "archived_log": "docs/sm/rtl/checks/ctrl64/run_seed_1907.log"
+    },
+    {
+      "configuration": "ctrl1",
+      "suite": "control",
+      "parameters": {
+        "WARPS": 1,
+        "FLIGHTS": 1
+      },
+      "seed": 1907,
+      "outcome": "PASS",
+      "summary": "SM_INSTR_CTRL_PASS warps=1 flights=1 checks=488 fetches=40 rejected=8 issues=26 completed=25 aborted=1 warp_commands=11 resets=2 seed=1907 cycles=594",
+      "counts": {
+        "warps": 1,
+        "flights": 1,
+        "checks": 488,
+        "fetches": 40,
+        "rejected": 8,
+        "issues": 26,
+        "completed": 25,
+        "aborted": 1,
+        "warp_commands": 11,
+        "resets": 2,
+        "seed": 1907,
+        "cycles": 594
+      },
+      "log": "build/sm/control_regression/ctrl1/run_seed_1907.log",
+      "log_sha256": "03e8729429d3e6c633e85a84faee52e12a217dd73e8a2643b2b50ca1071b7386",
+      "reused_compilation": true,
+      "archived_log": "docs/sm/rtl/checks/ctrl1/run_seed_1907.log"
+    }
+  ],
+  "warnings_waived": {
+    "UNUSEDSIGNAL": "Public transport fields",
+    "UNUSEDPARAM": "Shared package parameters",
+    "SYNCASYNCNET": "SVA sampling asynchronous reset",
+    "BLKSEQ": "Local procedural TB only"
+  },
+  "archive_note": "Actual runner output; archived_log added only after verifying current source and every run-log hash. Expected assertion failures are separate from normal functional passes."
+}

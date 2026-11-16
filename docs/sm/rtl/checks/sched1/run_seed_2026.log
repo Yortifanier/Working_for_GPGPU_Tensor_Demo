@@ -1,0 +1,5 @@
+SM_WARP_SCHED_PASS warps=1 checks=7524 grants=1836 steps=5035 seed=2026
+- verif/core/src/rtl/sp/sm/tb_sm_warp_sched.sv:79: Verilog $finish
+- S i m u l a t i o n   R e p o r t: Verilator 5.032 2025-01-01
+- Verilator: $finish at 50us; walltime 0.008 s; speed 5.269 ms/s
+- Verilator: cpu 0.010 s on 1 threads; alloced 33 MB

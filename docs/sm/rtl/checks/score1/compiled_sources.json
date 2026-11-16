@@ -1,0 +1,9 @@
+{
+  "source_signature": "e07c1260f983c732c8985c1919f81cc38439d418a1983f82d8d2b68dd56001b8",
+  "tool": "Verilator 5.032 2025-01-01 rev (Debian 5.032-1+b2)",
+  "top": "tb_sm_scoreboard",
+  "parameters": {
+    "WARPS": 1,
+    "FLIGHTS": 1
+  }
+}

@@ -2,7 +2,7 @@
 
 本文是后续编码合同，依据当前工作区的 [tcgen05 接口](../../design/core/src/if/sp/eu/tensor/tcgen05/tcgen05_if.sv)、[命令类型](../../design/core/src/common/tcgen05_pkg.sv)、[endpoint 顶层](../../design/core/src/rtl/sp/eu/tensor/tcgen05/tcgen05.sv)和[既有 SM 架构](SM_ARCHITECTURE.md)。旧架构文档中的实现状态是其发布时的快照；本文件补充新的 Tensor RTL 接入事实，不改写其固定来源哈希。
 
-**当前已有 Tensor endpoint、TMEM、MALU、移动/矩阵执行及相关测试源码；没有完整 SM RTL。** launch、SIMT/ITS、指令前端、实际 GPR/RF scoreboard、core 共享 SMEM 服务端、mbarrier 对象服务、普通 SALU/VALU/LSU 等仍须实现。现有 Tensor 测试模型不能当作这些模块的硬件实现。具体已通过配置以各检查报告为准，本文件不新增测试通过声明。
+**当前已有 Tensor endpoint、TMEM、MALU，以及第一版SM控制主干；没有完整 SM RTL。** 新增的 `sm_warp_sched`、`sm_instr_ctrl` 和 `sm_scoreboard` 实现有限统一控制流IR、寄存器区间依赖及执行域派发，见[实际实现说明](rtl/CONTROL_IMPLEMENTATION.md)。launch资源管理、SIMT/ITS、实际RF与collector/writeback、core统一SMEM、mbarrier对象服务、普通FMA/SFU/ALU、LSU、TMA等仍须实现。协议BFM和路由枚举不能算这些后端已实现。完整范围见[SM模块树](rtl/SM_MODULE_SCOPE.md)及[后端合同](rtl/SM_BACKEND_CONTRACT.md)。
 
 ## 1. 接入边界与首个可运行里程碑
 
@@ -168,17 +168,17 @@ hard reset之前先停止新launch，协调peer和外部存储drain/cancel，确
 
 ## 9. 待写模块与目录
 
-以下路径是新实现计划，尚未创建这些SM模块。
+以下为后续完整实现计划；控制主干第一版已开始，不把它当作完整SM或Tensor shell。当前实际命名以 `rtl/CONTROL_IMPLEMENTATION.md` 为准。
 
 | 计划路径/模块 | 第一版职责 |
 |---|---|
-| `design/core/src/common/sm_pkg.sv` | IR、launch/context、RF绑定、错误/epoch、scoreboard类型 |
+| `design/core/src/common/sm_pkg.sv` | 已有IR/依赖区间/错误/epoch/warp控制类型；后续增加launch资源与RF物理绑定 |
 | `design/core/src/if/cp/sm/` | launch、drain/abort、kernel完成与配置接口 |
 | `design/core/src/rtl/cp/sm/sm_context_table.sv` | 8 owner、generation、resource与cluster记录 |
 | `design/core/src/rtl/cp/sm/sm_launch_ctrl.sv` | 联合admission、INIT/RELEASE顺序及回收状态机 |
 | `design/core/src/rtl/sp/rf/sm_regfile.sv` | 参数化RF、32-thread片段读写与端口仲裁 |
-| `design/core/src/rtl/sp/rf/sm_scoreboard.sv` | 源保护、完整vector目的、poison和tag side table |
-| `design/core/src/rtl/sp/sm/sm_ir_frontend.sv` | 版本化IR读取、译码及源/目的绑定，不解析PTX文本 |
+| `design/core/src/rtl/sp/sm/sm_scoreboard.sv` | 已有寄存器区间、未捕获源和flight credit；RF物理写回及异步责任桥仍待接入 |
+| `design/core/src/rtl/sp/sm/sm_instr_ctrl.sv`、`sm_warp_sched.sv` | 已有统一控制流IR buffer、PC/实例、RR与派发；后续增加代码服务、完整lowering及SIMT/ITS |
 | `design/core/src/rtl/sp/sm/sm_tensor_issue_bridge.sv` | 动态collective汇合、descriptor snapshot、有序cmd与ST片段 |
 | `design/core/src/rtl/sp/sm/sm_tensor_return.sv` | rsp/RF片段/commit多目标责任与scoreboard唤醒 |
 | `design/core/src/rtl/sp/lsu/smem/` | shared allocator、真实word数组、byte写/RMW、barrier/proxy服务 |

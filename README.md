@@ -1,6 +1,10 @@
 # Working_for_GPGPU_Tensor_Demo
 Tensor
 
+## SM RTL 控制主干
+
+[第一版实现](docs/sm/rtl/CONTROL_IMPLEMENTATION.md)包含真实Sched、Instr Ctrl及scoreboard代码，支持多warp、GPR/predicate/CC区间依赖、源捕获、完整身份与执行域派发。当前为统一控制流项目IR；[完整SM模块树](docs/sm/rtl/SM_MODULE_SCOPE.md)还包含独立FMA/SFU/ALU、RF、LSU、SMEM、搬运、TMA、同步与cluster等后续模块，协议BFM不计为这些后端已实现。
+
 ## tcgen05 RTL
 
 [实现说明与24类功能映射](docs/tcgen05/rtl/RTL_IMPLEMENTATION.md)对应完整功能族的项目级 SystemVerilog endpoint，含多MALU并发、native布局、完整RF片段、双端CTA协作与完成通知。源码位于 `design/core/src/rtl/sp/eu/tensor/tcgen05`，接口位于 `design/core/src/if/sp/eu/tensor/tcgen05`；实际回归证据与设备对应边界分别记录，未宣称Rubin物理复刻或峰值达标。
