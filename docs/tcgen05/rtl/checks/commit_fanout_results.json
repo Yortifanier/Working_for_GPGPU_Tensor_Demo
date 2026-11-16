@@ -1,0 +1,89 @@
+{
+  "check_kind": "TCGEN05_COMMIT_FANOUT_RTL_SIMULATION",
+  "passed": true,
+  "tool": "Verilator 5.032 (Debian5.032-1+b2)",
+  "source_sha256": {
+    "design/core/src/rtl/sp/eu/tensor/tcgen05/tcgen05_commit_fanout.sv": "03afd948e6e73d706c5d7851ed2adc9c87689c168060fa84f64310bbe39dc766",
+    "verif/core/src/rtl/sp/eu/tensor/tcgen05/tb_tcgen05_commit_fanout.sv": "53a3a8d50c2c5802f8a8d8a33a542357ce5f8c190642e4bc966ce4f28a040209",
+    "verif/core/filelist/rtl/sp/eu/tensor/tcgen05/tb_tcgen05_commit_fanout.f": "05780ef51240f44d12905726efbffa33dde6c1ee75c06f17f097cc5eb169df90"
+  },
+  "dependencies_observed_after_run_sha256": {
+    "design/core/src/common/tcgen05_pkg.sv": "a56e67755b2caba32f6de86fc4575281e3caff4d6313a1daf53c1b20056d4931"
+  },
+  "results": [
+    {
+      "passed": true,
+      "seed": 1907,
+      "counts": {
+        "commands": 144,
+        "completed": 143,
+        "outputs": 1299,
+        "arrivals": 1117,
+        "checks": 4196,
+        "held": 1246,
+        "resets": 1,
+        "cycles": 3007,
+        "seed": 1907
+      },
+      "log": "docs/tcgen05/rtl/checks/commit_fanout/run_seed_1907.log",
+      "build_log": "build/tcgen05/fanout_unit/run_seed_1907.log",
+      "log_sha256": "494bf43f384590c1fde0a98f417c3abad9d4f0464dd1a1c3e8b8440257ee8201",
+      "summary": "TCGEN05_COMMIT_FANOUT_PASS commands=144 completed=143 outputs=1299 arrivals=1117 checks=4196 held=1246 resets=1 cycles=3007 seed=1907"
+    },
+    {
+      "passed": true,
+      "seed": 1908,
+      "counts": {
+        "commands": 144,
+        "completed": 143,
+        "outputs": 1333,
+        "arrivals": 1149,
+        "checks": 4298,
+        "held": 1295,
+        "resets": 1,
+        "cycles": 3090,
+        "seed": 1908
+      },
+      "log": "docs/tcgen05/rtl/checks/commit_fanout/run_seed_1908.log",
+      "build_log": "build/tcgen05/fanout_unit/run_seed_1908.log",
+      "log_sha256": "a8ac72b4ec762ac8401dc6bae35b570df5d116740e39b6dea0efecdc2e7f5767",
+      "summary": "TCGEN05_COMMIT_FANOUT_PASS commands=144 completed=143 outputs=1333 arrivals=1149 checks=4298 held=1295 resets=1 cycles=3090 seed=1908"
+    },
+    {
+      "passed": true,
+      "seed": 2026,
+      "counts": {
+        "commands": 144,
+        "completed": 143,
+        "outputs": 1327,
+        "arrivals": 1138,
+        "checks": 4280,
+        "held": 1326,
+        "resets": 1,
+        "cycles": 3115,
+        "seed": 2026
+      },
+      "log": "docs/tcgen05/rtl/checks/commit_fanout/run_seed_2026.log",
+      "build_log": "build/tcgen05/fanout_unit/run_seed_2026.log",
+      "log_sha256": "6caf212930e663baa720403945ba12383c00b4ab297867fad11807d040ae5d93",
+      "summary": "TCGEN05_COMMIT_FANOUT_PASS commands=144 completed=143 outputs=1327 arrivals=1138 checks=4280 held=1326 resets=1 cycles=3115 seed=2026"
+    }
+  ],
+  "assertions_enabled": true,
+  "scope": "Standalone commit destination fanout and abstract sink acknowledgement only; no opaque mbarrier memory implementation or GPU experiment claimed.",
+  "coverage": [
+    "Local and remote unicast preserve their target identity.",
+    "All32 target bits individually selected; 16/32bit masks, zero masks and full masks.",
+    "100 random masks per seed with both widths.",
+    "Each selected target emitted exactly once with onehot mask; comparison is set-based, not tied to DUT output iteration order.",
+    "TC_OK arrive_count1; nonOK diagnostic arrive_count0 on each selected target.",
+    "Output backpressure preserves payload; a queued request cannot overwrite active packet metadata.",
+    "Coordinated reset interrupts one partial multicast, drops remaining outputs and then accepts a fresh unicast without ghost arrivals."
+  ],
+  "warning_waivers": {
+    "UNUSEDSIGNAL": "Unused public fields",
+    "UNUSEDPARAM": "Public constants",
+    "SYNCASYNCNET": "SVA sampling asynchronous reset",
+    "BLKSEQ": "TB local procedural clock/scoreboard only; no DUT waiver"
+  }
+}

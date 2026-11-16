@@ -1,0 +1,21 @@
+{
+  "check_kind": "TCGEN05_LEGALIZE_UNIT_SIMULATION",
+  "passed": true,
+  "date": "2026-11-15",
+  "tool": "Verilator 5.032",
+  "summary": "TCGEN05_LEGALIZE_PASS checks=97",
+  "counts": {
+    "checks": 97
+  },
+  "source_sha256": {
+    "design/core/src/common/malu_pkg.sv": "bec4d6b583e5a2c73bbdd1f3715137a3dee446c0a1e25090f7af7cab8db65f16",
+    "design/core/src/common/tcgen05_pkg.sv": "1b4c90f0659e5b2ff51716ca61566fbc605e904f06627cf3f0bb23385cb806bc",
+    "design/core/src/rtl/sp/eu/tensor/tcgen05/tcgen05_legalize.sv": "799d9b2b96eec852a1015f55de5aee7b54bd159e649e3ebeec1f29327d5a586b",
+    "verif/core/src/rtl/sp/eu/tensor/tcgen05/tb_tcgen05_legalize.sv": "b2678825c5a339e1f85f315a4c4ebd05dafb00277eb1b1d95e8dc2055cca3507",
+    "verif/core/filelist/rtl/sp/eu/tensor/tcgen05/tb_tcgen05_legalize.f": "f2abe8188b5f8ab23437798049f9238c24dde8397e332055906846e4652cb370"
+  },
+  "log": "build/tcgen05/legalize_unit/run.log",
+  "log_sha256": "f0932ef0c711a0d7137123da22a8fec8e897444e0c0b23ad759d654b857fe2f0",
+  "scope": "Pure address/semantic-form RTL unit simulation, not full endpoint or NVIDIA GPU execution.",
+  "functional_mma_instructions_executed": 0
+}

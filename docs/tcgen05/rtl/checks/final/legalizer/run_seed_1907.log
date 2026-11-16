@@ -1,0 +1,5 @@
+TCGEN05_LEGALIZE_PASS checks=166
+- verif/core/src/rtl/sp/eu/tensor/tcgen05/tb_tcgen05_legalize.sv:206: Verilog $finish
+- S i m u l a t i o n   R e p o r t: Verilator 5.032 2025-01-01
+- Verilator: $finish at 164ns; walltime 0.000 s; speed 241.977 us/s
+- Verilator: cpu 0.001 s on 1 threads; alloced 33 MB

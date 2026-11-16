@@ -1,0 +1,5 @@
+TCGEN05_ENDPOINT_PASS checks=1770 responses=130 events=13 cycles=79542 smem_reads=2329 tmem_reads=1949 beats=365 cols=64 lanes=1 fp64=0 seed=1909
+- verif/core/src/rtl/sp/eu/tensor/tcgen05/tb_tcgen05.sv:509: Verilog $finish
+- S i m u l a t i o n   R e p o r t: Verilator 5.032 2025-01-01
+- Verilator: $finish at 795us; walltime 1.092 s; speed 728.034 us/s
+- Verilator: cpu 1.093 s on 1 threads; alloced 35 MB

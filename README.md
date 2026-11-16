@@ -1,6 +1,12 @@
 # Working_for_GPGPU_Tensor_Demo
 Tensor
 
+## tcgen05 RTL
+
+[实现说明与24类功能映射](docs/tcgen05/rtl/RTL_IMPLEMENTATION.md)对应完整功能族的项目级 SystemVerilog endpoint，含多MALU并发、native布局、完整RF片段、双端CTA协作与完成通知。源码位于 `design/core/src/rtl/sp/eu/tensor/tcgen05`，接口位于 `design/core/src/if/sp/eu/tensor/tcgen05`；实际回归证据与设备对应边界分别记录，未宣称Rubin物理复刻或峰值达标。
+
+[SM RTL接入准备](docs/sm/RTL_NEXT_STEPS.md)定义下一阶段的SMEM、mbarrier、RF/scoreboard、launch与cluster接口及实施顺序。
+
 ## SM 指令发生器 Testplan
 
 [执行计划位于verif/core/testplan/sm_instr_gen](verif/core/testplan/sm_instr_gen/README.md)，将106个vPlan测试点细化为参数、初始化、步骤、检查点、通过/失败条件和证据；附8个profile、6类suite及873条固定seed计划运行矩阵。TMEM与矩阵格式/scale/BLOCK/Cshift单独展开。当前功能用例均NOT_RUN，动态配置关闭，P0静态检查单独记录。

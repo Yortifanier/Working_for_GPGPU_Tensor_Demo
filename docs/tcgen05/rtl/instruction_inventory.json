@@ -1,0 +1,636 @@
+{
+  "schema_version": "1.0",
+  "date": "2026-11-16",
+  "scope": "Functional-class implementation and listed directed execution evidence; not opcode count, exhaustive legal-tuple coverage, GPU numerical bit-match, or physical Rubin replication.",
+  "ptx_upload_sha256": "4be2905e240b70a8b176b4d6fb162714f2fc361a9503572d848ff723abf289c3",
+  "review_source": "docs/tcgen05/rtl/instruction_inventory.md",
+  "review_source_sha256": "2fafdf16cb8947ef08482c5f901bb9c7d3fb11c700afb3c84f58fa2d9742bbf9",
+  "classes": [
+    {
+      "id": "TC-FUNC-001",
+      "family": "alloc",
+      "required_behavior": "group1/group2、blocking容量等待、共享内存返回TMEM地址、exclusive/nonexclusive、32-column粒度、申请列数不增加",
+      "source": "§9.7.18.7.1 PDF738–741",
+      "implementation_status": "IMPLEMENTED_PROJECT_SEMANTIC_ENDPOINT",
+      "dynamic_status": "PASS_LISTED_DIRECTED_CASES",
+      "implementation_modules": [
+        "tcgen05_allocator.sv",
+        "tcgen05_allocator_hub.sv",
+        "tcgen05_pair.sv",
+        "tcgen05_alloc_return.sv"
+      ],
+      "execution_evidence": {
+        "report": "docs/tcgen05/rtl/checks/final/results_all.json",
+        "suites": [
+          "allocator",
+          "control",
+          "cluster"
+        ],
+        "configurations": [
+          "allocator_512",
+          "allocator_576",
+          "allocator_hub",
+          "allocator_records2",
+          "cluster",
+          "commit_fanout",
+          "memory_peer_progress",
+          "pair_rollback"
+        ],
+        "scope": "Named directed cases in these suites; not all modifiers or native tuples."
+      }
+    },
+    {
+      "id": "TC-FUNC-002",
+      "family": "dealloc",
+      "required_behavior": "matching base/count/exclusive、group2 collective、在途访问排除后释放",
+      "source": "同上",
+      "implementation_status": "IMPLEMENTED_PROJECT_SEMANTIC_ENDPOINT",
+      "dynamic_status": "PASS_LISTED_DIRECTED_CASES",
+      "implementation_modules": [
+        "tcgen05_allocator.sv",
+        "tcgen05_pair.sv"
+      ],
+      "execution_evidence": {
+        "report": "docs/tcgen05/rtl/checks/final/results_all.json",
+        "suites": [
+          "allocator",
+          "integration",
+          "cluster"
+        ],
+        "configurations": [
+          "allocator_512",
+          "allocator_576",
+          "allocator_records2",
+          "cluster",
+          "integration_default",
+          "integration_small"
+        ],
+        "scope": "Named directed cases in these suites; not all modifiers or native tuples."
+      }
+    },
+    {
+      "id": "TC-FUNC-003",
+      "family": "relinquish_alloc_permit",
+      "required_behavior": "放弃后续申请许可，保留现有allocation",
+      "source": "同上",
+      "implementation_status": "IMPLEMENTED_PROJECT_SEMANTIC_ENDPOINT",
+      "dynamic_status": "PASS_LISTED_DIRECTED_CASES",
+      "implementation_modules": [
+        "tcgen05_allocator.sv",
+        "tcgen05_pair.sv"
+      ],
+      "execution_evidence": {
+        "report": "docs/tcgen05/rtl/checks/final/results_all.json",
+        "suites": [
+          "allocator",
+          "cluster"
+        ],
+        "configurations": [
+          "allocator_512",
+          "allocator_576",
+          "allocator_records2",
+          "cluster"
+        ],
+        "scope": "Named directed cases in these suites; not all modifiers or native tuples."
+      }
+    },
+    {
+      "id": "TC-FUNC-004",
+      "family": "ld",
+      "required_behavior": "全五种shape、x1..x128合法重复、warp-quarter权限、全RF片段写回ack",
+      "source": "§9.7.18.8.3 PDF742–746",
+      "implementation_status": "IMPLEMENTED_PROJECT_SEMANTIC_ENDPOINT",
+      "dynamic_status": "PASS_LISTED_DIRECTED_CASES",
+      "implementation_modules": [
+        "tcgen05_move.sv"
+      ],
+      "execution_evidence": {
+        "report": "docs/tcgen05/rtl/checks/final/results_all.json",
+        "suites": [
+          "move",
+          "integration",
+          "cluster"
+        ],
+        "configurations": [
+          "cluster",
+          "integration_default",
+          "integration_small",
+          "move_complete"
+        ],
+        "scope": "Named directed cases in these suites; not all modifiers or native tuples."
+      }
+    },
+    {
+      "id": "TC-FUNC-005",
+      "family": "ld.pack::16b",
+      "required_behavior": "相邻columns的两个16bit chunk拼成b32",
+      "source": "PDF742/745",
+      "implementation_status": "IMPLEMENTED_PROJECT_SEMANTIC_ENDPOINT",
+      "dynamic_status": "PASS_LISTED_DIRECTED_CASES",
+      "implementation_modules": [
+        "tcgen05_move.sv"
+      ],
+      "execution_evidence": {
+        "report": "docs/tcgen05/rtl/checks/final/results_all.json",
+        "suites": [
+          "move"
+        ],
+        "configurations": [
+          "move_complete"
+        ],
+        "scope": "Named directed cases in these suites; not all modifiers or native tuples."
+      }
+    },
+    {
+      "id": "TC-FUNC-006",
+      "family": "ld.red",
+      "required_behavior": "min/max、F32/S32/U32、abs、NaN传播、每lane跨column归约",
+      "source": "PDF743–746",
+      "implementation_status": "IMPLEMENTED_PROJECT_SEMANTIC_ENDPOINT",
+      "dynamic_status": "PASS_LISTED_DIRECTED_CASES",
+      "implementation_modules": [
+        "tcgen05_move.sv",
+        "tcgen05_move_math.sv"
+      ],
+      "execution_evidence": {
+        "report": "docs/tcgen05/rtl/checks/final/results_all.json",
+        "suites": [
+          "move",
+          "math"
+        ],
+        "configurations": [
+          "move_complete",
+          "move_math"
+        ],
+        "scope": "Named directed cases in these suites; not all modifiers or native tuples."
+      }
+    },
+    {
+      "id": "TC-FUNC-007",
+      "family": "ld.spcompress",
+      "required_behavior": "F32、32x32b、x4..128、2:4、b2索引、min/max选择、abs、NaN保留",
+      "source": "同上",
+      "implementation_status": "IMPLEMENTED_PROJECT_SEMANTIC_ENDPOINT",
+      "dynamic_status": "PASS_LISTED_DIRECTED_CASES",
+      "implementation_modules": [
+        "tcgen05_move.sv",
+        "tcgen05_move_math.sv"
+      ],
+      "execution_evidence": {
+        "report": "docs/tcgen05/rtl/checks/final/results_all.json",
+        "suites": [
+          "move",
+          "math"
+        ],
+        "configurations": [
+          "move_complete",
+          "move_math"
+        ],
+        "scope": "Named directed cases in these suites; not all modifiers or native tuples."
+      }
+    },
+    {
+      "id": "TC-FUNC-008",
+      "family": "ld.red.spcompress",
+      "required_behavior": "同时生成compressed data、metadata、reduction；NaN修饰只控制reduction",
+      "source": "同上",
+      "implementation_status": "IMPLEMENTED_PROJECT_SEMANTIC_ENDPOINT",
+      "dynamic_status": "PASS_LISTED_DIRECTED_CASES",
+      "implementation_modules": [
+        "tcgen05_move.sv",
+        "tcgen05_move_math.sv"
+      ],
+      "execution_evidence": {
+        "report": "docs/tcgen05/rtl/checks/final/results_all.json",
+        "suites": [
+          "move",
+          "math"
+        ],
+        "configurations": [
+          "move_complete",
+          "move_math"
+        ],
+        "scope": "Named directed cases in these suites; not all modifiers or native tuples."
+      }
+    },
+    {
+      "id": "TC-FUNC-009",
+      "family": "st",
+      "required_behavior": "全五种shape、x1..x128合法重复、完整源捕获、全部TMEM写ack",
+      "source": "§9.7.18.8.4 PDF746–748",
+      "implementation_status": "IMPLEMENTED_PROJECT_SEMANTIC_ENDPOINT",
+      "dynamic_status": "PASS_LISTED_DIRECTED_CASES",
+      "implementation_modules": [
+        "tcgen05_move.sv"
+      ],
+      "execution_evidence": {
+        "report": "docs/tcgen05/rtl/checks/final/results_all.json",
+        "suites": [
+          "move",
+          "integration",
+          "cluster"
+        ],
+        "configurations": [
+          "cluster",
+          "integration_default",
+          "integration_small",
+          "move_complete"
+        ],
+        "scope": "Named directed cases in these suites; not all modifiers or native tuples."
+      }
+    },
+    {
+      "id": "TC-FUNC-010",
+      "family": "st.unpack::16b",
+      "required_behavior": "b32的两个16bit chunk分别写相邻columns",
+      "source": "PDF742/747",
+      "implementation_status": "IMPLEMENTED_PROJECT_SEMANTIC_ENDPOINT",
+      "dynamic_status": "PASS_LISTED_DIRECTED_CASES",
+      "implementation_modules": [
+        "tcgen05_move.sv"
+      ],
+      "execution_evidence": {
+        "report": "docs/tcgen05/rtl/checks/final/results_all.json",
+        "suites": [
+          "move"
+        ],
+        "configurations": [
+          "move_complete"
+        ],
+        "scope": "Named directed cases in these suites; not all modifiers or native tuples."
+      }
+    },
+    {
+      "id": "TC-FUNC-011",
+      "family": "wait::ld/st",
+      "required_behavior": "warp collective、各自先前stream cutoff；不追踪MMA/cp/shift",
+      "source": "§9.7.18.8.5 PDF748–750",
+      "implementation_status": "IMPLEMENTED_PROJECT_SEMANTIC_ENDPOINT",
+      "dynamic_status": "PASS_LISTED_DIRECTED_CASES",
+      "implementation_modules": [
+        "tcgen05.sv"
+      ],
+      "execution_evidence": {
+        "report": "docs/tcgen05/rtl/checks/final/results_all.json",
+        "suites": [
+          "integration"
+        ],
+        "configurations": [
+          "integration_default",
+          "integration_small"
+        ],
+        "scope": "Named directed cases in these suites; not all modifiers or native tuples."
+      }
+    },
+    {
+      "id": "TC-FUNC-012",
+      "family": "cp",
+      "required_behavior": "全五种copy shapes、group1/group2、warpx2两种配对、warpx4、b4x16_p64/b6x16_p32展开",
+      "source": "§9.7.18.9.2 PDF751–753",
+      "implementation_status": "IMPLEMENTED_PROJECT_SEMANTIC_ENDPOINT",
+      "dynamic_status": "PASS_LISTED_DIRECTED_CASES",
+      "implementation_modules": [
+        "tcgen05_move.sv"
+      ],
+      "execution_evidence": {
+        "report": "docs/tcgen05/rtl/checks/final/results_all.json",
+        "suites": [
+          "move",
+          "cluster",
+          "layout"
+        ],
+        "configurations": [
+          "cluster",
+          "layout",
+          "move_complete"
+        ],
+        "scope": "Named directed cases in these suites; not all modifiers or native tuples."
+      }
+    },
+    {
+      "id": "TC-FUNC-013",
+      "family": "shift.down",
+      "required_behavior": "隐式31x256b、32对齐lane、32-byte片段沿row滑动、group1/group2、防覆盖；方向消歧见LAYOUT_IMPLEMENTATION.md",
+      "source": "§9.7.18.9.3 PDF753–754",
+      "implementation_status": "IMPLEMENTED_PROJECT_SEMANTIC_ENDPOINT",
+      "dynamic_status": "PASS_LISTED_DIRECTED_CASES",
+      "implementation_modules": [
+        "tcgen05_move.sv"
+      ],
+      "execution_evidence": {
+        "report": "docs/tcgen05/rtl/checks/final/results_all.json",
+        "suites": [
+          "move",
+          "cluster"
+        ],
+        "configurations": [
+          "cluster",
+          "move_complete"
+        ],
+        "scope": "Named directed cases in these suites; not all modifiers or native tuples."
+      }
+    },
+    {
+      "id": "TC-FUNC-014",
+      "family": "mma",
+      "required_behavior": "dense、SMEM/TMEM A、SMEM B、独立kind/type/shape、enable-input-d、disable-output-lane、scale-input-d",
+      "source": "§9.7.18.10.10.1 PDF823–830",
+      "implementation_status": "IMPLEMENTED_PROJECT_SEMANTIC_ENDPOINT",
+      "dynamic_status": "PASS_LISTED_DIRECTED_CASES",
+      "implementation_modules": [
+        "tcgen05_mma.sv",
+        "tcgen05_dot_array.sv"
+      ],
+      "execution_evidence": {
+        "report": "docs/tcgen05/rtl/checks/final/results_all.json",
+        "suites": [
+          "mma",
+          "array",
+          "integration",
+          "cluster"
+        ],
+        "configurations": [
+          "array_parallel",
+          "array_serial",
+          "array_small",
+          "cluster",
+          "integration_default",
+          "integration_small",
+          "mma_parallel",
+          "mma_serial",
+          "mma_small"
+        ],
+        "scope": "Named directed cases in these suites; not all modifiers or native tuples."
+      }
+    },
+    {
+      "id": "TC-FUNC-015",
+      "family": "mma.block_scale",
+      "required_behavior": "mxf8f6f4/mxf4/mxf4nvf4、独立scale类型、scale_vec1X/2X/4X与BLOCK16/32、TMEM scale矩阵",
+      "source": "同上，§9.7.18.10.7 PDF780–781",
+      "implementation_status": "IMPLEMENTED_PROJECT_SEMANTIC_ENDPOINT",
+      "dynamic_status": "PASS_LISTED_DIRECTED_CASES",
+      "implementation_modules": [
+        "tcgen05_legalize.sv",
+        "tcgen05_mma.sv"
+      ],
+      "execution_evidence": {
+        "report": "docs/tcgen05/rtl/checks/final/results_all.json",
+        "suites": [
+          "mma",
+          "legalizer",
+          "layout"
+        ],
+        "configurations": [
+          "layout",
+          "legalizer",
+          "mma_parallel",
+          "mma_serial",
+          "mma_small"
+        ],
+        "scope": "Named directed cases in these suites; not all modifiers or native tuples."
+      }
+    },
+    {
+      "id": "TC-FUNC-016",
+      "family": "mma collector",
+      "required_behavior": "A/B的fill/use/lastuse/discard；源仍须在MMA完成前保持合法",
+      "source": "PDF824–829，PDF756",
+      "implementation_status": "IMPLEMENTED_PROJECT_SEMANTIC_ENDPOINT",
+      "dynamic_status": "PASS_LISTED_DIRECTED_CASES",
+      "implementation_modules": [
+        "tcgen05_mma.sv"
+      ],
+      "execution_evidence": {
+        "report": "docs/tcgen05/rtl/checks/final/results_all.json",
+        "suites": [
+          "mma"
+        ],
+        "configurations": [
+          "mma_parallel",
+          "mma_serial",
+          "mma_small"
+        ],
+        "scope": "Named directed cases in these suites; not all modifiers or native tuples."
+      }
+    },
+    {
+      "id": "TC-FUNC-017",
+      "family": "mma.ashift",
+      "required_behavior": "A来自TMEM、M128/256、禁止同时A fill/use，实际移动A数据",
+      "source": "PDF828–829",
+      "implementation_status": "IMPLEMENTED_PROJECT_SEMANTIC_ENDPOINT",
+      "dynamic_status": "PASS_LISTED_DIRECTED_CASES",
+      "implementation_modules": [
+        "tcgen05_mma.sv"
+      ],
+      "execution_evidence": {
+        "report": "docs/tcgen05/rtl/checks/final/results_all.json",
+        "suites": [
+          "mma",
+          "legalizer"
+        ],
+        "configurations": [
+          "legalizer",
+          "mma_parallel",
+          "mma_serial",
+          "mma_small"
+        ],
+        "scope": "Named directed cases in these suites; not all modifiers or native tuples."
+      }
+    },
+    {
+      "id": "TC-FUNC-018",
+      "family": "mma.decompress::lut::b",
+      "required_behavior": "3bit SMEM index→TMEM LUT中E4M3值；8-column slice共享8候选值、禁止B transpose及layout B/C/F",
+      "source": "PDF826–830",
+      "implementation_status": "IMPLEMENTED_PROJECT_SEMANTIC_ENDPOINT",
+      "dynamic_status": "PASS_LISTED_DIRECTED_CASES",
+      "implementation_modules": [
+        "tcgen05_mma.sv"
+      ],
+      "execution_evidence": {
+        "report": "docs/tcgen05/rtl/checks/final/results_all.json",
+        "suites": [
+          "mma",
+          "layout",
+          "legalizer"
+        ],
+        "configurations": [
+          "layout",
+          "legalizer",
+          "mma_parallel",
+          "mma_serial",
+          "mma_small"
+        ],
+        "scope": "Named directed cases in these suites; not all modifiers or native tuples."
+      }
+    },
+    {
+      "id": "TC-FUNC-019",
+      "family": "mma.sp",
+      "required_behavior": "全kind的structured sparse A、metadata位置恢复、TF32 1:2、普通2:4、MXFP4成对4:8",
+      "source": "§9.7.18.10.10.2 PDF830–837；§.10.9 PDF816–822",
+      "implementation_status": "IMPLEMENTED_PROJECT_SEMANTIC_ENDPOINT",
+      "dynamic_status": "PASS_LISTED_DIRECTED_CASES",
+      "implementation_modules": [
+        "tcgen05_mma.sv"
+      ],
+      "execution_evidence": {
+        "report": "docs/tcgen05/rtl/checks/final/results_all.json",
+        "suites": [
+          "mma",
+          "layout"
+        ],
+        "configurations": [
+          "layout",
+          "mma_parallel",
+          "mma_serial",
+          "mma_small"
+        ],
+        "scope": "Named directed cases in these suites; not all modifiers or native tuples."
+      }
+    },
+    {
+      "id": "TC-FUNC-020",
+      "family": "mma.ws",
+      "required_behavior": "group1、B collector b0..b3、zero-column-mask-desc、dense F16/TF32/f8f6f4/i8/Ti16",
+      "source": "§9.7.18.10.10.3 PDF837–840",
+      "implementation_status": "IMPLEMENTED_PROJECT_SEMANTIC_ENDPOINT",
+      "dynamic_status": "PASS_LISTED_DIRECTED_CASES",
+      "implementation_modules": [
+        "tcgen05_mma.sv"
+      ],
+      "execution_evidence": {
+        "report": "docs/tcgen05/rtl/checks/final/results_all.json",
+        "suites": [
+          "mma"
+        ],
+        "configurations": [
+          "mma_parallel",
+          "mma_serial",
+          "mma_small"
+        ],
+        "scope": "Named directed cases in these suites; not all modifiers or native tuples."
+      }
+    },
+    {
+      "id": "TC-FUNC-021",
+      "family": "mma.ws.sp",
+      "required_behavior": "ws与sparse组合、B collector、zero-column mask及metadata",
+      "source": "§9.7.18.10.10.4 PDF840–842",
+      "implementation_status": "IMPLEMENTED_PROJECT_SEMANTIC_ENDPOINT",
+      "dynamic_status": "PASS_LISTED_DIRECTED_CASES",
+      "implementation_modules": [
+        "tcgen05_mma.sv"
+      ],
+      "execution_evidence": {
+        "report": "docs/tcgen05/rtl/checks/final/results_all.json",
+        "suites": [
+          "mma"
+        ],
+        "configurations": [
+          "mma_parallel",
+          "mma_serial",
+          "mma_small"
+        ],
+        "scope": "Named directed cases in these suites; not all modifiers or native tuples."
+      }
+    },
+    {
+      "id": "TC-FUNC-022",
+      "family": "fence before/after_thread_sync",
+      "required_behavior": "与core执行顺序桥接；不是给出一个无副作用立即完成的空命令",
+      "source": "§9.7.18.11.1 PDF843–844",
+      "implementation_status": "IMPLEMENTED_PROJECT_SEMANTIC_ENDPOINT",
+      "dynamic_status": "PASS_LISTED_DIRECTED_CASES",
+      "implementation_modules": [
+        "tcgen05.sv"
+      ],
+      "execution_evidence": {
+        "report": "docs/tcgen05/rtl/checks/final/results_all.json",
+        "suites": [
+          "integration"
+        ],
+        "configurations": [
+          "integration_default",
+          "integration_small"
+        ],
+        "scope": "Named directed cases in these suites; not all modifiers or native tuples."
+      }
+    },
+    {
+      "id": "TC-FUNC-023",
+      "family": "commit normal/restricted",
+      "required_behavior": "捕获同thread/group的MCS或SMEM-A cutoff，异步mbarrier arrive count1，事件不依赖后续正常命令credit",
+      "source": "§9.7.18.12.1 PDF844–846",
+      "implementation_status": "IMPLEMENTED_PROJECT_SEMANTIC_ENDPOINT",
+      "dynamic_status": "PASS_LISTED_DIRECTED_CASES",
+      "implementation_modules": [
+        "tcgen05.sv",
+        "tcgen05_commit_fanout.sv"
+      ],
+      "execution_evidence": {
+        "report": "docs/tcgen05/rtl/checks/final/results_all.json",
+        "suites": [
+          "integration",
+          "cluster"
+        ],
+        "configurations": [
+          "cluster",
+          "integration_default",
+          "integration_small"
+        ],
+        "scope": "Named directed cases in these suites; not all modifiers or native tuples."
+      }
+    },
+    {
+      "id": "TC-FUNC-024",
+      "family": "commit multicast",
+      "required_behavior": "cluster同offset多个mbarrier、16bit默认mask或显式16/32bit mask、每目标恰一次",
+      "source": "同上",
+      "implementation_status": "IMPLEMENTED_PROJECT_SEMANTIC_ENDPOINT",
+      "dynamic_status": "PASS_LISTED_DIRECTED_CASES",
+      "implementation_modules": [
+        "tcgen05_commit_fanout.sv"
+      ],
+      "execution_evidence": {
+        "report": "docs/tcgen05/rtl/checks/final/results_all.json",
+        "suites": [
+          "control",
+          "integration"
+        ],
+        "configurations": [
+          "allocator_hub",
+          "commit_fanout",
+          "integration_default",
+          "integration_small",
+          "memory_peer_progress",
+          "pair_rollback"
+        ],
+        "scope": "Named directed cases in these suites; not all modifiers or native tuples."
+      }
+    }
+  ],
+  "counts": {
+    "functional_classes": 24,
+    "claimed_executed": 24,
+    "actual_configuration_seed_runs": 29,
+    "elaborated_test_configurations": 22
+  },
+  "mandatory_test_categories": [
+    "legal actual data/control behavior",
+    "boundary",
+    "illegal-combination rejection",
+    "backpressure stability",
+    "ownership/generation/resource lifetime"
+  ],
+  "unresolved_native_issues": [
+    "Some Table50 cross-page large-K joint shape cells still require target assembly cross-check.",
+    "Ti16 uses decoded integer transport; raw S1Z4M11 and conflicting transpose descriptions are not reconstructed.",
+    "One Ti16 sparse collector syntax row omits metadata despite the sparse chapter; this project retains metadata.",
+    "WS zero-column skip/use prose conflicts with examples; project follows the illustrated sequences.",
+    "Shift direction lacks PTX row-index pseudocode; project follows patent window and CUTLASS tail-refresh evidence, without GPU measurement.",
+    "Internal NVIDIA numerical order, physical MALU geometry/count, and Rubin peak/resource implementation are not proven."
+  ]
+}

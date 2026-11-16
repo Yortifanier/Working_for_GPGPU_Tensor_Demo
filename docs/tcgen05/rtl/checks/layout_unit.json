@@ -1,0 +1,23 @@
+{
+  "check_kind": "TCGEN05_LAYOUT_UNIT_SIMULATION",
+  "passed": true,
+  "date": "2026-11-15",
+  "tool": "Verilator 5.032",
+  "summary": "TCGEN05_LAYOUT_PASS checks=825662 native_outputs=409600 layouts=7",
+  "counts": {
+    "checks": 825662,
+    "native_outputs": 409600,
+    "layouts": 7
+  },
+  "source_sha256": {
+    "design/core/src/common/malu_pkg.sv": "bec4d6b583e5a2c73bbdd1f3715137a3dee446c0a1e25090f7af7cab8db65f16",
+    "design/core/src/common/tcgen05_pkg.sv": "1b4c90f0659e5b2ff51716ca61566fbc605e904f06627cf3f0bb23385cb806bc",
+    "design/core/src/common/tcgen05_layout_pkg.sv": "26944da5d7fcd16b0709f91dcad9823e00464cfd7d87d02e357cbce47f9236cb",
+    "verif/core/src/rtl/sp/eu/tensor/tcgen05/tb_tcgen05_layout.sv": "bb856a8c5e444e40571cb1c7188cb876f557a30bf1c24e46f42cad7339b01ee2",
+    "verif/core/filelist/rtl/sp/eu/tensor/tcgen05/tb_tcgen05_layout.f": "96af96cce35f485f47cb58f3e85d1b364653aa16ed401f0d9457f1311921e31d"
+  },
+  "log": "build/tcgen05/layout_unit/run.log",
+  "log_sha256": "e247ee8a9a0ce6469e3d0f7b0189ddce5895ecfebb8433d8c78c03b1badc0402",
+  "scope": "Pure address/semantic-form RTL unit simulation, not full endpoint or NVIDIA GPU execution.",
+  "functional_mma_instructions_executed": 0
+}

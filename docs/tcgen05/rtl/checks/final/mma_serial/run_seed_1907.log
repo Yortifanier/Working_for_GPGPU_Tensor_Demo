@@ -1,0 +1,5 @@
+TCGEN05_MMA_PASS commands=69 checks=12164 cycles=14718768 areads=52 sreads=275897 treads=344854 writes=12088 beats=68933 terms=272986 max_contexts=1 engines=1 lanes=4 fp64=1
+- verif/core/src/rtl/sp/eu/tensor/tcgen05/tb_tcgen05_mma.sv:506: Verilog $finish
+- S i m u l a t i o n   R e p o r t: Verilator 5.032 2025-01-01
+- Verilator: $finish at 147ms; walltime 65.731 s; speed 2.246 ms/s
+- Verilator: cpu 65.522 s on 1 threads; alloced 34 MB

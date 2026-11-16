@@ -1,0 +1,125 @@
+{
+  "check_kind": "TCGEN05_MOVE_UNIT_RTL_SIMULATION",
+  "passed": true,
+  "scope": "Standalone normalized movement engine and shared comparison circuit; does not claim full native Tensor endpoint, hardware throughput or execution of the 106 SM generator testplan cases.",
+  "tool": "Verilator 5.032 (Debian 5.032-1+b2)",
+  "parameters": {
+    "COLS": 576,
+    "memory_outstanding_limit": 1
+  },
+  "source_sha256": {
+    "design/core/src/rtl/sp/eu/tensor/tcgen05/tcgen05_move.sv": "0dc1a8f2ba2520a7d041685af280b2d71f6fb584aec5513efa86b54f429945aa",
+    "design/core/src/rtl/sp/eu/tensor/tcgen05/tcgen05_move_math.sv": "1f6a7e0270da6ef1457a73045297dee822a0e5b239fea9b691ff8daca8ad77ad",
+    "verif/core/src/rtl/sp/eu/tensor/tcgen05/tb_tcgen05_move.sv": "1108ce3e796ac2e2665e8b6893dfd2a0d384706abce63400eb8074c564bf89c7",
+    "verif/core/src/rtl/sp/eu/tensor/tcgen05/tb_tcgen05_move_math.sv": "caa6a99c9440c62a121e437e5c5e78a8138315a88c5cab999bfe88cf7689f368",
+    "verif/core/filelist/rtl/sp/eu/tensor/tcgen05/tb_tcgen05_move.f": "9c6fa3112d6588f998e624c100ab9f48aaf8da97f4e880190c74fbd127ef40fd",
+    "verif/core/filelist/rtl/sp/eu/tensor/tcgen05/tb_tcgen05_move_math.f": "1e73a760bee66cc7e36af0a4a905c622ef147b0a82de9d950e3fe5e14021bc0b",
+    "verif/core/flow/rtl/sp/eu/tensor/tcgen05/generate_move_vectors.py": "54555d0f9ba82afa61c507c143dc28856f57826bb445b9fe7e4d9ee04e8e78a9"
+  },
+  "dependencies_observed_after_run_sha256": {
+    "design/core/src/common/malu_pkg.sv": "bec4d6b583e5a2c73bbdd1f3715137a3dee446c0a1e25090f7af7cab8db65f16",
+    "design/core/src/common/tcgen05_pkg.sv": "2070c996921799740b6086acac89c0ead90f5f857a9e240c8c51a2c792d2b7ef",
+    "design/core/src/common/tcgen05_layout_pkg.sv": "cf2e37407e5ba15a4f32e8727fd9eaf3d019d5659737f38e465c9c719cedcd5c"
+  },
+  "functional_results": [
+    {
+      "seed": 1907,
+      "passed": true,
+      "counts": {
+        "commands": 248,
+        "checks": 100547,
+        "responses": 248,
+        "rf_fragments": 3035,
+        "cycles": 4532532,
+        "reads": 178786,
+        "writes": 155968,
+        "peer": 20608,
+        "rf_hold": 1045,
+        "mem_hold": 334492,
+        "seed": 1907
+      },
+      "log": "docs/tcgen05/rtl/checks/move/run_seed_1907.log",
+      "log_sha256": "cc616ce0fc8bd67553b4099ad8f3fb09bacbee1c9403d3e397a0acaf22d13382",
+      "summary": "TCGEN05_MOVE_PASS commands=248 checks=100547 responses=248 rf_fragments=3035 cycles=4532532 reads=178786 writes=155968 peer=20608 rf_hold=1045 mem_hold=334492 seed=1907",
+      "build_log": "build/tcgen05/move_unit/run_seed_1907.log"
+    },
+    {
+      "seed": 1908,
+      "passed": true,
+      "counts": {
+        "commands": 248,
+        "checks": 100547,
+        "responses": 248,
+        "rf_fragments": 3035,
+        "cycles": 4534459,
+        "reads": 178786,
+        "writes": 155968,
+        "peer": 20608,
+        "rf_hold": 961,
+        "mem_hold": 335885,
+        "seed": 1908
+      },
+      "log": "docs/tcgen05/rtl/checks/move/run_seed_1908.log",
+      "log_sha256": "c5f58eae707520277f3ed588a1255ccfb5dbd111b726afcf1e35b4776e66b3ee",
+      "summary": "TCGEN05_MOVE_PASS commands=248 checks=100547 responses=248 rf_fragments=3035 cycles=4534459 reads=178786 writes=155968 peer=20608 rf_hold=961 mem_hold=335885 seed=1908",
+      "build_log": "build/tcgen05/move_unit/run_seed_1908.log"
+    },
+    {
+      "seed": 2026,
+      "passed": true,
+      "counts": {
+        "commands": 248,
+        "checks": 100547,
+        "responses": 248,
+        "rf_fragments": 3035,
+        "cycles": 4527233,
+        "reads": 178786,
+        "writes": 155968,
+        "peer": 20608,
+        "rf_hold": 1058,
+        "mem_hold": 334011,
+        "seed": 2026
+      },
+      "log": "docs/tcgen05/rtl/checks/move/run_seed_2026.log",
+      "log_sha256": "f981aa0e58fb8811353d812c897dcfc0472d473ff410da333382163bd98a5543",
+      "summary": "TCGEN05_MOVE_PASS commands=248 checks=100547 responses=248 rf_fragments=3035 cycles=4527233 reads=178786 writes=155968 peer=20608 rf_hold=1058 mem_hold=334011 seed=2026",
+      "build_log": "build/tcgen05/move_unit/run_seed_2026.log"
+    }
+  ],
+  "independent_comparison_oracle": {
+    "passed": true,
+    "vectors": 6000,
+    "seed": 1907,
+    "method": "Python IEEE F32 decode and independent numeric ordering with explicit NaN/signed-zero policy, plus signed/unsigned integer comparisons.",
+    "log": "docs/tcgen05/rtl/checks/move/math_run.log",
+    "log_sha256": "f37cbd550feeb6d39079d4e07be3c2ea1a8a257144772bec0253a5ed3065a177",
+    "vectors_sha256": "ce094c2a10efed85ab5d3e3edf6e888da80c9ffefe52fa7b78969cbe3ad91a95",
+    "build_log": "build/tcgen05/move_unit/math_run.log"
+  },
+  "coverage_scope": [
+    "All five LD/ST shapes and every legal repeat x1 through x128, with raw32 and pack16/unpack16.",
+    "16x32bx2 halfSplit remains a column offset when packing doubles per-element columns.",
+    "F32/S32/U32 reduction over both permitted LD shapes.",
+    "Compression x4 through x128, cdata, full/partial metadata words and optional reduction.",
+    "32 streaming min/max, abs, NaN-propagation, NaN-preservation, ties and signed-zero combinations.",
+    "All five CP shapes; both warp-pair multicast patterns and four-way multicast; local and peer memory.",
+    "B4/B6 containers use nonzero padding to prove it is excluded from expanded payload.",
+    "Twelve native CP descriptor recipes: no swizzle/32/64/128B swizzle crossed with plain/B4/B6.",
+    "CP4 destination base+0/32/64/96 lanes and tail refresh at31/63/95/127.",
+    "Both-endpoint SHIFT in all quarters, plus four-quarter SHIFT -> CP4 tail refresh -> LD chain.",
+    "RF and memory backpressure, malformed commands, memory error, txn mismatch, subsequent recovery and legacy inline adapter."
+  ],
+  "limitations": [
+    "Native SMEM descriptor modes remain subject to shared layout helper and top-level legalizer; this report tests only the stated descriptor recipes.",
+    "SHIFT last row is preserved by project policy; published evidence and control interpretation are documented in MOVE_IMPLEMENTATION.md.",
+    "Pair allocation atomicity, owner permission, mbarrier RMW and complete MMA integration belong to top-level verification.",
+    "Memory errors do not roll back already committed writes."
+  ],
+  "assertions_enabled": true,
+  "warning_waivers": {
+    "UNUSEDSIGNAL": "Unused public/sanitized fields",
+    "UNUSEDPARAM": "Public constants",
+    "SYNCASYNCNET": "SVA sampling the asynchronous reset",
+    "BLKSEQ": "Local procedural TB clock/scoreboard only; no DUT waiver"
+  }
+}

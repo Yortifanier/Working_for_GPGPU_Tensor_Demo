@@ -1,0 +1,94 @@
+{
+  "kind": "ELABORATED_RTL_RESOURCE_AUDIT",
+  "passed": true,
+  "tool": "Verilator 5.032 2025-01-01 rev (Debian 5.032-1+b2)",
+  "results": [
+    {
+      "engines": 4,
+      "enable_fp64": false,
+      "per_core": {
+        "variable_multiplication_nodes": 1,
+        "multiplier_operand_bits": [
+          24,
+          24
+        ],
+        "multiplier_result_bits": 48,
+        "shared_word_add_result_bits": 33,
+        "accumulator_words": 20,
+        "accumulator_word_bits": 32,
+        "accumulator_bits": 640,
+        "claim": "Elaborated RTL, not mapped DSP count, RAM macro, area, frequency, or power sign-off"
+      },
+      "total_numerical_multiply_paths": 4,
+      "total_accumulator_bytes": 320,
+      "xml_sha256": "364d0747594b065a2319f56f048ad8d98f296b42ca8ddbab51f00eb78e997563",
+      "hierarchy": [
+        "tcgen05_dot_array.g_dot__BRA__0__KET__.core",
+        "tcgen05_dot_array.g_dot__BRA__1__KET__.core",
+        "tcgen05_dot_array.g_dot__BRA__2__KET__.core",
+        "tcgen05_dot_array.g_dot__BRA__3__KET__.core"
+      ]
+    },
+    {
+      "engines": 4,
+      "enable_fp64": true,
+      "per_core": {
+        "variable_multiplication_nodes": 1,
+        "multiplier_operand_bits": [
+          53,
+          53
+        ],
+        "multiplier_result_bits": 106,
+        "shared_word_add_result_bits": 33,
+        "accumulator_words": 132,
+        "accumulator_word_bits": 32,
+        "accumulator_bits": 4224,
+        "claim": "Elaborated RTL, not mapped DSP count, RAM macro, area, frequency, or power sign-off"
+      },
+      "total_numerical_multiply_paths": 4,
+      "total_accumulator_bytes": 2112,
+      "xml_sha256": "f48e7b4d3cd858a9b441149818ad174d57431fc2470de9c58d74658295436c40",
+      "hierarchy": [
+        "tcgen05_dot_array.g_dot__BRA__0__KET__.core",
+        "tcgen05_dot_array.g_dot__BRA__1__KET__.core",
+        "tcgen05_dot_array.g_dot__BRA__2__KET__.core",
+        "tcgen05_dot_array.g_dot__BRA__3__KET__.core"
+      ]
+    }
+  ],
+  "default_storage_contract": {
+    "tmem_bytes": 294912,
+    "shared_result_tile_bytes_without_fp64": 262144,
+    "shared_result_tile_bytes_with_fp64": 524288,
+    "basis": "Explicit RTL data capacities; not mapped macro measurements"
+  },
+  "source_sha256": {
+    "design/core/src/common/malu_pkg.sv": "bec4d6b583e5a2c73bbdd1f3715137a3dee446c0a1e25090f7af7cab8db65f16",
+    "design/core/src/common/tcgen05_layout_pkg.sv": "26944da5d7fcd16b0709f91dcad9823e00464cfd7d87d02e357cbce47f9236cb",
+    "design/core/src/common/tcgen05_pkg.sv": "1b4c90f0659e5b2ff51716ca61566fbc605e904f06627cf3f0bb23385cb806bc",
+    "design/core/src/if/sp/eu/tensor/malu/malu_if.sv": "f4f91a0094eb93586f15546949fc570a0001091f4c59dff6090c778b8d2d3086",
+    "design/core/src/if/sp/eu/tensor/tcgen05/tcgen05_if.sv": "15fc93457a34073932cf9cf357e67bd6cf941afd33b0a0a529f87d8e475cbb51",
+    "design/core/src/rtl/sp/eu/tensor/malu/malu.sv": "713b2b7be57d1d6d5d8cf7a134ce794e54d8e8bfc9f56c3ed6b519b96afaf4c1",
+    "design/core/src/rtl/sp/eu/tensor/malu/malu_core.sv": "da56d5dd3f38299755fcacdef493c6091536338188cb1f9b5b71149688697348",
+    "design/core/src/rtl/sp/eu/tensor/malu/malu_decode.sv": "ecb64bc43a68ab7e82e6556e71d026ef7e54d1d104ff3eba70097792d011688e",
+    "design/core/src/rtl/sp/eu/tensor/malu/malu_round_pack.sv": "c96739a42bd36a879d023154197fb6880bf5f08478201376b6a643c386433bdf",
+    "design/core/src/rtl/sp/eu/tensor/tcgen05/tcgen05.sv": "62211b18723f20aad8bf38c22c221761226472654218b8fe0b35de2b30a2f684",
+    "design/core/src/rtl/sp/eu/tensor/tcgen05/tcgen05_alloc_return.sv": "b9b033874e5c31f6e0e00042849b3d8dd3a07071a9b4f0585bb24da2139206be",
+    "design/core/src/rtl/sp/eu/tensor/tcgen05/tcgen05_allocator.sv": "f7443f33a063f4fddef419abe023a2b933b66210cd7f5234774baa6a360f0653",
+    "design/core/src/rtl/sp/eu/tensor/tcgen05/tcgen05_allocator_hub.sv": "d044de85265f2554bacae003031c5bd781b4136016a06c1641a483ad1b2ba4d0",
+    "design/core/src/rtl/sp/eu/tensor/tcgen05/tcgen05_commit_fanout.sv": "03afd948e6e73d706c5d7851ed2adc9c87689c168060fa84f64310bbe39dc766",
+    "design/core/src/rtl/sp/eu/tensor/tcgen05/tcgen05_control_mux.sv": "1c2091884c707e0cd08d34388c452781ad46486c02c47185e3d99e6935f6a27e",
+    "design/core/src/rtl/sp/eu/tensor/tcgen05/tcgen05_dot_array.sv": "37bb21d444cb166a4647027274c96627a8796dce4a9ab94272442c8764f041ef",
+    "design/core/src/rtl/sp/eu/tensor/tcgen05/tcgen05_execute.sv": "99617adfd0cfdd9b96a3b5b4a77aed118ed85802d993d541254866080d284f66",
+    "design/core/src/rtl/sp/eu/tensor/tcgen05/tcgen05_legalize.sv": "63789a2eed5d533755169d02cb43958706682fa6d56fb19a314913b66de43fe5",
+    "design/core/src/rtl/sp/eu/tensor/tcgen05/tcgen05_memory.sv": "19a7c667e5c6d3b78295ec00561dd33144a7f3c10edd330f6ae4040d28271487",
+    "design/core/src/rtl/sp/eu/tensor/tcgen05/tcgen05_memory_lane.sv": "4836b859105c25df73dd68944d1e2b7a2aea2ed4a6baf56ba4cb3bec959e29d2",
+    "design/core/src/rtl/sp/eu/tensor/tcgen05/tcgen05_mma.sv": "49ae64342febc02ae28d03a79c4a02adac54b41da8c2d46437f0324297d32732",
+    "design/core/src/rtl/sp/eu/tensor/tcgen05/tcgen05_move.sv": "0dc1a8f2ba2520a7d041685af280b2d71f6fb584aec5513efa86b54f429945aa",
+    "design/core/src/rtl/sp/eu/tensor/tcgen05/tcgen05_move_math.sv": "1f6a7e0270da6ef1457a73045297dee822a0e5b239fea9b691ff8daca8ad77ad",
+    "design/core/src/rtl/sp/eu/tensor/tcgen05/tcgen05_pair.sv": "17961dd71b120a9c3f888b26b9666c2f5bc5fa910a0acb335de10839eada443d",
+    "design/core/src/rtl/sp/eu/tensor/tcgen05/tcgen05_tmem.sv": "43f4fc6f50a840b97eb9e0cf4f142e71d3a3dc360a97d5771b40dcf3e537bb63",
+    "design/core/src/rtl/sp/eu/tensor/tcgen05/tcgen05_word_arbiter.sv": "5f74aea2a3525d03e66dd878b3c4b57854d0349a027a25da03704e4e342249a9"
+  },
+  "claim": "Counts instantiated numerical paths and each shared accumulator. Not DSP count, PPA, performance, or NVIDIA/Rubin physical geometry."
+}

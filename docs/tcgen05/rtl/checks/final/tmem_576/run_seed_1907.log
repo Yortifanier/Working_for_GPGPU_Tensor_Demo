@@ -1,0 +1,5 @@
+TCGEN05_TMEM_PASS cols=576 transfers=225325 reads=149527 writes=75794 ranges=4 partial=1804 zero=131 held=6168 queued=1 reset=3 final_rng=43e21e1e
+- verif/core/src/rtl/sp/eu/tensor/tcgen05/tb_tcgen05_tmem.sv:256: Verilog $finish
+- S i m u l a t i o n   R e p o r t: Verilator 5.032 2025-01-01
+- Verilator: $finish at 9ms; walltime 0.941 s; speed 9.700 ms/s
+- Verilator: cpu 0.932 s on 1 threads; alloced 33 MB

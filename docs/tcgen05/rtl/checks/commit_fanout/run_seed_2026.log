@@ -1,0 +1,5 @@
+TCGEN05_COMMIT_FANOUT_PASS commands=144 completed=143 outputs=1327 arrivals=1138 checks=4280 held=1326 resets=1 cycles=3115 seed=2026
+- verif/core/src/rtl/sp/eu/tensor/tcgen05/tb_tcgen05_commit_fanout.sv:146: Verilog $finish
+- S i m u l a t i o n   R e p o r t: Verilator 5.032 2025-01-01
+- Verilator: $finish at 31us; walltime 0.002 s; speed 12.263 ms/s
+- Verilator: cpu 0.003 s on 1 threads; alloced 33 MB

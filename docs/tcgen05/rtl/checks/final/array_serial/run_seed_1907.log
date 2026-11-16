@@ -1,0 +1,5 @@
+TCGEN05_DOT_ARRAY_PASS checks=248 responses=48 perf_jobs=16 perf_cycles=8929 max_busy=1 max_math=1 held=56 engines=1 lanes=4 fp64=1 seed=1907 cycles=25157
+- verif/core/src/rtl/sp/eu/tensor/tcgen05/tb_tcgen05_dot_array.sv:244: Verilog $finish
+- S i m u l a t i o n   R e p o r t: Verilator 5.032 2025-01-01
+- Verilator: $finish at 252us; walltime 0.046 s; speed 5.433 ms/s
+- Verilator: cpu 0.046 s on 1 threads; alloced 33 MB

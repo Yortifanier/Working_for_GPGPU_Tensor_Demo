@@ -1,0 +1,5 @@
+TCGEN05_CLUSTER_PASS checks=1101 commands=24 responses=24 events=2 peer_memory=2567 pins_even=2 pins_odd=2 cycles=63330 seed=1907
+- verif/core/src/rtl/sp/eu/tensor/tcgen05/tb_tcgen05_cluster.sv:274: Verilog $finish
+- S i m u l a t i o n   R e p o r t: Verilator 5.032 2025-01-01
+- Verilator: $finish at 633us; walltime 2.636 s; speed 242.067 us/s
+- Verilator: cpu 2.616 s on 1 threads; alloced 37 MB

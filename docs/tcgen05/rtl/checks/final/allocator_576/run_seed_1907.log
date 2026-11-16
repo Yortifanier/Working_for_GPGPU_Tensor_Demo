@@ -1,0 +1,5 @@
+TCGEN05_ALLOCATOR_PASS max_cols=576 records=18 checked=983 cycles=9095
+- verif/core/src/rtl/sp/eu/tensor/tcgen05/tb_tcgen05_allocator.sv:474: Verilog $finish
+- S i m u l a t i o n   R e p o r t: Verilator 5.032 2025-01-01
+- Verilator: $finish at 91us; walltime 0.050 s; speed 1.797 ms/s
+- Verilator: cpu 0.051 s on 1 threads; alloced 34 MB
